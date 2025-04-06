@@ -1,0 +1,75 @@
+<?-include('./_inc/start.ejs') ?>
+<div class="container">
+    <div class="d-flex flex-column h-100 gap-3">
+        <h3>App Settings</h3>
+    
+        <div class="d-flex flex-column gap-4">
+            <div class="d-flex flex-column gap-3">            
+                <div class="d-flex jcs aic gap-2">
+                    <p class="mb-0 h6">Linked Account Email</p>
+                    <span class="verified text-success d-none" title="Email Verified Successfully !"><i class="bi bi-patch-check-fill"></i></span>
+                    <span class="pending text-warning d-none" title="Activation Pending !"><i class="bi bi-exclamation-diamond-fill"></i></span>
+                    <span class="cnange-email text-primary role-btn small ms-auto" title="Change Account Email">Change Email</span>
+                </div>
+                <div class="d-flex jcs ais align-items-sm-center flex-column flex-sm-row gap-2">
+                    <input type="email" class="form-control" id="account-email" disabled placeholder="name@example.com" style="max-width: 350px;">
+                    <button type="button" class="btn btn-primary get-activation d-none disabled">
+                        <div class="spinner-border spinner-border-sm submit-status d-none" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        Submit
+                    </button>
+                    <div class="actcode-message text-success small ms-sm-auto"></div>
+                </div>
+                <div class="d-flex jcs ais align-items-sm-center flex-column flex-sm-row gap-2 validate-code d-none">
+                    <input type="number" class="form-control" id="validate-code" placeholder="activation code" style="max-width: 350px;">
+                    <button type="button" class="btn btn-primary link-email">Verify</button>
+                    <div class="d-flex jcb aic gap-2 flex-fill" >
+                        <div class="status-message small"></div>
+                        <span class="role-btn get-activation text-primary small d-flex jcb aic gap-3">
+                            <div class="spinner-border spinner-border-sm submit-status d-none" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            Resnd Activation Code
+                        </span>
+                    </div>
+                </div>
+                <div class="form-text">
+                    Linked Account helps you to Reset Password and other Account related actions!
+                </div>
+            </div>
+
+            <div>
+                <div class="d-flex jcb aic gap-2 send-auth-code d-none">
+                    <button type="button" class="btn btn-light send-authcode gap-2">Send Auth Code</button>
+                    <div class="me-auto auth-status me-auto"></div>
+                    <span class="small text-secondary w-50">The authorization code is required to reset or change the admin password for the application. This code is issued only once; therefore, it is essential to keep this email secure.</span>
+                </div>
+                <div class="small text-danger auth-error"></div>
+            </div>
+    
+            <!-- passowrd -->
+            <div class="d-flex flex-column gap-3">
+                <p class="h6 mb-0">Change Account Password</p>
+                <div class="d-flex flex-column jcs ais gap-2">
+                    <input type="text" class="form-control" id="old-pwd" class="form-control" placeholder="Existing Password" style="max-width: 350px;">
+                    <div class="d-flex flex-column">
+                        <input type="text" class="form-control" id="new-pwd" class="form-control" placeholder="New Password" style="max-width: 350px;" >
+                        <div class="form-text fw-light">
+                            Your password must be 8-50 characters long, must not contain spaces, or emoji.
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-light ms-sm-auto chg-pwd">Change</button>
+                </div>
+            </div>
+    
+            <!-- close -->
+        </div>
+        <div class="btn-group mt-auto">
+            <a href="/logout" class="btn btn-light logout w-50">Logout</a>
+            <a href="/apps" class="btn btn-light w-50">Back</a>
+        </div>
+    </div>
+</div>
+<script type="module" src="js/app_settings.js"></script>
+<?-include('./_inc/close.ejs') ?>

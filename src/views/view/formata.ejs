@@ -1,0 +1,62 @@
+<?-include('../_inc/start.ejs') ?>
+<!-- <div class="postion-fixed top-0 start-0 d-flex jcc aic bg-primary p-2 text-white z-2 d-print-none" id="print"><i class="bi bi-printer"></i></div> -->
+<div class="d-flex jcc aic dvh-70 status">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+<div class="overflow-auto">
+    <div class="btn-print d-flex jcc aic py-2 px-3 text-white z-2 d-print-none" id="print"><i class="bi bi-printer"></i></div>
+    <div class="btn-exit d-flex jcc aic py-2 px-3 text-white z-2 d-print-none" id="close"><i class="bi bi-x-lg"></i></div>
+
+    <div class="container-sm view-order my-5 d-none" style="min-width: 768px;">
+        <div class="d-flex flex-column gap-3">
+            <div class="d-flex jcc aic fw-bold small">ORDER DETAILS</div>
+            <!-- entity details -->
+            <div class="d-flex jcb ais small gap-2">
+                <div class="d-flex">SELLER</div>
+                <div class="d-flex flex-column gap-1">
+                    <div class="entity_name fw-bold text-end"></div>  
+                    <div class="d-flex jce aic gap-2">
+                        <div class="city"></div>
+                        <div class="pincode"></div>
+                        <div class="state"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- party details -->
+            <div class="d-flex jce ais small">
+                <div class="me-auto">CUSTOMER</div>
+                <div class="party_name"></div>
+            </div>
+            <!-- item details -->
+            <div class="data-table"></div>
+            <!-- total details -->
+            <div class="d-flex jcb aic ga-2">
+                <div class="d-flex"></div>
+                <div class="d-flex"></div>
+                <div class="d-flex jce">
+                    <table class="table table-borderless table-sm text-end small">
+                        <tbody>
+                            <tr>
+                                <th>DISCOUNT</th>
+                                <td class="discount">0.00</td>
+                            </tr>
+                            <tr>
+                                <th>FREIGHT</th>
+                                <td class="freight">0.00</td>
+                            </tr>
+                            <tr>
+                                <th>TOTAL</th>
+                                <td class="total">0.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/formata.js" type="module"></script>
+<?-include('../_inc/close.ejs') ?>

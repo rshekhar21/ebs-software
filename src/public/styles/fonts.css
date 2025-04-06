@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Codystar:wght@300;400&family=Doto:wght@100..900&family=Martel:wght@200;300;400;600;700;800;900&family=Monoton&family=Nothing+You+Could+Do&display=swap');
+
+.dancing-script {
+    font-family: "Dancing Script", cursive;
+    font-optical-sizing: auto;
+    /* font-weight: 400; */
+    /* font-style: normal; */
+}
+
+.doto-digital {
+    font-family: "Doto", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 200;
+    font-style: normal;
+    font-variation-settings: "ROND" 0;
+}
+
+.martel-extralight {
+    font-family: "Martel", serif;
+    font-weight: 200;
+    font-style: normal;
+}
+
+.martel-light {
+    font-family: "Martel", serif;
+    font-weight: 300;
+    font-style: normal;
+}
+
+.martel-regular {
+    font-family: "Martel", serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.martel-semibold {
+    font-family: "Martel", serif;
+    font-weight: 600;
+    font-style: normal;
+}
+
+.martel-bold {
+    font-family: "Martel", serif;
+    font-weight: 700;
+    font-style: normal;
+}
+
+.martel-extrabold {
+    font-family: "Martel", serif;
+    font-weight: 800;
+    font-style: normal;
+}
+
+.martel-black {
+    font-family: "Martel", serif;
+    font-weight: 900;
+    font-style: normal;
+}
+
+.monoton-regular {
+    font-family: "Monoton", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.nothing-you-could-do-regular {
+    font-family: "Nothing You Could Do", cursive;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.codystar-light {
+    font-family: "Codystar", sans-serif;
+    font-weight: 300;
+    font-style: normal;
+}
+
+.codystar-regular {
+    font-family: "Codystar", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}

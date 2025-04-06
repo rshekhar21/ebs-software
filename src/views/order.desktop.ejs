@@ -1,0 +1,229 @@
+<div class="container-fluid p-0 d-none d-lg-block">
+  <div class="d-flex dvh-100">
+    <!-- left panel -->
+    <div class="d-flex flex-column gap-3 px-2 pt-2 pb-4 text-white overflow-auto d-print-none" id="side-panel">
+      <h4 class="text-center mb-0">EBS</h4>
+      <a class="entity-name h6 fw-light text-light mb-0 small text-center pb-2 mb-3 nav-link border-bottom" href="/apps/app" title="Company Name"></a>
+
+      <!-- top -->
+      <div class="d-flex flex-column gap-1 menu-items top-side fw-300 overflow-auto"></div>
+
+      <!-- bottom -->
+      <div class="d-flex flex-column mt-auto" id="bottom">
+        <div class="d-flex flex-column gap-2 bottom-side fw-light menu-items"></div>
+        <div class="menu-items text-center role-btn position-relative d-none">
+          <span class="role-btn" id="flyout-menu"><i class="bi bi-three-dots"></i></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- main body -->
+    <div class="d-flex flex-column gap-4 flex-fill pb-2 overflow-auto position-relative" id="desktop-body">
+
+      <!-- invoice order -->
+      <?-include('./order.new.ejs') ?>
+
+      <!-- purchae order -->
+      <?-include('./order.purchase.ejs') ?>
+
+      <!-- settings -->
+      <div class="position-absolute menu-body top-0 start-0 bg-white shadow w-100 w-xxl-80  h-100 d-print-none d-none z-2" id="settings">
+        <div class="d-flex jcs h-100">
+          <div class="settings-type bg-light py-2 pe-2 vstack gap-2" style="max-width: 220px;">
+            <h5 class="mb-4 ps-2">SETTINGS</h5>
+            <h6 class="py-2 ps-2 rounded-end  general role-btn text-primary" data-ebs="general" data-name="GENERAL">Local</h6>
+            <h6 class="py-2 ps-2 rounded-end remote role-btn" data-ebs="remote" data-name="REMOTE">Remote
+            </h6>
+            <h6 class="py-2 ps-2 rounded-end discounts role-btn" data-ebs="discounts" data-name="DISCOUTNS">
+              Discounts</h6>
+            <h6 class="py-2 ps-2 rounded-end customsizes role-btn" data-ebs="customsizes" data-name="CUSTOME SIZES">Custom Sizes</h6>
+            <h6 class="py-2 ps-2 rounded-end partyfields role-btn" data-ebs="partyFields" data-name="PARTY FIELDS">Qucik Partyfields </h6>
+            <h6 class="py-2 ps-2 rounded-end restrictions role-btn" data-ebs="restrictions" data-name="USERS & RESTRICTIONS">Users Rescrictions</h6>
+            <h6 class="py-2 ps-2 rounded-end pymtmethods role-btn" data-ebs="pymtmethods" data-name="PAYMENTS">Payment Methods</h6>
+          </div>
+
+          <div class="settings d-flex flex-column gap-2 flex-fill bg-white py-2">
+            <div class="d-flex jcb aic mb-2 px-3">
+              <span class="h5 setting-name mb-0">GENERAL</span>
+              <span class="small text-secondary enity-id ms-4 me-auto" title="Entity ID"></span>
+              <button type="button" class="btn btn-close close-settings"></button>
+            </div>
+
+            <div class="p-3 h-80 overflow-auto" id="view-settings" data-setting="general"></div>
+
+            <div class="d-flex jce aic gap-3 px-3 mt-auto">
+              <span class="saved fs-5 text-success d-none">Saved Successfully</span>
+              <button type="button" class="btn btn-light px-4 close-settings ms-auto">Close</button>
+              <button type="submit" form="_create_form" class="btn btn-primary px-4 apply-general-settings">Apply</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- charts -->
+      <div class="position-absolute menu-body top-0 start-0 overflow-auto bg-white w-100 h-100 py-2 px-3 d-print-none d-none z-2" id="charts">
+        <div class="d-flex jcb aic gap-4 mb-2">
+          <h4>Charts</h4>
+          <button class="reload-charts btn btn-light ms-auto" type="button" title="Refresh Data"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#434343">
+              <path d="M440-142.77q-112.54-14.62-186.27-99.15Q180-326.46 180-440q0-61 24.08-116.88 24.08-55.89 67.46-98.2l42.77 42.77q-36.85 33.62-55.58 78.04Q240-489.85 240-440q0 88 56.19 155.12 56.19 67.11 143.81 82.11v60Zm80 .77v-60q86.62-17.54 143.31-83.96Q720-352.38 720-440q0-100-70-170t-170-70h-14.15l54 54-42.16 42.15L351.54-710l126.15-126.15L519.85-794l-54 54H480q125.54 0 212.77 87.23T780-440q0 112.92-73.92 197.08Q632.15-158.77 520-142Z" />
+            </svg></button>
+          <button class="btn btn-close close-charts" type="button"></button>
+        </div>
+        <div class="vstack gap-4" style="height: calc(100% - 50px);">
+          <div class="d-flex jcb ais gap-2 flex-fill border-bottom" style="max-height: 430px;">
+            <div class="w-100 pe-2">
+              <div class="d-flex jcb aic">
+                Daily Sales Comparison (CM / LM)
+              </div>
+              <canvas id="dailyComparisonChart"></canvas>
+
+            </div>
+            <!-- <div class="w-50 ps-2">
+                            <div class="d-flex jcb aic">
+                                Monthly Sales Comparison (C-FY / L-FY)
+                            </div>
+                            <canvas id="salesComparisonChart"></canvas>
+                        </div> -->
+          </div>
+          <div class="d-flex jcb ais gap-2 flex-fill">
+            <div class="w-50 ps-2">
+              <div class="d-flex jcb aic">
+                Monthly Sales Comparison (C-FY / L-FY)
+              </div>
+              <canvas id="salesComparisonChart"></canvas>
+            </div>
+            <div class="w-50">
+              <div class="d-flex jcb aic">
+                Fiscal Year Sales (5Y)
+              </div>
+              <canvas id="yearlySalesChart"></canvas>
+            </div>
+          </div>
+          <!-- <div class="d-flex jcb ais gap-2 flex-fill d-none" style="max-height: 250px;">
+                        <div class="w-50 border-end">
+                            <div class="d-flex jcb aic">
+                                Yearly Purchase
+                            </div>
+                        </div>
+                        <div class="w-50">
+                            <div class="d-flex jcb aic">
+                                Yearly Purchase
+                            </div>
+                        </div>
+                    </div> -->
+        </div>
+      </div>
+
+      <!-- montyly sales -->
+      <div class="position-absolute menu-body top-0 start-0 overflow-auto bg-white w-100 h-100 p-2 px-3 d-none z-2" id="monthlySales1">
+        <div class="d-flex jcb aic mb-2 gap-2">
+          <h5 class="me-auto">Monthly Sales</h5>
+          <select name="fin-year" id="fin-year" class="form-select" style="max-width: 200px;"></select>
+          <button class="btn btn-close close-msales" type="button"></button>
+        </div>
+        <div class="sales-data overflow-auto" style="height: calc(100% - 50px);"></div>
+      </div>
+
+      <!-- history/ledger -->
+      <div class="position-absolute menu-body top-0 start-0 overflow-auto bg-white w-100 h-100 p-2 px-3 d-flex flex-column gap-3 position-relative z-2 d-none" id="history">
+        <div class="d-flex jcb aic mb-2 gap-4 my-2">
+          <h5 class="me-auto party mb-0">Ledger</h5>
+          <div class="btn-group ms-auto">
+            <button type="button" class="btn btn-light refresh-hist" title="Refresh Data"><i class="bi bi-arrow-counterclockwise"></i></button>
+            <button type="button" class="btn btn-light print-ledger" title="Print Page"><i class="bi bi-printer"></i></button>
+          </div>
+          <button type="button" class="btn btn-close close-history" title="Close"></button>
+        </div>
+        <div class="d-flex jcb aic gap-5 my-4 bg-light py-1">
+          <span title="Opening Balance">
+            Opening <span class="fw-bold opening">0</span>
+          </span>
+          <span title="Total Billing">
+            Billing <span class="fw-bold orders">0</span>
+          </span>
+          <span title="Total Payments">
+            Payments <span class="fw-bold pymts text-success">0</span>
+          </span>
+          <span title="Due Balance">
+            Balance <span class="fw-bold balance">0</span>
+          </span>
+
+          <span class="cal ms-auto role-btn" title="Filter Data"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000">
+              <path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Zm280 240q-17 0-28.5-11.5T440-440q0-17 11.5-28.5T480-480q17 0 28.5 11.5T520-440q0 17-11.5 28.5T480-400Zm-160 0q-17 0-28.5-11.5T280-440q0-17 11.5-28.5T320-480q17 0 28.5 11.5T360-440q0 17-11.5 28.5T320-400Zm320 0q-17 0-28.5-11.5T600-440q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440q0 17-11.5 28.5T640-400ZM480-240q-17 0-28.5-11.5T440-280q0-17 11.5-28.5T480-320q17 0 28.5 11.5T520-280q0 17-11.5 28.5T480-240Zm-160 0q-17 0-28.5-11.5T280-280q0-17 11.5-28.5T320-320q17 0 28.5 11.5T360-280q0 17-11.5 28.5T320-240Zm320 0q-17 0-28.5-11.5T600-280q0-17 11.5-28.5T640-320q17 0 28.5 11.5T680-280q0 17-11.5 28.5T640-240Z" />
+            </svg></span>
+          <div class="position-absolute z-5 rounded border-primary shadow p-2 d-none bg-white mt-5" style="top: 100px; right: 10px">
+            <form class="d-flex flex-column gap-2 mb-0" id="history-by-dates">
+              <div class="date-to d-flex jcs aic gap-1">
+                <label for="date-to" class="form-label mb-0" style="width: 60px;">To</label>
+                <input type="date" name="to" id="date-to" class="form-control">
+              </div>
+
+              <div class="date-from d-flex jcs aic gap-1">
+                <label for="date-from" class="form-label mb-0" style="width: 60px;">From</label>
+                <input type="date" name="from" id="date-from" class="form-control">
+              </div>
+              <button type="submit" class="btn btn-sm btn-outline-primary">View</button>
+            </form>
+          </div>
+
+        </div>
+        <div class="history-data overflow-auto flex-fill"></div>
+      </div>
+
+      <!-- view purchase -->
+      <div class="position-absolute menu-body top-0 start-0 overflow-auto bg-white w-100 h-100 p-2 px-3 d-flex flex-column gap-3 position-relative clear-data z-2 d-none" id="view-purchase"></div>
+
+      <!-- dashboard -->
+      <div class="position-absolute menu-body top-0 start-0 overflow-auto bg-white w-100 h-100 p-2 px-3 d-flex flex-column gap-3 position-relative clear-data z-2 d-none" id="dashboard"></div>
+
+      <!-- view parties -->
+      <div class="position-absolute menu-body top-0 start-0 overflow-auto bg-white w-100 h-100 p-2 px-3 d-flex flex-column gap-3 position-relative clear-data z-2 d-none" id="view-partys"></div>
+
+      <!-- view stock -->
+      <div class="position-absolute menu-body top-0 start-0 overflow-auto bg-white w-100 h-100 p-2 px-3 d-flex flex-column gap-3 position-relative clear-data z-2 d-none" id="view-stock"></div>
+
+      <!-- view orders -->
+      <div class="position-absolute menu-body top-0 start-0 overflow-auto bg-white w-100 h-100 p-2 px-3 d-flex flex-column gap-3 position-relative clear-data z-2 d-none" id="view-orders"></div>
+
+      <!-- monthly sales -->
+      <div class="position-absolute menu-body top-0 start-0 overflow-auto bg-white w-100 h-100 p-2 px-3 d-flex flex-column gap-3 position-relative clear-data z-2 d-none" id="monthlySales"></div>
+
+      <!-- monthly purchase -->
+      <div class="position-absolute menu-body top-0 start-0 overflow-auto bg-white w-100 h-100 p-2 px-3 d-flex flex-column gap-3 position-relative clear-data z-2 d-none" id="monthlyPurchase"></div>
+
+      <!-- calculator -->
+      <div class="position-absolute menu-body me-2 mb-2 p-2 rounded border bg-white d-flex flex-column gap-3 calculator shadow z-5 position-relative d-none" id="calc" style="width: 400px; height: auto; cursor: move; top: 30%; right: 0;">
+
+        <div class="form-floating">
+          <textarea class="form-control" spellcheck="false" placeholder="Leave a comment here" id="equation" style="height: 100px"></textarea>
+          <label for="equation">Enter Equation eg. 2 + 2</label>
+        </div>
+
+        <div class="btn-group">
+          <button class="btn btn-light closecalc">Close</button>
+          <button class="btn btn-light clearcalc">Clear</button>
+          <button class="btn btn-light calculate">Calculate</button>
+        </div>
+        <div class="fw-bold text-center mt-3 calc-result">0.00</div>
+
+      </div>
+
+      <!-- view closing -->
+      <div class="position-absolute menu-body top-0 start-0 overflow-auto bg-white w-100 h-100 p-2 px-3 d-flex flex-column gap-3 position-relative z-2 d-none" id="view-closing"></div>
+
+    </div>
+
+    <!-- right panel -->
+    <div class="d-none d-xxl-flex flex-column border-start bg-light-subtle ms-auto px-1 d-print-none" id="rightPanel" style="width: 300px;">
+      <div class="overflow-auto" id="content-right-panel"></div>
+      <div class="mt-auto border-top d-flex flex-column bg-white sales-chart" style="width: 100%;">
+        <div class="d-flex jce aic pt-2 gap-2">
+          <!-- <span class="text-end role-btn refresh-chart" title="Refresh Data"><i class="bi bi-arrow-clockwise"></i></span> -->
+          <button class="btn btn-close close-chart d-none me-2" type="button" title="Close Chart"></button>
+          <span class="text-end role-btn fs-chart me-2" title="View Chart Full Screen"><i class="bi bi-three-dots"></i></span>
+        </div>
+        <canvas id="myChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Offline</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 90vh;
+      background-color: #f0f0f0;
+    }
+
+    .offline-container {
+      text-align: center;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .offline-icon {
+      font-size: 5rem;
+      color: #ccc;
+      margin-bottom: 20px;
+    }
+
+    /* Optional: Add a CSS animation for the offline icon */
+    @keyframes offline-pulse {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      50% {
+        transform: scale(1.1);
+        opacity: 0.7;
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .offline-icon {
+      animation: offline-pulse 1.5s infinite;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="offline-container">
+    <i class="offline-icon">❌</i>
+    <h1>You are Offline</h1>
+    <p>Please check your internet connection and try again.</p>
+  </div>
+</body>
+
+</html>

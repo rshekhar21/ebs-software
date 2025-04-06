@@ -1,0 +1,283 @@
+<div class="container-fluid d-lg-none p-0 bg-cart">
+  <div class="d-flex flex-column dvh-100">
+
+    <div class="d-flex jcb aic p-2">
+      <span class="fs-5">EBS</span>
+      <div class="dropdown">
+        <span class="role-btn bg-white ps-5" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="bi bi-three-dots-vertical"></i>
+        </span>
+        <ul class="dropdown-menu dropdown-menu-end text-end">
+          <li><span class="dropdown-item role-btn">Hold</span></li>
+          <li><span class="dropdown-item role-btn">Unhold</span></li>
+          <li><span class="dropdown-item role-btn">Clear All</span></li>
+          <li><span class="dropdown-item role-btn">Reset Data</span></li>
+          <li><span class="dropdown-item role-btn">View Last Order</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- header with qty/amount -->
+    <div class="rounded-top bg-light p-2 d-flex gap-2 justify-content-between align-items-center order-qty-amount">
+      <span class="role-btn me-auto" title="menu" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368">
+          <path d="M140-254.62v-59.99h680v59.99H140ZM140-450v-60h680v60H140Zm0-195.39v-59.99h680v59.99H140Z" />
+        </svg></span>
+      <div class="d-flex justify-content-center align-items-center gap-2 fs-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="pt-1" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000">
+          <path d="M292.31-115.38q-25.31 0-42.66-17.35-17.34-17.35-17.34-42.65 0-25.31 17.34-42.66 17.35-17.34 42.66-17.34 25.31 0 42.65 17.34 17.35 17.35 17.35 42.66 0 25.3-17.35 42.65-17.34 17.35-42.65 17.35Zm375.38 0q-25.31 0-42.65-17.35-17.35-17.35-17.35-42.65 0-25.31 17.35-42.66 17.34-17.34 42.65-17.34t42.66 17.34q17.34 17.35 17.34 42.66 0 25.3-17.34 42.65-17.35 17.35-42.66 17.35ZM235.23-740 342-515.38h265.38q6.93 0 12.31-3.47 5.39-3.46 9.23-9.61l104.62-190q4.61-8.46.77-15-3.85-6.54-13.08-6.54h-486Zm-19.54-40h520.77q26.08 0 39.23 21.27 13.16 21.27 1.39 43.81l-114.31 208.3q-8.69 14.62-22.58 22.93-13.88 8.31-30.5 8.31H324l-48.62 89.23q-6.15 9.23-.38 20 5.77 10.77 17.31 10.77h435.38v40H292.31q-35 0-52.23-29.5-17.23-29.5-.85-59.27l60.15-107.23L152.31-820H80v-40h97.69l38 80ZM342-515.38h280-280Z" />
+        </svg>
+        <span class="text-secondary total-qty display-5">0</span>
+      </div>
+      <span class="display-5 ms-3">/</span>
+      <span class="text-dark display-5 order-amount">0.00</span>
+
+
+      <!-- left menu -->
+      <!-- for dark bg user this class 'text-bg-dark' on the id 'offcanvasWithBothOptions' -->
+      <div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="true" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel" style="width: 220px;">
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">Menu</h5>
+          <!-- use this class on button for dark bg ' btn-close-white' -->
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+          <!-- use this style on ul for dark bg.  style="--bs-list-group-color: unset !important; --bs-list-group-bg: unset !important;" -->
+          <ul class="list-group list-group-flush text-secondary bg-transparent">
+            <a href="/apps/app" class="list-group-item ebs-link">Home</a>
+            <a href="/apps/app/partys" class="list-group-item ebs-link">Partys</a>
+            <a href="/apps/app/dues" class="list-group-item ebs-link">Party Dues</a>
+            <a href="/apps/app/orders" class="list-group-item ebs-link">Orders</a>
+            <a href="/apps/app/closing" class="list-group-item ebs-link">Closing</a>
+            <a href="/apps/app/stock" class="list-group-item ebs-link">Stock</a>
+            <a href="/apps/app/pymts" class="list-group-item ebs-link">Payments</a>
+            <a href="/apps/app/expense" class="list-group-item ebs-link">Expense</a>
+            <a href="/apps/app/sales" class="list-group-item ebs-link">Sales</a>
+            <a href="/apps/app/purch" class="list-group-item ebs-link">Purchase</a>
+            <a href="/apps/app/sold" class="list-group-item ebs-link">Solds</a>
+            <a href="/signout" class="list-group-item ebs-link">Logout</a>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- float menu -->
+    <!-- <div class="dropdown float-menu position-fixed top-0 end-0 me-2 z-3" style="margin-top: 65px;">
+      <span class="role-btn bg-white rounded" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="bi bi-three-dots-vertical"></i>
+      </span>
+      <ul class="dropdown-menu dropdown-menu-end text-end">
+        <li><span class="dropdown-item role-btn">Hold</span></li>
+        <li><span class="dropdown-item role-btn">Unhold</span></li>
+        <li><span class="dropdown-item role-btn">Clear All</span></li>
+        <li><span class="dropdown-item role-btn">Reset Data</span></li>
+        <li><span class="dropdown-item role-btn">View Last Order</span></li>
+      </ul>
+    </div> -->
+
+    <!-- add articles -->
+    <div class="d-flex flex-column position-relative position-fixed top-0 end-0 h-100 w-100 z-3 add-mobile-articles d-none">
+      <!-- search/add manually -->
+      <div class="position-relative p-2 d-flex flex-column gap-2 w-100 h-100 z-3 bg-items">
+        <div class="btn-group btn-group-lg btn-group-add-manually">
+          <button class="btn btn-outline-success w-50 ebs-add-stock">+ Stock</button>
+          <button class="btn btn-outline-success w-50 ebs-add-manually">+ Manually</button>
+        </div>
+
+        <!-- search -->
+        <div class="ebs-search-items">
+          <!-- scan comming soon warning -->
+          <div class="position-relative my-1 bg-light rounded text-center position-fixed bottom-0 end-0 m-3 p-2 ebs-scan-msg d-none">
+            <span class="text-secondary word-wrap" style="font-size: 0.8rem;">SCAN feature coming soon! Currently, enter SKU for item nsertion.</span>
+            <button class="btn btn-close position-absolute end-0 translate-middle-y ebs-close-scan-waring" style="top: -15px"></button>
+          </div>
+          <!-- input search -->
+          <div class="position-relative">
+            <input type="text" class="form-control form-control-lg w-100" id="ebsSearchItems" placeholder="Enter Article Name">
+            <input type="number" class="form-control form-control-lg w-100 d-none" id="ebsScanItems" placeholder="Enter SKU">
+            <button class="btn btn-light me-1 position-absolute top-50 end-0 translate-middle-y ebs-scan-sku"><i class="bi bi-upc-scan"></i></button>
+          </div>
+        </div>
+
+        <!-- search results -->
+        <div class="d-flex flex-column gap-1 overflow-auto rounded z-3 h-100 ebs-search-item-results d-none">
+          <div class="results p-2 h-auto overflow-auto">
+            <div class="d-flex flex-column gap-1 small">
+              <div class="d-flex jcb aic gap-2 border-bottom">
+                <span class="me-auto">Article</span>
+                <span class="">Avl.</span>
+                <span class="fw-500">Price</span>
+              </div>
+            </div>
+          </div>
+          <!-- search viatls -->
+          <div class="result-details d-flex justify-content-between bg-light align-items-center p-2 mt-auto">
+            <span class="small text-secondary">Showing<span class="ebs-entries-found ms-1 fw-bold"></span>/25 Max Entries</span>
+            <button class="btn btn-close close-ebs-search-item-results"></button>
+          </div>
+        </div>
+
+        <!-- search close button -->
+        <button class="btn btn-sm btn-outline-danger me-auto mt-auto mb-2 ms-2 ebs-close-add-items"><i class="bi bi-x-lg"></i></button>
+
+        <!-- manual form -->
+        <div class="position-fixed top-0 start-0 w-100 h-100 p-2 bg-white overflow-auto ebs-manual-form d-none">
+          <form action="" class="mb-0 d-flex flex-column gap-2" id="ebsMobileManualForm">
+            <div class="form-floating">
+              <input type="text" class="form-control" id="mobileProduct" placeholder="Article Name">
+              <label for="mobileProduct">Article Name</label>
+            </div>
+            <div class="input-group">
+              <div class="form-floating">
+                <input type="number" step="0.00" class="form-control" id="mobilePrice" placeholder="Price">
+                <label for="mobilePrice">Price</label>
+              </div>
+              <div class="form-floating">
+                <input type="number" step="0.00" class="form-control" id="mobileQty" placeholder="Quantity">
+                <label for="mobileQty">Quantity</label>
+              </div>
+            </div>
+
+            <!-- extra inputs -->
+            <div class="d-flex flex-column gap-2 more-fields d-none">
+              <div class="input-group">
+                <div class="form-floating">
+                  <input type="text" step="0.00" class="form-control" id="mobileSize" placeholder="Size">
+                  <label for="mobileSize">Size</label>
+                </div>
+                <div class="form-floating">
+                  <input type="number" step="0.00" class="form-control" id="mobileGst" placeholder="GST">
+                  <label for="mobileGst">GST</label>
+                </div>
+              </div>
+              <div class="input-group">
+                <div class="form-floating">
+                  <input type="number" step="0.00" class="form-control" id="mobileDisc" placeholder="Discount">
+                  <label for="mobileDisc">Discount</label>
+                </div>
+                <div class="form-floating">
+                  <input type="number" step="0.00" class="form-control" id="mobileDiscper" placeholder="Disc %">
+                  <label for="mobileDiscper">Disc %</label>
+                </div>
+              </div>
+              <div class="input-group">
+                <div class="form-floating">
+                  <input type="number" class="form-control" id="mobileHsn" placeholder="HSN">
+                  <label for="mobileHsn">HSN</label>
+                </div>
+                <div class="form-floating">
+                  <input type="text" class="form-control" id="mobileUnit" placeholder="UNIT">
+                  <label for="mobileUnit">UNIT</label>
+                </div>
+              </div>
+            </div>
+
+            <!-- manual form control buttons -->
+            <div class="btn-group btn-group-lg w-100 mt-3">
+              <button type="button" class="btn btn-outline-primary toggle-morefields"><i class="bi bi-chevron-expand"></i></button>
+              <button type="button" class="btn btn-outline-primary reset-mobile"><i class="bi bi-arrow-repeat"></i></button>
+              <button type="button" class="btn btn-outline-primary close-mobile"><i class="bi bi-x-lg"></i></button>
+              <button type="submit" class="btn btn-outline-primary apply-mobile"><i class="bi bi-check2-all"></i></button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- show order items -->
+    <div class="d-flex flex-column gap-2 rounded-bottom h-75 overflow-auto billed-items">
+      <div class="d-flex flex-column p-2 overflow-auto h-100" style="background-color: rgba(255, 255, 255, 0.857);">
+        <ul class="items-list list-group list-group-flush"></ul>
+      </div>
+      <div class="d-flex jcb aic small bg-light rounded-bottom mt-auto p-2"></div>
+    </div>
+
+    <!-- order details -->
+    <div class="d-flex flex-column gap-2 rounded-bottom h-75 overflow-auto continue-order d-none">
+      <div class="d-flex flex-column p-2 overflow-auto h-100" style="background-color: rgba(255, 255, 255, 1); gap: 2.4rem;">
+        <!-- current party -->
+        <div class="d-flex jcb aic">
+          Party
+          <span class="party-name fw-bold"></span>
+        </div>
+
+        <!-- add party -->
+        <div class="d-flex jcb aic">
+          Add / Search Party
+          <div class="btn-group btn-group-sm w-50">
+            <button class="btn btn-outline-secondary srch-party"><i class="bi bi-search"></i></button>
+            <button class="btn btn-outline-secondary add-party">Add</button>
+          </div>
+        </div>
+
+        <!-- search party -->
+        <div class="d-flex flex-column gap-4 position-fixed p-2 top-0 end-0 w-100 bg-white srch-party z-5 d-none" style="height: 100dvh;">
+          <div class="input-group">
+            <input type="search" name="" id="srchParty" class="form-control form-control-lg" placeholder="Search Party by Name / Contact">
+            <span class="input-group-text role-btn sync-partys"><i class="bi bi-arrow-clockwise"></i></span>
+          </div>
+          <div class="party-results d-none"></div>
+          <button class="btn-close mt-auto ms-auto mb-4 me-4 close-add-party"></button>
+        </div>
+
+        <!-- set order date -->
+        <div class="d-flex jcb aic">
+          Set Order Date
+          <input type="date" name="" id="set_order_date" class="form-control set-order-date w-50">
+        </div>
+
+        <!-- set bill number -->
+        <div class="d-flex jcb aic">
+          Bill Number
+          <div class="input-group input-group-sm w-50">
+            <input type="text" name="" id="setBillNumber" class="form-control set-order-date w-50" placeholder="Bill Number">
+            <span class="input-group-text role-btn w-30">Apply</span>
+          </div>
+        </div>
+
+        <!-- add discount -->
+        <div class="d-flex jcb aic">
+          Add Disount
+          <button class="btn btn-sm btn-outline-secondary add-disc w-50">Discount</button>
+        </div>
+
+        <!-- disc received -->
+        <div class="d-flex jcb aic">
+          Discount
+          <div class="input-group input-group-sm w-50">
+            <input type="text" name="" id="editDisc" class="form-control disc-received w-50 " readonly>
+            <span class="input-group-text role-btn w-30">Edit</span>
+          </div>
+        </div>
+        
+        <!-- collect payment -->
+        <div class="d-flex jcb aic">
+          Collect Payment
+          <button class="btn btn-sm btn-outline-secondary add-pymt w-50">+ Pymt</button>
+        </div>
+
+        <!-- pymt received -->
+        <div class="d-flex jcb aic">
+          Payment
+          <div class="input-group input-group-sm w-50">
+            <input type="text" name="" id="editPymt" class="form-control pymt-received w-50 " readonly>
+            <span class="input-group-text role-btn w-30">Edit</span>
+          </div>
+        </div>          
+
+      </div>
+    </div>
+
+    <!-- finish order -->
+    <div class="d-flex flex-column gap-2 rounded-bottom h-75 overflow-auto finish-order bg-white d-none">
+      <div class="text-center fw-bold my-5">Order Summary</div>
+    </div>  
+
+    <!-- button add articles -->
+    <!-- <div class="mt-auto mb-5 position-fixed bottom-0 start-0 d-flex w-100" id="addNewItems">
+      <button class="btn btn-sm btn-primary ebs-add-items w-50 mx-auto" title="Add New Items">+ Articles</button>
+    </div> -->
+
+    <!-- back/next buttons -->
+    <div class="back-next position-fixed start-0 bottom-0 w-100" id="btnSet"></div>
+  </div>
+</div>

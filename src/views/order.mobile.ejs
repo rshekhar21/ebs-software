@@ -1,0 +1,458 @@
+<div class="container-fluid px-0 py-1 d-lg-none">
+    <div class="d-flex flex-column gap-2 px-2 overflow-auto" style="min-width: 300px; height: 98dvh;">
+        <!-- header -->
+        <div class="d-flex jcb aic py-1 border-bottom">
+            <div class="d-flex jcs aic gap-2">
+                <span class="order-amount fs-4 text-primary">0.00</span> /
+                <span class="total-qty fs-4 text-secondary">0</span>
+            </div>
+            <div class="dropdown">
+                <div class="role-btn fs-5" data-bs-toggle="dropdown"><i class="bi bi-list"></i></div>
+                <ul class="dropdown-menu mt-2">
+                    <li><a class="dropdown-item" href="/apps/app">Home</a></li>
+                    <li><a class="dropdown-item view-last role-btn" >View Last</a></li>
+                    <li><a class="dropdown-item" href="/apps/app/orders">View Orders</a></li>
+                    <li><a class="dropdown-item" href="/apps/app/closing">View Closing</a></li>
+                    <li><a class="dropdown-item" href="/apps/app/pymts">View Payments</a></li>
+                    <li><a class="dropdown-item" href="/apps/app/partys">View Partys</a></li>
+                    <li><a class="dropdown-item" href="/apps/app/stock">View Stock</a></li>
+                    <li><a class="dropdown-item" href="/apps/app/sales">View Sales</a></li>
+                    <li><a class="dropdown-item resetIDB role-btn">Reset Data</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- body -->
+        <div class="d-flex flex-column gap-2 h-100">
+            <!-- orders data -->
+            <div class="d-flex flex-column gap-2">
+                <!-- order date, add party and set order number -->
+                <div class="d-flex jcb aic gap-2">
+                    <div class="role-btn order-date py-1"></div>
+                    <div class="role-btn select-party mx-3"> <i class="bi bi-person-plus-fill"></i></div>
+                    <div class="spinner-border spinner-border-sm text-primary party-sync-status d-none" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <span class="party-synced text-success d-none"><i class="bi bi-patch-check-fill"></i></span>
+                    <div class="ms-auto d-flex jce aic gap-2">
+                        <div class="role-btn order-number" title="click to change order number"></div>
+                        <form class="order-number flex-nowrap d-none mb-0">
+                            <input type="text" class="form-control form-control-sm order-number text-end" style="width: 125px;"
+                                placeholder="bill number" aria-label="Order Number" aria-describedby="Order Number">
+                            <button type="submit" class="d-none"><i class="bi bi-check2"></i></button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- party details -->
+                <div class="party-details position-relative d-flex jcb aic gap-3 d-none">
+                    <div class="position-relative">
+                        <div class="party-name fw-400 pe-2"></div>
+                        <span
+                            class="position-absolute top-0 start-100 translate-middle badge rounded-circle p-1 dues-status"><span
+                                class="visually-hidden">customer has due balance</span></span>
+                    </div>
+
+                    <span class="edit-party role-btn ms-auto"><i class="bi bi-pencil-square"></i></span>
+                    <span class="party-info" style="padding-right: 1px;"><i class="bi bi-info-circle-fill"></i></span>
+                    <ul class="party-info-box list-group small w-50 position-absolute top-0 end-0 z-3 d-none">
+                        <li class="list-group-item  list-group-item-action bg-light d-flex jcb aic">
+                            Party Details
+                            <span class="close-info-box role-btn"><i class="bi bi-x-lg"></i></span>
+                        </li>
+                        <li class="list-group-item d-flex jcb aic">
+                            Billing
+                            <span class="billing">0.00</span>
+                        </li>
+                        <li class="list-group-item d-flex jcb aic">
+                            Last Bill
+                            <span class="last-bill">0.00</span>
+                        </li>
+                        <li class="list-group-item d-flex jcb aic">
+                            Payments
+                            <span class="payments">0.00</span>
+                        </li>
+                        <li class="list-group-item d-flex jcb aic">
+                            Dues
+                            <span class="due-amount">0.00</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- searc party list -->
+                <div class="srch-party w-100 position-relative d-none"></div>
+
+                <!-- item mode -->
+                <div class="d-flex jcb aic gap-1 py-1">
+                    <span class="small text-secondary">ADD ITEMS</span>
+                    <!-- <button class="btn btn-primary" id="scanButton">scan</button> -->
+                    <div class="btn-group btn-group-sm w-50 small">
+                        <input type="radio" class="btn-check" name="itemsmode" id="option1" value="sku"
+                            autocomplete="off" checked>
+                        <label class="btn btn-outline-secondary" for="option1">SKU/EAN</label>
+
+                        <input type="radio" class="btn-check" name="itemsmode" id="option2" value="search"
+                            autocomplete="off">
+                        <label class="btn btn-outline-secondary" for="option2">SEARCH</label>
+                    </div>
+                </div>
+
+                <!-- sku mode -->
+                <div class="insert-articles position-relative">
+                    <div class="inputs d-none"></div>
+                    <div class="articles-list overflow-auto px-0 border rounded position-absolute top-0 start-0 w-100 py-2 bg-white z-3 d-none"
+                        style="height: 71dvh; margin-top: 45px;"></div>
+                </div>
+
+                <!-- items list -->
+                <div class="items-list d-flex flex-column gap-2 border rounded bg-white position-relative overflow-auto d-none" style="max-height: 180px !important;">                    
+                    <ul class="items-list list-group list-group-flush bg-white"></ul>
+                    <button type="button" class="btn btn-secondary rounded-pill px-4 close-list position-fixed translate-middle bottom-0 start-50 mb-6 d-none"><i class="bi bi-x-lg"></i></button>
+                </div>
+                <button type="button" class="btn btn-light rounded-pill maximise-items rounded-0 small d-none"><i class="bi bi-chevron-down"></i></button>
+            </div>
+
+            <!-- search/manual  -->
+            <div class="manual-items position-absolute top-0 start-0 w-100 h-100 d-flex flex-column gap-3 p-2 bg-white z-3 d-none" style="min-width: 300px;">
+                <div class="d-flex jcc aic mb-2"><button class="btn btn-close close-manual"></button></div>
+                <div class="position-relative">
+                    <div class="input-group">
+                        <input type="search" class="form-control form-control-lg search-product" placeholder="Search Product" id="search-item">
+                        <span class="input-group-text role-btn refresh-stock"><i class="bi bi-search"></i></span>
+                    </div>
+                    <div class="search-result position-absolute top-0 start-0 w-100 p-2 border rounded mt-6 bg-white overflow-auto d-none z-3" style="max-height: 75dvh;"></div>
+                </div>
+
+                <form class="d-flex flex-column gap-2 flex-fill mb-0" id="add-manual">
+                    <div class="d-flex flex-column gap-2">
+
+                        <div class="d-flex jcb aic my-2">
+                            <span class="fw-500 small text-center">OR, ADD MANUALLY</span>
+                            <button type="submit" class="btn btn-sm btn-primary px-4"><i class="bi bi-plus"></i> ADD</button>
+                        </div>
+
+                        <div class="form-floating">
+                            <input type="text" class="form-control product" name="product">
+                            <label>PRODUCT</label>
+                        </div>
+
+                        <div class="d-flex jcb aic gap-2">
+                            <div class="form-floating w-50">
+                                <input type="number" class="form-control price" name="price">
+                                <label>PRICE</label>
+                            </div>
+                            <div class="form-floating w-50">
+                                <input type="number" class="form-control qty" name="qty" value="1">
+                                <label>QTY</label>
+                            </div>
+                        </div>
+
+                        <div class="d-flex jcb aic gap-2">
+                            <div class="form-floating w-50">
+                                <input type="text" class="form-control" name="size">
+                                <label>SIZE</label>
+                            </div>
+                            <div class="form-floating w-50">
+                                <input type="number" class="form-control" name="gst">
+                                <label>GST</label>
+                            </div>
+                        </div>
+
+                        <div class="d-flex jcb aci gap-2">
+                            <div class="form-floating w-50">
+                                <input type="number" class="form-control" name="disc_val">
+                                <label>DISCOUNT</label>
+                            </div>
+                            <div class="form-floating w-50">
+                                <input type="number" class="form-control" name="disc_per">
+                                <label>DISC %</label>
+                            </div>
+                        </div>
+
+                        <div class="d-flex jcb aci gap-2">
+                            <div class="form-floating w-50">
+                                <input type="text" class="form-control" name="unit">
+                                <label>UNIT</label>
+                            </div>
+                            <div class="form-floating w-50">
+                                <input type="number" class="form-control" name="hsn">
+                                <label>HSN</label>
+                            </div>
+                        </div>
+                        
+                        <div class="btn-group mt-5 d-none">
+                            <button type="button" class="btn btn-primary w-50 close-manual">CLOSE</button>
+                            <button type="submit" class="btn btn-primary w-50">ADD</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- edit/delete -->
+            <div class="item-ctrl position-absolute top-0 start-0 w-100 h-100 p-2 bg-white position-relative d-none z-3"
+                style="min-width: 300px;">
+                <div class="d-flex flex-column gap-2 h-100">
+                    <span class="fw-500 small bg-light p-2 mb-2 text-center">EDIT ITEM</span>
+
+                    <form class="d-flex flex-column gap-2" id="item-edit-form">
+                        <div class="form-floating">
+                            <input type="text" class="form-control edit-product" name="product">
+                            <label for="floatingInput">PRODUCT</label>
+                        </div>
+
+                        <div class="form-floating">
+                            <input type="number" class="form-control edit-price" name="price">
+                            <label for="floatingInput">PRICE</label>
+                        </div>
+
+                        <div class="d-flex jcb aic gap-2">
+                            <div class="form-floating w-50">
+                                <input type="number" class="form-control edit-qty" name="qty" id="edit-qty">
+                                <label for="floatingInput">QTY</label>
+                            </div>
+                            <div class="btn-group btn-group-lg w-50">
+                                <button type="button" class="btn btn-light py-3 qty-minus" title="Add Quantity"><i
+                                        class="bi bi-dash-lg"></i></button>
+                                <button type="button" class="btn btn-light py-3 qty-plus" title="Delete Quantity"><i
+                                        class="bi bi-plus-lg"></i></button>
+                            </div>
+                        </div>
+
+                        <div class="d-flex jcb aci gap-2">
+                            <div class="form-floating w-50">
+                                <input type="text" class="form-control edit-size" name="size">
+                                <label for="floatingInput">SIZE</label>
+                            </div>
+                            <div class="form-floating w-50">
+                                <input type="number" class="form-control edit-gst" name="gst">
+                                <label for="floatingInput">GST</label>
+                            </div>
+                        </div>
+
+                        <div class="d-flex jcb aci gap-2">
+                            <div class="form-floating w-50">
+                                <input type="number" class="form-control edit-disc" name="disc_val">
+                                <label for="floatingInput">DISCOUNT</label>
+                            </div>
+                            <div class="form-floating w-50">
+                                <input type="number" class="form-control edit-disc-percent" name="disc_per">
+                                <label for="floatingInput">DISC %</label>
+                            </div>
+                        </div>
+
+                        <div class="d-flex jcb aci gap-2">
+                            <div class="form-floating w-50">
+                                <input type="text" class="form-control edit-unit" name="unit">
+                                <label for="floatingInput">UNIT</label>
+                            </div>
+                            <div class="form-floating w-50">
+                                <input type="number" class="form-control edit-hsn" name="hsn">
+                                <label for="floatingInput">HSN</label>
+                            </div>
+                        </div>
+                        <input type="hidden" name="index" id="edit-index">
+                    </form>
+
+                    <div class=" btn-group btn-group-sm mt-auto">
+                        <button type="button" class="btn btn-primary w-50  close-item-edit">CLOSE</button>
+                        <button type="submit" form="item-edit-form" class="btn btn-primary w-50">APPLY</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- set subtotal -->
+            <div class="d-flex flex-column gap-0 p-2 mt-auto rounded small">
+                <div class="d-flex jcb aic gap-2">
+                    <div class="d-flex jcs aic gap-2">
+                        <span class="">SUB TOTAL</span>
+                        <span class="sub-total fw-500">0</span> /
+                    </div>
+                    <div class="d-flex jcs aic gap-2">
+                        QTY <span class="total-qty fw-500">0</span>
+                    </div>
+
+                    <button type="button" class="btn btn-light set-subtotal ms-auto"> <i class="bi bi-gear"></i> </button>
+                    <button type="button" class="btn btn-light" data-bs-toggle="collapse" href="#collapseExample" title="View Subtotal"><i class="bi bi-chevron-down"></i></button>
+                </div>
+
+                <div class="d-flex jcb aic gap-2 d-none">
+                    <div class="d-flex jcs aic gap-1 role-btn py-2">
+                        TAX <span class="tax fw-500">0</span>
+                    </div>
+                    <div class="d-flex jcs aic gap-1 role-btn">
+                        <div class="d-flex jcs aic"><i class="bi bi-plus-lg"></i>DISC</div> <span
+                            class="disc fw-500">0</span>
+                    </div>
+                    <div class="d-flex flex-column ">
+                        <div class="d-flex jcs aic gap-1 role-btn freight role-btn">
+                            <div class="d-flex jcs aic"><i class="bi bi-plus-lg"></i>FREIGTH</div> <span
+                                class="tax fw-500">0</span>
+                        </div>
+                        <form class="add-freight mb-0 d-none" style="max-width: 100px;">
+                            <input type="number" class="form-control form-control-sm text-end">
+                            <button type="submit" class="btn btn-light border d-none"></button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="collapse bill-details" id="collapseExample">
+                    <div class="d-flex flex-column gap-1 mt-3">
+                        <div class="d-flex jcb aci tax-amt border-bottom mb-2 fw-500 d-none">
+                            Bill Detais
+                            <button type="button" class="btn btn-sm btn-light set-subtotal d-none">
+                                <i class="bi bi-three-dots"></i></button>
+                        </div>
+                        <div class="d-flex jcb aci tax-amt">
+                            Subtotal
+                            <span class="sub-total">0</span>
+                        </div>
+                        <div class="d-flex jcb aci disc-amt">
+                            Discount
+                            <span class="discount">0</span>
+                        </div>
+                        <div class="d-flex jcb aci gap-2 tax-amt">
+                            Tax 
+                            <!-- <span class="tax-type text-secondary me-auto">(cgst/sgst)</span> -->
+                            <span class="tax">0</span>
+                        </div>                        
+                        <div class="d-flex jcb aci freight-amt">
+                            Freight
+                            <span class="freight">0</span>
+                        </div>
+                        <!-- <div class="d-flex jcb aci"> 
+                    Round Off
+                    <span class="rnd-amount">0</span>
+                </div> -->
+                        <div class="d-flex jcb ac fw-500">
+                            Total
+                            <span class="order-amount">0</span>
+                        </div>
+                        <div class="d-flex jcb aci pymt-amt">
+                            Payment
+                            <span class="total-pymt">0</span>
+                        </div>
+                        <div class="d-flex jcb aci bal-amt">
+                            Balance
+                            <span class="balance">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- set paymetns -->
+            <div class="d-flex jcb aic gap-2 rounded small p-2">
+                <div class="d-flex jcs aic gap-2">
+                    <span class="">PAYMENTS</span>
+                    <span class="total-pymt fw-500">0</span>
+                    <span class="order-status"></span>
+                </div>
+                <div class="d-flex jce aic gap-3">
+                    <!-- <span class="text-primary role-btn cash-pymt" title="Cash Payments">Cash</span> -->
+                    <button type="button" class="btn btn-light disabled" id="addPayment" title="Add Payments"><i class="bi bi-plus-lg"></i></button>
+                    
+                    <div class="position-fixed top-0 start-0 z-5 d-flex flex-column gap-2 rounded addPayment w-100 h-100 d-none" style="background-color: rgba(0, 0, 0, 0.7);">
+                        <form class="mb-0 d-flex flex-column gap-2 bg-white p-2" id="paymentForm">
+                            <div class="d-flex jcb aic gap-2">
+                                <div class="form-floating">
+                                    <input type="number" class="form-control cash" step="0.01" name="cash" id="py_cash" placeholder="">
+                                    <label>Cash</label>
+                                </div>
+                                <div class="form-floating">
+                                    <input type="number" class="form-control" step="0.01" name="bank" id="py_bank" placeholder="">
+                                    <label>Bank</label>
+                                </div>
+                            </div>
+
+                            <div class="d-flex jcb aic gap-2">
+                                <div class="form-floating w-50">
+                                    <input type="number" class="form-control" step="0.01" name="other" id="py_other" placeholder="">
+                                    <label>Other</label>
+                                </div>
+                                <div class="form-floating w-50">
+                                    <select class="form-select" name="bank_mode" id="py_bankModes" aria-label="Bank Mode"></select>
+                                    <label for="bankModes">Bank Mode</label>
+                                </div>
+                            </div>
+
+                            <div class="d-flex jcb aci gap-2">
+                                <div class="form-floating w-50">
+                                    <select class="form-select" name="pymt_method" id="py_pymtMehtods" aria-label="Payment Method"></select>
+                                    <label for="pymtMehtods">Pymt Method</label>
+                                </div>
+                                <div class="form-floating w-50">
+                                    <select class="form-select" name="bank_id" id="py_bankslist" aria-label="Bank Account"></select>
+                                    <label for="bankslist">Bank Account</label>
+                                </div>
+                            </div>
+
+                            <div class="d-flex jcb aci gap-2">
+                                <div class="form-floating w-50">
+                                    <input type="number" class="form-control disabled" name="amount" id="py_received" readonly="" placeholder="">
+                                    <label>Payment</label>
+                                </div>
+                                <div class="form-floating w-50">
+                                    <input type="text" class="form-control" name="balance" id="py_balance" readonly="" placeholder="">
+                                    <label>Balance</label>
+                                </div>
+                            </div>
+                            
+                            <div class="form-floating">
+                                <textarea class="form-control" name="notes" placeholder="Leave a comment here" id="pymtNotes"></textarea>
+                                <label for="pymt-notes">Comments</label>
+                                <input type="hidden" name="index" value="0">
+                            </div>
+
+                            <div class="btn-group my-3">
+                                <button type="button" class="btn btn-outline-secondary quickPay w-25 py-0" value="cash">Cash</button>
+                                <button type="button" class="btn btn-outline-secondary quickPay w-25 py-0" value="gpay"><img width="36" height="36" src="https://img.icons8.com/color/48/google-logo.png" alt="google-pay"/></button>
+                                <button type="button" class="btn btn-outline-secondary quickPay w-25 py-0" value="paytm"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAACVUlEQVR4nO2WT2sTQRTAn39Aa3cqLWgRwZNHP4OF0swE2mtP6ueoFwnevKoglCqdieAhztSrNz+EIvWiFMS02plGbGyb1kRms5udnewmEdlA4f1gCHk7u/N+M292FgBBEARBEARBEGTcKHMHpP4Cpw6lb4HST0Hqdtj+l4DxLcJEx20B4/uEio2JRX7d6bfr9fkcUF6B5dq56Pqvblw0nHu6MSqaYUCabVCm09ek+RnJfY9iDVB6BZTZCmPSrEGtcROk3gClNSjzAV6bu/Eg+75AL0nK38bJECYOsvuI+9H1Xsy5Jx2TppkpoEz3et61UFK3M8TvgZ2dPAHCRAvm1i+GyVD+LUfy08gCytQHr4Dp/GPbtIn9dgeZLFWvphIsv7jilx1h64u9PlQcjiwQ4898TFrqdthSCe/Ng9otJf91K1Ua3ad0zrgDz5aqk1B+fCFg/Amh/Ef/KvB2IQIxbunEJAInYGcwtQLzr2ZTyVUqZwkTj/LLrF9gpvxyCpZrE4ULSH1sS+goNzkq6mFyVHwdKkBFfcBeKlCAidaAgZ9lze70wuplX8C+UscuoMI9wI/7zwGxRyh/fm1p9ZIvED/DF7ClFlC+Ys+HMQoc2RI6yRzEwd3odvazVsBnekHccM6KZoEC4s9wAb49bA9YAspNTp/3hQhIfWiTaw8TCCivjiLgvtG8knxQzAqYAwiY0HHd5wlM0bUZwvgb99BL3lS8lgg450Qowz8Sxh/C3LvzqQfak9c9gWOk3olmdieJRd9P9tfvZ7+VEARBEARBEARB4JTyF2J2zO+85cc7AAAAAElFTkSuQmCC" alt="paytm"></button>
+                                <button type="button" class="btn btn-outline-secondary quickPay w-25 py-0" value="ppay"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAACEklEQVR4nO3Zz0sbQRQH8P1nOhNo6c2DZ52ApEHUeikt9GRL60WhPdWLGgiYW/FQlMyYFukhPRSl/qDW1B60NWAUBBHxB0UtWtuYtNnVrPvKJsHuSkV2F3ZnynzhXZJD3md23pBMFEVGRkaG6zSgkWaCaKYR0V8EM/CjGs3PQmyW4GTUU/ME07hfTZPLCtGY+5UPunlcrXBo5Jbz1Uc0E3Tj5O+W+uAGUOQHwArOARw0TizlC6Dn4Qx8mt6G/A8Nvm4dw+O2MbEA6eQqWPPzuwr3GtLiAMIhBm+YHbGzkYeWulExAKRWrwZzNsTyl2/QdCMlDoBgBsOJrA0xmV4XC0D+gRgayIoFIJjBi/giGEYVYJwZEOv+WJkJs5qup4IFdLaPV5pym6ODEtyufx0coPvuBHjN0/tTwQHMk2Vpfs918+XyGTxqHQsOYK3IzZe25i6+r5bKlddPNJ3PIY5IAJNPwNMWMs90ay5+deB+Bghm8Lt4eg7oiL4VD5Bb2D8HrC0fwrMH76Hrzjt43rsAum7wD4g/mbvy7OcaEA4xmB3fFBdAaoj+rgzMTW3D2soh5D7vV34fnJ7oYgDIJaWpAgwx+Z8BhbwmNmA4kQVN1WF3pyAmgHgsReirRUyPXQDM+3leAGzGOQAno9wArtGIY0D1KdBY4M0j2qd4ifnngnk/7+tMIFo0t43rlZeRkZFR/MofPh9jCPaBsBoAAAAASUVORK5CYII=" alt="phone-pe"></button>
+                            </div>
+
+                            <div class="btn-group btn-group-sm">
+                                <button type="reset" class="btn btn-light reset-pymt">Reset</button>
+                                <button type="button" class="btn btn-light removePymt d-none">Remove</button>
+                                <button type="button" class="btn btn-light closePymt">Close</button>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary applyPymt disabled" value="add">Apply</button>
+                        </form>
+                    </div>
+
+                    <div class="dropup d-none">
+                        <button type="button" class="btn btn-light" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-three-dots-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><span class="dropdown-item role-btn add-pymt">Add</span></li>
+                            <li><span class="dropdown-item role-btn cash-pymt">Cash</span></li>
+                            <li><span class="dropdown-item role-btn del-pymt">Remove</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- cancel/execute order -->
+        <div class="btn-group mt-auto pb-1">
+            <button type="button" class="btn btn-primary w-50 new-order" title="Clear All Details">CLEAR</button>
+            <button type="button" class="btn btn-primary w-50 execute" title="Save Order">EXECUTE</button>
+        </div>
+
+        <!-- <div class="d-flex flex-column position-absolute top-0 start-0 p-2 h-100 w-100 z-5 text-white execute-status" style="background-image: url('/img/99fc167ac92d93d0117cfbed91b5c444.jpg'); background-size: cover; background-position: center; background-color: white;"> -->
+        <div class="d-flex flex-column position-absolute top-0 start-0 p-2 h-100 w-100 z-5 text-white execute-status d-none" style="background-color: rgba(12, 97, 254, 0.881);">
+            <div class="d-flex flex-column jcc gap-5 aic my-auto exe-status">
+                <div class="spinner-border text-white"></div>
+                <div class="fw-light text-white">Processing...</div>
+            </div>
+
+            <div class="d-flex jcc aic display-1 mt-6 order-saved d-none"><i class="bi bi-shield-fill-check"></i></div>
+            <div class="text-center display-3 my-auto order-saved d-none">Order Saved Successfully</div>
+            <div class="text-center order-saved d-none view-order role-btn">View Order</div>
+
+            <div class="d-flex jcc aic mt-auto order-saved d-none">
+                <button type="button" class="btn btn-lg btn-light mb-5 close-execute-status"><i class="bi bi-x-lg"></i></button>
+            </div>
+        </div>
+    </div>  
+</div>
