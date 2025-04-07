@@ -357,10 +357,10 @@ doc.addEventListener('DOMContentLoaded', () => {
         try {
             if (e.key == 'Enter') {
                 let party_id = this.value;
-                let db = new xdb(storeId, 'partys');
-                let [res] = await db.searchByKey({ key: party_id, indexes: ['party_id'], limit: 1 });
-                if (!res?.id) { [res] = await queryData({ key: 'srchPartyByPartyId', values: [party_id] }) }
-                if (!res?.id) return;
+                let [res] = await queryData({ key: 'srchPartyByPartyId', values: [party_id] });
+                if (!res) return;
+                // let db = new xdb(storeId, 'partys');
+                // let [res] = await db.searchByKey({ key: party_id, indexes: ['party_id'], limit: 1 });
                 let { id, party_name, email, contact } = res;
                 updateDetails({ party: id, party_name, party_id, email, contact });
                 loadPartyDetails();
