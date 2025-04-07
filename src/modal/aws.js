@@ -1,11 +1,12 @@
 const { S3Client, ListObjectsV2Command, PutObjectCommand, GetObjectCommand  }=require('@aws-sdk/client-s3');
 const log=console.log;
 require('dotenv').config();
+const env = require('../../env.json');
 
 // Set your AWS credentials
 const credentials = {
-  accessKeyId: process.env.AWS_ACCESSKEY,
-  secretAccessKey: process.env.AWS_SECRETKEY,
+  accessKeyId: env.AWS_ACCESSKEY || process.env.AWS_ACCESSKEY,
+  secretAccessKey: env.AWS_SECRETKEY || process.env.AWS_SECRETKEY,
 };
 
 // Set the AWS region

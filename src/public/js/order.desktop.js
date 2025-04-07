@@ -292,6 +292,8 @@ doc.addEventListener('DOMContentLoaded', () => {
             let data = await _searchParty(val);
             // create party 
             if (!data.length) {
+                jq('div.search-party').html('').addClass('d-none');
+                return;
                 let btn = createEL('button');
                 jq(btn).addClass('btn btn-primary btn-sm w-100').text('+ Party').click(async function () {
                     jq('div.search-party').addClass('d-none').html('');
@@ -327,8 +329,8 @@ doc.addEventListener('DOMContentLoaded', () => {
             parseData({ tableObj: tbl, colsToRight: ['party_id', 'contact'], colsToShow: ['id', 'party_name', 'party_id', 'contact'] });
             jq(tbl.tbody).find('tr').addClass('role-btn').each(function (i, e) {
                 jq(e).click(function () {
-                    let index = jq(this).index(); log(index);
-                    let po = data[index]; log(po);
+                    let index = jq(this).index();
+                    let po = data[index];
                     let { id, party_name, party_id, email } = po;
                     jq('div.search-party').html('').addClass('d-none');
                     jq('#searchParty').val('');
@@ -356,7 +358,7 @@ doc.addEventListener('DOMContentLoaded', () => {
             if (e.key == 'Enter') {
                 let party_id = this.value;
                 let db = new xdb(storeId, 'partys');
-                let [res] = await db.searchByKey({ key: party_id, indexes: ['party_id'], limit: 1 }); log(res);
+                let [res] = await db.searchByKey({ key: party_id, indexes: ['party_id'], limit: 1 });
                 if (!res?.id) { [res] = await queryData({ key: 'srchPartyByPartyId', values: [party_id] }) }
                 if (!res?.id) return;
                 let { id, party_name, email, contact } = res;

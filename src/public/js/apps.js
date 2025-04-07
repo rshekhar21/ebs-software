@@ -1,4 +1,4 @@
-import { jq, log, doc, getData, create, postData, showModal, quickData } from './help.js';
+import { jq, log, doc, getData, create, postData, showModal, quickData, Storage } from './help.js';
 
 doc.addEventListener('DOMContentLoaded', function () {
     loadApps();
@@ -19,7 +19,7 @@ doc.addEventListener('DOMContentLoaded', function () {
         jq(mb).find('button.apply').click(async function () {
             let password = jq(input).val(); //log(pwd)
             if (password.trim().length === 0) return;
-            let res = await postData({ url: '/verify-password', data: { password } }); //log(res.data);
+            let res = await postData({ url: '/verify-password', data: { password } });
             if (res.data) {
                 jq(input).val('');
                 jq(mb).modal('hide').remove();
@@ -80,6 +80,8 @@ async function loadApps() {
                 .attr({ 'data-bs-toggle': 'tooltip', 'data-bs-placement': 'left', 'data-bs-title': title, 'data-key': a.app_id })
                 .click(async function () {
                     let res = await postData({ url: '/setapp', data: { app_id: a.app_id, trade: a.trade_name } });
+                    let ver = await quickData('/version');
+                    Storage.set('appver', ver);
                     if (res.data) window.location.href = '/apps/app';
                 })
             let [div] = jq('<div></div>').addClass('py-4 d-flex jcc aic bg-blue1 rounded text-white position-relative').append(trade, link)

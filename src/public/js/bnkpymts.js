@@ -19,19 +19,20 @@ async function viewDetails() {
         jq('div.process').addClass('d-none');
         let fys = await queryData({ key: 'pymtfys' });
         if (!fys.length) { jq('#root').html(`<span class="fs-2 text-secondary">No Records Found</span>`); return; }
-        let [selectmonth] = jq('<select></select>').addClass('form-select form-select-sm').css('max-width', '150px');
-        let [selectbank] = jq('<select></select>').addClass('form-select form-select-sm me-auto').css('max-width', '200px').attr('id', 'bank_id');
-        let [selectfy] = jq('<select></select').addClass('form-select form-select-sm').css('max-width', '100px')
+        let [selectbank] = jq('<select></select>').addClass('form-select form-select-sm me-auto w-md-25').attr('id', 'bank_id');
+        let [selectmonth] = jq('<select></select>').addClass('form-select form-select-sm w-md-10').prop('title', 'Select Month')
+        let [selectfy] = jq('<select></select').addClass('form-select form-select-sm w-md-10').prop('title', 'Financial Year')
         let [apply] = jq('<button></button>').addClass('btn btn-sm btn-primary apply').text('Apply').prop('title', 'Click to Fetch/Pull Details');
-        let [print] = jq('<button></button>').addClass('btn btn-sm btn-success print disabled').text('Print').click(function () { window.print() }).prop('title', 'Print Data');
-        let [downlaod] = jq('<button></button>').addClass('btn btn-sm btn-secondary export-excel disabled').text('Excel').prop('title', 'Export Excel File')
-        let [headrow] = jq('<div></div>').addClass('d-flex jcb aic gap-2 p-2 rounded d-print-none').append(selectbank, selectmonth, selectfy, apply, print, downlaod)
+        let [print] = jq('<button></button>').addClass('btn btn-sm btn-primary print disabled').text('Print').click(function () { window.print() }).prop('title', 'Print Data');
+        let [downlaod] = jq('<button></button>').addClass('btn btn-sm btn-primary export-excel disabled').text('Excel').prop('title', 'Export Excel File')
+        let [btn_group] = jq('<div></div>').addClass('btn-group mw-md-100').append(apply, print, downlaod);
+        let [headrow] = jq('<div></div>').addClass('d-flex flex-column flex-md-row jcb aic gap-2 p-2 rounded d-print-none').append(selectbank, selectmonth, selectfy, btn_group)
         let [tablesdiv] = jq('<div></div>').addClass('p-2');
         let [container] = jq('<div></div>').addClass('container-md d-flex flex-column gap-2 px-0').append(headrow, tablesdiv);
         let fyplaceholder = new Option('Year', '');
         selectfy.add(fyplaceholder);
 
-        fys.forEach(y => { selectfy.add(new Option(y.fin_year)) });
+        fys.forEach(y => { selectfy.add(new Option(y.year)) });
         let monthPlaceholder = new Option('Month', '');
         selectmonth.add(monthPlaceholder);
         Months.forEach(m => { selectmonth.add(new Option(m.full, m.month)); })
@@ -47,6 +48,10 @@ async function viewDetails() {
             let fy = jq(selectfy).val();
             if (!bank || !month || !fy) return;
             let res = await fetchTable({ key: 'statement', values: [bank, fy, month, bank, fy, month] });
+            if(!res) {
+                jq(tablesdiv).html('');
+                return
+            };
             parseData({ tableObj: res, colsToTotal: ['amount'], colsToRight: ['amount'] });
             let { table, tbody } = res;
             jq(tbody).find(`[data-key='cr/dr']`).each(function (i, e) { if (e.textContent.toLowerCase() == 'debit') jq(e).closest('tr').find('td').addClass('text-danger'); });
@@ -55,8 +60,7 @@ async function viewDetails() {
             jq(downlaod).toggleClass('disabled', !res.data.length);
             jq(downlaod).click(async function () { exportToExcel(res.data, 'Statement') })
             // jq(downlaod).click(async function () { log(doc.body.innerHTML) })
-        })
-
+        });
 
         jq('#root').html(container);
 

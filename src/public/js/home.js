@@ -1,6 +1,6 @@
 
 import { initLocaldb } from './_localdb.js';
-import { jq, log, doc, create, isRrestricted, quickData, controlBtn } from './help.js';
+import { jq, log, doc, create, isRrestricted, quickData, controlBtn, Storage} from './help.js';
 import list from './home-list.js';
 import { icons } from './svgs.js';
 doc.addEventListener('DOMContentLoaded', function () {
@@ -83,7 +83,8 @@ async function loadMenuItems(list) {
         jq('div.menu-items').empty(); // Use .empty() for better performance
 
         // 2. Fetch the app version from the API
-        const versionData = await quickData('/version'); //log(versionData);
+        // const versionData = await quickData('/version'); log(versionData);
+        const versionData = Storage.get('appver');
         if (!versionData || !versionData.version) {
             throw new Error("Failed to fetch app version or version is missing.");
         }
@@ -98,7 +99,7 @@ async function loadMenuItems(list) {
             const icon = jq('<span></span>').addClass('fs-4').html(item.bsicon);
             const name = jq('<span></span>').addClass('fs-6').text(item.name);
             const content = jq('<div></div>').addClass('card-content d-flex flex-column jcc aic gap-1').append(icon, name);
-            const card = jq('<div></div>').addClass(`ebs-card position-relative role-btn ${item.class}`).append(content);
+            const card = jq('<div></div>').addClass(`ebs-card position-relative role-btn ${item.class}`).append(content).prop('title', item.title);
             const padlock = jq('<span></span>').addClass('position-absolute top-0 end-0 pt-3 pe-3 fs-5').html(icons.lockDanger).prop('title', 'Available in Pro. Version only!');
 
             // 5. Apply lock logic based on app version and item version

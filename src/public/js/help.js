@@ -23,7 +23,7 @@ export const trade_name = getCookie('app_name');
 export const user_id = getCookie('user_id');
 export const cuid = getCookie('userid');
 export const cuser = getCookie('username');
-export const store_id = getCookie('store_id'); log(store_id)
+export const store_id = getCookie('store_id'); //log(store_id)
 export const app_id = getCookie('app_id'); //log(app_id)
 
 export const back = () => { window.history.back() }
@@ -2739,16 +2739,43 @@ export async function shareOrder(order_id, thermal = true) {
     }
 }
 
+let myWin = null
+
 export function viewOrder(orderid) {
-    let url = `${window.location.origin}/apps/order/thermal/?orderid=${orderid}`; //log(url);
+    let url = `${window.location.origin}/apps/order/thermal/?orderid=${orderid}`;
     if (window?.app?.node()) {
-        window?.app?.showThermal(url)
-    } else {
+        window?.app?.showThermal(url);
+        return;
+    }
+    if (myWin && !myWin.closed) {
+        myWin.focus();
+        return;
+    }
+    let height = window.innerHeight;
+    let width = window.innerWidth;
+    myWin = window.open(url, "_blank", "top=0, width=500, height=100");
+    myWin.resizeTo(450, height);
+    myWin.moveTo(width / 2 - 250, 0);
+}
+
+export function viewOrderA4(orderid) {
+    try {
+        let url = `${window.location.origin}/view/order/format/b/?orderid=${orderid}`;
+        if (window?.app?.node()) {
+            window?.app?.showA4(url);
+            return;
+        }
+        if (myWin && !myWin.closed) {
+            myWin.focus();
+            return;
+        }
         let height = window.innerHeight;
         let width = window.innerWidth;
-        const myWin = window.open(url, "_blank", "top=0, width=500, height=100");
-        myWin.resizeTo(450, height);
-        myWin.moveTo(width / 2 - 250, 0);
+        myWin = window.open(url, "_blank", "top=0, width=1024, height=700");
+        myWin.resizeTo(1024, height);
+        myWin.moveTo(width / 2 - 512, 0);
+    } catch (error) {
+        log(error);
     }
 }
 

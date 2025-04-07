@@ -1227,7 +1227,7 @@ function showPODetails() {
         setPurchase();
         setTotals();
         setItemsTable();
-        let pd = getPurchData(); log(pd, pd.items);
+        let pd = getPurchData();
         calculateGSTsTotal(pd.items)
         let { subtotal, total, tax, qty, disc_val, pymt, disc_per, scan, balance, round, freight, update = false, notes = null } = pd; //log(update);
         round = parseNumber(round);

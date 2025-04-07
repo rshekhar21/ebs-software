@@ -463,7 +463,7 @@ export function setItems(obj) { //log('setitems')
 function setOrder() {
     try {
         let { discount, disc_percent, items, tax } = getOrderData();
-        if (tax === 0) {disc_percent = 0; discount = 0;} log(tax);
+        if (tax === 0) {disc_percent = 0; discount = 0;}
         const itemsArr = items.filter(item => !item.hasOwnProperty('del'));
         const subtotal = itemsArr.map(item => (item.clc)).reduce((prev, curr) => prev + curr, 0);
         if (!items.length) return;
@@ -1068,7 +1068,7 @@ export async function loadPartyDetails() {
         let id = od.party; //log(id);
 
         if (!id) {
-            jq('span.party-id, span.contact, span.email, span.billing, span.last-bill, span.payments, span.due-amount, span.gstin, span.address, span.city, span.pincode, span.state, span.state-code, span.partyid').text('');
+            jq('.party-id, span.contact, span.email, span.billing, span.last-bill, span.payments, span.due-amount, span.gstin, span.address, span.city, span.pincode, span.state, span.state-code, span.partyid').text('');
             jq('.party-name').removeClass('text-danger text-success').text('');
             jq('div.party-actions, div.party-addreses, div.party-data').addClass('d-none');
             return
@@ -1090,9 +1090,10 @@ export async function loadPartyDetails() {
         }
 
         let dueAmt = parseNumber(party?.balance);
-        jq('.party-name').removeClass('text-danger text-success').addClass(dueAmt > 0 ? 'text-danger' : dueAmt < 0 ? 'text-success' : '').text(party?.party_name);
+        jq('div.party-details').toggleClass('d-none', !party.id);
         jq('span.partyid').text(party.id);
-        jq('span.party-id').text(party.party_id);
+        jq('.party-name').removeClass('text-danger text-success').addClass(dueAmt > 0 ? 'text-danger' : dueAmt < 0 ? 'text-success' : '').text(party?.party_name);
+        jq('.party-id').text(party.party_id);
         jq('span.contact').text(party?.contact || 'Contact Number');
         jq('span.email').text(party?.email || 'Email Address');
         jq('div.party-actions').removeClass('d-none');
@@ -1151,6 +1152,11 @@ export async function loadPartyDetails() {
         })
         if (party?.state) {
             let { entity } = getSettings();
+            let estate = entity?.state ? entity.state.toLowerCase(): null;
+            if(!estate){
+                updateDetails({ gstType: null });
+                return;
+            }
             party.state.toLowerCase() !== entity?.state.toLowerCase() ? updateDetails({ gstType: 'igst' }) : updateDetails({ gstType: null });
         }
         updateDetails({ enable_rewards: party.enable_rewards, reward_percent: party.reward_percent });

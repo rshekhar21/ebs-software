@@ -163,18 +163,7 @@ function setData(data) {
             await checkShowPymt(id);
 
             jq('#viewOrder').click(function () {
-                // let url = `${window.location.origin}/apps/order/thermal/?orderid=${order_id}`; //log(url);
-                // if (window?.app?.node()) {
-                //     window?.app?.showThermal(url)
-                // } else {
-                //     let height = window.innerHeight;
-                //     let width = window.innerWidth;
-                //     const myWin = window.open(url, "_blank", "top=0, width=500, height=100");
-                //     myWin.resizeTo(450, height);
-                //     myWin.moveTo(width / 2 - 250, 0);
-                // }
                 viewOrder(order_id);
-
             });
 
             jq('#shareDetails_').click(function () {

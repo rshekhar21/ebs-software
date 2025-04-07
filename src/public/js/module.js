@@ -326,7 +326,7 @@ export async function _searchParty(val) {
             key: val,
             indexes: ['party_id', 'party_name', 'contact', 'email'],
             columns: ['id', 'party_name', 'party_id', 'contact', 'email'],
-            limit: 20,
+            limit: 10,
             sortby: 'party_name',
         }); //log(arr);
         if (!arr.length) {

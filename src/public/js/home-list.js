@@ -18,7 +18,8 @@ const list = [{
     img: '',
     rc: 'jDzNlYbp', //restriction code
     hidden: false,
-    version: 'basic'
+    version: 'basic',
+    title: 'View Closing'
 },
 {
     key: 'sales',
@@ -30,7 +31,8 @@ const list = [{
     img: '',
     rc: 'klidFVCa',
     hidden: false,
-    version: 'basic'
+    version: 'basic',
+    title: 'View Sales Report'
 },
 {
     key: 'orders',
@@ -41,7 +43,8 @@ const list = [{
     bsicon: '<i class="bi bi-list-ol"></i>',
     rc: 'PgBXvEqD',
     img: '',
-    version: 'basic'
+    version: 'basic',
+    title: 'View Orders'
 },
 {
     key: 'neworder',
@@ -53,7 +56,8 @@ const list = [{
     img: '',
     rc: '',
     hidden: false,
-    version: 'basic'
+    version: 'basic',
+    title: "Create New Order",
 },
 {
     key: 'party',
@@ -65,7 +69,8 @@ const list = [{
     img: '',
     rc: '',
     hidden: false,
-    version: 'basic'
+    version: 'basic',
+    title: "Add/Edit/View Customers",
 },
 {
     key: 'dues',
@@ -77,7 +82,8 @@ const list = [{
     img: '',
     rc: 'eLpjxhZi',
     hidden: false,
-    version: 'pro'
+    version: 'pro',
+    title: 'View Party Dues',
 },
 {
     key: 'stock',
@@ -89,7 +95,8 @@ const list = [{
     img: '',
     rc: '',
     hidden: false,
-    version: 'basic'
+    version: 'basic',
+    title: 'Add/Edit/View Stock',
 },
 {
     key: 'purchase',
@@ -101,7 +108,8 @@ const list = [{
     img: '',
     rc: 'WnkzKJLc',
     hidden: false,
-    version: 'pro'
+    version: 'pro',
+    title: 'View Purhcases',
 },
 {
     key: 'supplier',
@@ -113,7 +121,8 @@ const list = [{
     img: '',
     rc: 'FROKLrJs',
     hidden: false,
-    version: 'pro'
+    version: 'pro',
+    title: "Add/Edit/View Suppliers",
 },
 {
     key: 'payments',
@@ -125,7 +134,8 @@ const list = [{
     img: '',
     rc: '',
     hidden: false,
-    version: 'basic'
+    version: 'basic',
+    title: "Add/Edit/View Payments",
 },
 {
     key: 'bnkpymts',
@@ -137,7 +147,8 @@ const list = [{
     img: '',
     rc: '',
     hidden: false,
-    version: 'pro'
+    version: 'pro',
+    title: 'View Bank Payments',
 },
 {
     key: 'sold',
@@ -149,7 +160,8 @@ const list = [{
     img: '',
     rc: '',
     hidden: false,
-    version: 'basic'
+    version: 'basic',
+    title: 'View Sold Itmes List',
 },
 {
     key: 'gst',
@@ -161,7 +173,8 @@ const list = [{
     img: '',
     rc: '',
     hidden: false,
-    version: 'basic'
+    version: 'basic',
+    title: 'View GST Report',
 },
 {
     key: 'gr',
@@ -173,7 +186,8 @@ const list = [{
     img: '',
     rc: '',
     hidden: false,
-    version: 'pro'
+    version: 'pro',
+    title: "View Returns",
 },
 {
     key: 'notes',
@@ -185,7 +199,8 @@ const list = [{
     img: '',
     rc: '',
     hidden: false,
-    version: 'pro'
+    version: 'pro',
+    title: "Add/Edit/View Notes",
 },
 {
     key: 'expense',
@@ -197,7 +212,8 @@ const list = [{
     img: '',
     rc: 'QUbxNZWM',
     hidden: false,
-    version: 'basic'
+    version: 'basic',
+    title: "Add/Edit/View Expenses",
 },
 {
     key: 'employee',
@@ -209,7 +225,8 @@ const list = [{
     img: '',
     rc: 'xyfztULQ',
     hidden: false,
-    version: 'pro'
+    version: 'pro',
+    title: "Add/Edit/View Employees",
 },
 {
     key: 'banks',
@@ -221,7 +238,8 @@ const list = [{
     img: '',
     rc: 'FnhxaHlT',
     hidden: false,
-    version: 'basic'
+    version: 'basic',
+    title: 'Add/Edit/View Banks',
 },
 {
     key: 'users',
@@ -233,7 +251,8 @@ const list = [{
     img: '',
     rc: 'CrOdiKbL',
     hidden: false,
-    version: 'pro'
+    version: 'pro',
+    title: 'Add/Edit/View Users',
 },
 {
     key: 'entity',
@@ -245,7 +264,8 @@ const list = [{
     img: '',
     rc: 'ZKGfSuzx',
     hidden: false,
-    version: 'basic'
+    version: 'basic',
+    title: "View/Edit Business Details",
 },
 // { key: 'settings', name: 'Settings', url: `${urlstr}settings`, icon: '', class:'', bsicon:'<i class="bi bi-gear"></i>', img: '', rc: '', hidden: false, version: '' },
 // { key: 'switch', name: 'Switch App', url: '/apps', icon: 'toggle_on', class:'', bsicon:'<i class="bi bi-toggle-off"></i>', img: '', rc: '', hidden: false, version: '' },
@@ -259,7 +279,8 @@ const list = [{
     img: '',
     rc: '',
     hidden: false,
-    version: 'basic'
+    version: 'basic',
+    title: "Logout",
 },
 ];
 export default list;

@@ -99,69 +99,75 @@
     <div class="d-flex flex-column gap-2 order-details py-2 w-100">
       <div class="d-flex jcb aic gap-2">
         <!-- party name, edit party -->
-        <div class="d-flex jcb aic gap-4 position-relative w-50">
-          <h3 class="party-name mb-0"></h3>
-          <div class="party-actions d-none">
-            <div class="dropdown d-block d-xl-none" style="padding-right: 1px;">
-              <span class="role-btn" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-gear-fill"></i>
-              </span>
-              <ul class="dropdown-menu">
-                <li><span class="dropdown-item role-btn edit-party">Edit Party</span></li>
-                <li><span class="dropdown-item role-btn view-history">View History</span>
-                </li>
-                <li><span class="dropdown-item role-btn show-party-details">party-info</span>
-                </li>
-                <li>
-                  <hr class="dropdown-divider">
-                </li>
-                <li><span class="dropdown-item role-btn party-info">View Details</span></li>
-              </ul>
+        <div class="w-50">
+          <div class="d-flex jcb aic gap-4 position-relative w-100 party-details d-none">
+            <div class="d-flex jcs aic gap-2">
+              <h4 class="party-name mb-0" title="Party Name"></h4>
+              <span class="ms-auto">/</span>
+              <h4 class="party-id text-secondary mb-0" title="Party ID"></h4>
             </div>
-
-            <div class="d-none d-xl-flex jce aic ms-auto gap-4 flex-fill">
-              <span class="role-btn fs-5 add-party d-none" title="Add Party"><i class="bi bi-plus-square"></i></span>
-              <span class="role-btn fs-5 edit-party" title="Edit Party"><i class="bi bi-pencil-square"></i></span>
-              <span class="role-btn fs-5 view-history" title="View History"><i class="bi bi-hourglass"></i></span>
-              <span class="role-btn fs-5 show-party-details" title="Quick Details"><i class="bi bi-chevron-down"></i></span>
-              <span class="role-btn fs-5 party-info"><i class="bi bi-info-circle-fill"></i></span>
+            <div class="party-actions d-none">
+              <div class="dropdown d-block d-xl-none" style="padding-right: 1px;">
+                <span class="role-btn" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bi bi-gear-fill"></i>
+                </span>
+                <ul class="dropdown-menu">
+                  <li><span class="dropdown-item role-btn edit-party">Edit Party</span></li>
+                  <li><span class="dropdown-item role-btn view-history">View History</span>
+                  </li>
+                  <li><span class="dropdown-item role-btn show-party-details">party-info</span>
+                  </li>
+                  <li>
+                    <hr class="dropdown-divider">
+                  </li>
+                  <li><span class="dropdown-item role-btn party-info">View Details</span></li>
+                </ul>
+              </div>
+  
+              <div class="d-none d-xl-flex jce aic ms-auto gap-4 flex-fill">
+                <span class="role-btn fs-5 add-party d-none" title="Add Party"><i class="bi bi-plus-square"></i></span>
+                <span class="role-btn fs-5 edit-party" title="Edit Party"><i class="bi bi-pencil-square"></i></span>
+                <span class="role-btn fs-5 view-history" title="View History"><i class="bi bi-hourglass"></i></span>
+                <span class="role-btn fs-5 show-party-details" title="Quick Details"><i class="bi bi-chevron-down"></i></span>
+                <span class="role-btn fs-5 party-info"><i class="bi bi-info-circle-fill"></i></span>
+              </div>
             </div>
+  
+            <ul class="party-info-box list-group w-50 position-absolute top-0 end-0 z-4 shadow d-none">
+              <li class="list-group-item  list-group-item-action bg-light d-flex jcb aic fw-500">
+                Party Details
+                <span class="close-info-box role-btn"><i class="bi bi-x-lg"></i></span>
+              </li>
+              <li class="list-group-item d-flex jcb aic">
+                Orders
+                <span class="orders-cnt fst-italic">0.00</span>
+              </li>
+              <li class="list-group-item d-flex jcb aic">
+                Billing
+                <span class="billing fw-500">0.00</span>
+              </li>
+              <li class="list-group-item d-flex jcb aic">
+                Last Bill
+                <span class="last-bill">0.00</span>
+              </li>
+              <li class="list-group-item d-flex jcb aic">
+                Payments
+                <span class="payments">0.00</span>
+              </li>
+              <li class="list-group-item d-flex jcb aic text-success">
+                Rewards
+                <span class="rewards fw-500">0.00</span>
+              </li>
+              <li class="list-group-item d-flex jcb aic">
+                Dues
+                <span class="due-amount fw-500">0.00</span>
+              </li>
+              <li class="list-group-item d-flex jcb aic">
+                Opening Balance
+                <span class="opening-bal fw-500">0.00</span>
+              </li>
+            </ul>
           </div>
-
-          <ul class="party-info-box list-group w-50 position-absolute top-0 end-0 z-4 shadow d-none">
-            <li class="list-group-item  list-group-item-action bg-light d-flex jcb aic fw-500">
-              Party Details
-              <span class="close-info-box role-btn"><i class="bi bi-x-lg"></i></span>
-            </li>
-            <li class="list-group-item d-flex jcb aic">
-              Orders
-              <span class="orders-cnt fst-italic">0.00</span>
-            </li>
-            <li class="list-group-item d-flex jcb aic">
-              Billing
-              <span class="billing fw-500">0.00</span>
-            </li>
-            <li class="list-group-item d-flex jcb aic">
-              Last Bill
-              <span class="last-bill">0.00</span>
-            </li>
-            <li class="list-group-item d-flex jcb aic">
-              Payments
-              <span class="payments">0.00</span>
-            </li>
-            <li class="list-group-item d-flex jcb aic text-success">
-              Rewards
-              <span class="rewards fw-500">0.00</span>
-            </li>
-            <li class="list-group-item d-flex jcb aic">
-              Dues
-              <span class="due-amount fw-500">0.00</span>
-            </li>
-            <li class="list-group-item d-flex jcb aic">
-              Opening Balance
-              <span class="opening-bal fw-500">0.00</span>
-            </li>
-          </ul>
         </div>
 
         <!-- qty, total -->

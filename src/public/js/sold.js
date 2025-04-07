@@ -55,7 +55,7 @@ async function loadData() {
             hidecols: ['emp_id'],
             sortby: 'order_id', sortOrder: 'desc',
             limit: 500,
-        }); log(data);
+        });
         jq('div.process').addClass('d-none');
         let res = await h.fetchTable({ key: 'sold', limit: 500 }, true, true, data);
         showData(res);

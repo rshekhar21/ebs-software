@@ -127,5 +127,6 @@ dist
 .pnp.*
 *.pdf
 .env
+env.json
 
 test.sql

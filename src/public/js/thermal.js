@@ -91,14 +91,14 @@ async function loadData(orderid) {
       <div class="d-flex jcb aic fw-500">
           PARTY <span class="fw-bold">${od?.party_name} / ${od?.party_id}</span>
       </div> 
-      <div class="d-flex jcb aic ${od?.address ? '' : 'd-none'}">
+      <div class="d-flex jcb aic ${ general?.showPartyAddress == 'Yes'? od?.address ? '' : 'd-none': 'd-none'}">
           <div class="ms-auto d-flex flex-column">
-            <span class="ms-auto ${od?.address ? '' : 'd-none'} text-end">${od?.address}</span>
-            <span class="ms-auto ${od?.city ? '' : 'd-none'}">${od?.city}</span>
-            <span class="ms-auto ${od?.pincode ? '' : 'd-none'}">${od?.pincode}</span>
-            <span class="ms-auto ${od?.state ? '' : 'd-none'}">${od?.state}</span>
+            <span class="ms-auto ${od?.address ? '' : 'd-none'} text-end">${od?.address||''}</span>
+            <span class="ms-auto ${od?.city ? '' : 'd-none'}">${od?.city||''}</span>
+            <span class="ms-auto ${od?.pincode ? '' : 'd-none'}">${od?.pincode||''}</span>
+            <span class="ms-auto ${od?.state ? '' : 'd-none'}">${od?.state||''}</span>
           </div>
-      </div> `;
+      </div>`;
 
     jq('div.party').html(partystr);
 
@@ -174,7 +174,9 @@ async function loadData(orderid) {
       </ul>`
       ;
 
-    jq('div.totals').html(strTotal);
+    jq('div.totals').html(strTotal);     
+
+    jq('div.inv-msg').html(general.invoiceMessage); // 15-day Exchange with invoice<br/>Accessories & Imports Excluded.
 
     jq('div.comments').html(od.notes || '');
 

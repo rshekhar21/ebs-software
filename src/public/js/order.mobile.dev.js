@@ -201,8 +201,7 @@ function loadItems(items) {
 
 function loadViatls(od) {
     try {
-        log(od);
-        let { qty, total } = od; log(qty);
+        let { qty, total } = od;
         jq('span.total-qty').text(parseLocals(qty));
         jq('span.order-amount').text(parseLocal(total));
 

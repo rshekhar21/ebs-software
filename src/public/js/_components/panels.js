@@ -1,4 +1,4 @@
-import help, { advanceQuery, calculateTotalTaxByGst, copyToClipboard, createEL, createNewPage, createStuff, createTable, doc, errorMsg, fd2obj, fetchTable, generateUniqueAlphaCode, getClientType, getFinYear, getForm, getSettings, getSqlDate, isAdmin, isRrestricted, jq, log, parseColumn, parseCurrency, parseData, parseLocals, parseNumber, popListInline, postData, queryData, setTable, shareOrder, showCalender, showErrors, showModal, showSuccess, showTable, storeId, viewOrder, xdb } from "../help.js";
+import help, { advanceQuery, calculateTotalTaxByGst, copyToClipboard, createEL, createNewPage, createStuff, createTable, doc, errorMsg, fd2obj, fetchTable, generateUniqueAlphaCode, getClientType, getFinYear, getForm, getSettings, getSqlDate, isAdmin, isRrestricted, jq, log, parseColumn, parseCurrency, parseData, parseLocals, parseNumber, popListInline, postData, queryData, setTable, shareOrder, showCalender, showErrors, showModal, showSuccess, showTable, storeId, viewOrder, viewOrderA4, xdb } from "../help.js";
 import { loadSettings } from "./settings.js";
 import { icons } from "../svgs.js";
 import { _addPartyPymt, _delStock, _loadSrchstock, addPurchPymt, createStock, editParty, numerifyObject, purchEntry, sendOrderEmail, setEditStockBody } from "../module.js";
@@ -1526,16 +1526,17 @@ async function orderSubmenu(el, i, data, cb = null) {
     })
 
     jq('#viewPrint').click(function () {
-        let url = `${window.location.origin}/view/order/format/b/?orderid=${order_id}`;
-        if(window?.app?.node()){
-            window?.app?.showA4(url)
-        }else{
-            let height = window.innerHeight;
-            let width = window.innerWidth;
-            const myWin = window.open(url, "_blank", "top=0, width=1024, height=700");
-            myWin.resizeTo(1024, height);
-            myWin.moveTo(width / 2 - 512, 0);
-        }
+        // let url = `${window.location.origin}/view/order/format/b/?orderid=${order_id}`;
+        // if(window?.app?.node()){
+        //     window?.app?.showA4(url)
+        // }else{
+        //     let height = window.innerHeight;
+        //     let width = window.innerWidth;
+        //     const myWin = window.open(url, "_blank", "top=0, width=1024, height=700");
+        //     myWin.resizeTo(1024, height);
+        //     myWin.moveTo(width / 2 - 512, 0);
+        // }
+        viewOrderA4(order_id);
     })
 
     jq('#editOrder').click(async function () {

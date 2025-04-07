@@ -15,7 +15,7 @@ doc.addEventListener('keypress', async function (e) {
 
 doc.addEventListener('DOMContentLoaded', function () {
     const { orderid } = getUrlParams();
-    const app = window?.app?.node() || null; log(app);
+    const app = window?.app?.node() || null;
 
     fetchOrder(orderid);
     document.title = 'Invoice';
@@ -39,8 +39,8 @@ doc.addEventListener('DOMContentLoaded', function () {
             Storage.set('A4Printer', printer);
         })
 
-        jq('#save-page').click(async function(){
-            let filename=`Invoice_${orderid}.pdf`;
+        jq('#save-page').click(async function () {
+            let filename = `Invoice_${orderid}.pdf`;
             await window?.app?.printPdf(filename);
             window.close();
         })
@@ -96,12 +96,16 @@ async function fetchOrder(orderid) {
         // party
         jq('.bill-number').text(od.inv_number);
         jq('.bill-date').html(`${od?.bill_date || moment(od?.order_date).format('DD-MM-YYYY')}`);
-        jq('.party-name').text(od.party_name)
+        jq('.party-name').text(od.party_name);
+
+        let title = od.title || (od.gst_number ? 'M/s' : '');
 
         let billing = `
             <span class="small fw-500 mb-1">BILLED TO</span>
-            <span class="title">${od.title || 'M/s'}</span>
-            <span class="party-name fw-500">${od.party_name}</span>
+            <div class="d-flex jcs aic">
+                <span class="title ${title ? 'me-2' : ''}">${title}</span>
+                <span class="party-name fw-500">${od.party_name || ''}</span>             
+            </div>
             <span class="address">${od.address || ''}</span>
             <span class="city">${od.city || ''}</span>
             <div class="d-flex jcs aic gap-2 mb-1">
@@ -116,8 +120,10 @@ async function fetchOrder(orderid) {
 
         let shipping = `
             <span class="small fw-500 mb-1">SHIPED TO</span>
-            <span class="title">${od.title || 'M/s'}</span>
-            <span class="party-name fw-500">${od.party_name || ''}</span>
+            <div class="d-flex jcs aic">
+                <span class="title ${title ? 'me-2' : ''}">${title}</span>
+                <span class="party-name fw-500">${od.party_name || ''}</span>            
+            </div>
             <span class="address">${od.address || od.ship_address || ''}</span>
             <span class="city">${od.city || ''}</span>
             <div class="d-flex jcs aic gap-2">
