@@ -217,7 +217,7 @@ SELECT
     -- y.`new_bal` AS `nb`,
     x.`entry` AS `type`,
     x.`orderid`,
-    DATE_FORMAT(x.`timestamp`, '%d/%m/%Y %r') AS `timestamp`
+    DATE_FORMAT(x.`timestamp`, '%r') AS `timestamp`
 FROM
     x
     LEFT JOIN `party` p ON x.`party` = p.`id`
