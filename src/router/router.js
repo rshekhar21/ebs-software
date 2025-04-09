@@ -124,6 +124,7 @@ router.post('/aws/download', ctrl.dlAWS)
 router.post('/api/bulk-edit', ctrl.bulkEdit);
 router.post('/api/reset/schema', ctrl.resetSchema);
 router.post('/api/email/order', ctrl.emailOrder);
+router.post('/api/hold-order', ctrl.holdOrder);
 router.post('/getuserpwdresetcode', ctrl.sendPasswordResetCode);
 router.post('/reset-user-password', ctrl.resetUserPassword);
 router.post('/verify-password', mw.isLoggedIn, mw.vefifyPassword);
@@ -132,6 +133,7 @@ router.post('/email/activate', mw.isLoggedIn, ctrl.activateEmail);
 router.post('/email/send-authcode', mw.isLoggedIn, ctrl.sendAuthCode);
 router.post('/rest-admin-pwd', mw.isLoggedIn, ctrl.restLocalAppAdminPwd);
 router.post('/apps/user-restriction', ctrl.userResctictions);
+
 // router.post('/api/upload/partys', function (req, res, next) { req.ebs = req.body, next() }, upload.single('file'), ctrl.importPartys);
 router.post('/api/import/partys', ctrl.importPartys)
 router.post('/api/upload/file', upload.single('file'), (req, res) => {

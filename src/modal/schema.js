@@ -35,6 +35,7 @@ module.exports = schema = {
   coupons: 'coupons',
   empsales: 'empsales',
   expense: 'expense',
+  holds: 'holds',
   hold: 'hold',
   holditems: 'holditems',
   rewards: 'rewards',

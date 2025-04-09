@@ -357,7 +357,20 @@ async function _empSales(id) {
     }
 }
 
-export async function _viewholds(id) {
+_unholdOrder(1)
+export async function _unholdOrder(id){
+    try {
+        // let div = document.getElementById(id); //log(div);
+        // if (jq(div).hasClass('d-none')) return;
+        let [data] = await queryData({ key: 'uholdOrder', values: [id]}); //log(data);
+        // let date = moment(data.dated).format('D-M-yyyy'); //log(date);
+
+    } catch (error) {
+        log(error);
+    }
+}
+
+export async function _viewholds_(id) {
     try {
         let div = document.getElementById(id); //log(div);
         if (jq(div).hasClass('d-none')) return;
@@ -399,6 +412,51 @@ export async function _viewholds(id) {
                 loadOrderDetails();
                 refreshOrder();
                 jq('div.ihold-panel').addClass('d-none');
+            })
+        })
+    } catch (error) {
+        log(error);
+    }
+}
+
+export async function _viewholds(id) {
+    try {
+        let div = document.getElementById(id); //log(div);
+        if (jq(div).hasClass('d-none')) return;
+        let data = await queryData({ key: 'holdsList'}); //log(list);
+
+        let tbl = await setTable({ data, colsToHide: ['id'], colsToRight: ['dated'], serial: false, });
+        jq(div).html('').html(tbl.table);
+        jq(tbl.tbody).find(`[data-key="party"]`).each(function (e) {
+            let party = this.textContent; //log(party);
+            if (party == '') jq(this).text('N/A');
+        })
+        jq(tbl.tbody).find('tr').addClass('role-btn').each(function (i, e) {
+            jq(e).click(async function () {
+                let od = getOrderData();
+                if (od.items.length) {
+                    let cnf = confirm('All Existing Data will be Cleared? are you sure want to Unhold?');
+                    if (!cnf) return;
+                }
+                let id = jq(this).closest('tr').find(`[data-key="id"]`).text();
+                // let [data] = await db.get(id);
+                let [{data}] = await queryData({ key: 'uholdOrder', values: [id]});
+                let pymts = data.pymts;
+                let items = data.items;
+                let payments = data.payments;
+                delete data.pymts;
+                delete data.items;
+                delete data.payments;
+                data.order_date = getSqlDate();
+                updateDetails(data);
+                updateDetails({ pymts: [], items: [] });
+                updateDetails({ pymts, items });
+                // updateDetails({ items });
+                jq(this).closest('tr').remove();
+                loadOrderDetails();
+                refreshOrder();
+                jq('div.ihold-panel').addClass('d-none');
+                queryData({ key: 'delHoldById', values: [id]});
             })
         })
     } catch (error) {

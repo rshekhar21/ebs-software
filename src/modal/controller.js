@@ -41,6 +41,7 @@ function importPartys(req, res) { action(req, res, modal.importPartys) }
 function searchStock(req, res) { action(req, res, modal.searchStock) }
 function getVersion(req, res) { action(req, res, modal.getVersion) }
 function shortUrl(req, res) { action(req, res, modal.shortUrl) }
+function holdOrder(req, res) { action(req, res, modal.holdOrder) }
 
 module.exports = {
     listApps,
@@ -72,4 +73,5 @@ module.exports = {
     searchStock,
     getVersion,
     shortUrl,
+    holdOrder,
 };

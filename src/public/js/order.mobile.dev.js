@@ -192,7 +192,7 @@ function loadItems(items) {
         if (items.length) {
             // jq('button.ebs-add-items').removeClass('mx-auto').addClass('ms-auto w-50')
             jq('button.btn-next').removeClass('d-none')
-            log('items', items);
+            // log('items', items);
         }
     } catch (error) {
         log(error);

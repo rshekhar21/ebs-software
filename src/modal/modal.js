@@ -1149,6 +1149,21 @@ async function shortUrl(req) {
 Modals.shortUrl = shortUrl;
 
 
+async function holdOrder(req) {
+    try {
+        let { ssid, party, data } = req.body;
+        if (!ssid) throw 'Invalid Request!';
+        let sql = "INSERT INTO holds (`party`, `data`) VALUES (?,?);"
+        let res = await queryUserDb(sql, [party, data]);
+        return res;
+    } catch (error) {
+        log(error);
+        return error;
+    }
+
+}
+Modals.holdOrder = holdOrder;
+
 async function testfunction(cnstr) {
     try {
         let sql = 'select max(id) id from party;'; //log(sql);
@@ -1295,6 +1310,8 @@ async function uploadSolds() {
         log(error);
     }
 }
+
+
 
 // uploadOrders();
 // uploadSolds();

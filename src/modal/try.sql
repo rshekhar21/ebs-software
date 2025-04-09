@@ -1,5 +1,16 @@
--- Active: 1728019028452@@ebsserver.in@3306@gbxecgjdbxwi
+-- Active: 1728019028452@@ebsserver.in@3306@db_demo
 SELECT * FROM orders;
+
+show tables;
+desc test;
+drop table if exists test;
+
+create Table if not exists `holds`(`id` INT AUTO_INCREMENT PRIMARY KEY, `party` VARCHAR(255), `dated` DATE DEFAULT (CURRENT_DATE), `data` JSON);
+
+INSERT INTO test(`data`) values('{ "name": "raj", "contact": "9910075648"}');
+
+SELECT * FROM `holds` WHERE id = 1;
+
 
 SELECT * FROM payments;
 

@@ -1,4 +1,4 @@
-import { _viewHistory, _viewholds, leftPanel, rightPanel } from "./_components/panels.js";
+import { _unholdOrder, _viewHistory, _viewholds, leftPanel, rightPanel } from "./_components/panels.js";
 import help, { advanceQuery, changeCase, convertToDecimal, createEL, createStuff, createTable, doc, errorMsg, fd2json, fd2obj, generateUniqueAlphaCode, getData, getSettings, isRrestricted, jq, log, parseCurrency, parseData, parseDecimal, parseLocal, parseLocals, parseNumber, popConfirm, popListInline, postData, queryData, removeDecimal, roundOff, separateDecimal, setTable, showError, showTable, Storage, storeId, sumArray, xdb } from "./help.js";
 import { createEditParty, _loadSrchstock, numerifyObject, _scanProduct, _searchProduct, salesChart, _refreshSalesChart, holdOrder, _searchParty, _scanEAN } from "./module.js";
 import { getOrderData, hardresetData, loadBankModes, loadBanks, loadBillNumber, loadOrderDetails, loadPartyDetails, loadPymtMethods, quickData, refreshOrder, resetOrder, saveOrder, setItems, setTaxOnAllItems, showOrderDetails, updateDetails, updateOrder } from "./order.config.js";
@@ -15,6 +15,7 @@ doc.addEventListener('keydown', function (e) {
         e.preventDefault();
         // execute();
     }
+
     if (e.altKey && e.key.toLowerCase() == 'c' && url === page) {
         let modal = jq('#ebsModal').is(':visible');
         if (!modal) jq('div.calculator').toggleClass('d-none'); jq('#equation').focus()
@@ -1144,9 +1145,10 @@ doc.addEventListener('DOMContentLoaded', () => {
         let data = await db.all();
         if (!data.length) return;
         jq('div.ihold-panel').removeClass('d-none');
-        _viewholds('inv-hold');
-
+        _viewholds('inv-hold');     
+        // _unholdOrder(1);   
     })
+
 
     let lastWin = null;
     jq('a.view-last').click(async function () {
@@ -1250,6 +1252,16 @@ doc.addEventListener('DOMContentLoaded', () => {
         updateDetails({ items: newItems });
         showOrderDetails()
     });
+
+    jq('a.refresh-emp').click(async function () {
+        try {
+            let db = new xdb(storeId, 'employees');
+            let res = await queryData({ key: 'employee' });
+            await db.put(res);
+        } catch (error) {
+            log(error);
+        }
+    })
 
     jq('a.show-empid').click(function () {
         jq('#order-table').find(`[data-key="emp_id"]`).toggleClass('d-none');

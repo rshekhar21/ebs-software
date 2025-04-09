@@ -73,7 +73,7 @@ export async function createEditParty({ quick = false, update_id = null, callbac
                 if (window.location.pathname == '/apps/app/orders/create') {
                     if (update_id) return;
                     let [rs] = await queryData({ key: 'getpartyby_maxid' });
-                    updateDetails({ purchase: { sup_id: rs.party_id, supplier: rs.party_name } });                    
+                    updateDetails({ purchase: { sup_id: rs.party_id, supplier: rs.party_name } });
                 }
             },
         });
@@ -100,8 +100,8 @@ export async function createEditParty({ quick = false, update_id = null, callbac
 
 export async function createEditSupplier({ update_id = null, callback = false, applyCallback = false, focus = null, hideFields = [] }) {
     try {
-        let table = 'supplier'; 
-        let title = update_id? 'Edit Supplier': 'Create Supplier';
+        let table = 'supplier';
+        let title = update_id ? 'Edit Supplier' : 'Create Supplier';
 
         let res = await createStuff({
             title, table,
@@ -112,7 +112,7 @@ export async function createEditSupplier({ update_id = null, callback = false, a
             applyButtonText: update_id ? 'Update' : 'Apply',
         }); log(res)
         let form = res.obj.form;
-        if(!form) return;
+        if (!form) return;
         jq(form).find('#contact').blur(async function () {
             try {
                 let contact = this.value;
@@ -1147,7 +1147,7 @@ export function setStockBody(mb) {
     jq(mb).find('div.hsn, div.unit').appendTo(jq(mb).find('div.hsn-unit'));
 }
 
-export async function holdOrder() {
+export async function holdOrder_() {
     try {
         let data = getOrderData();
         let items = data.items;
@@ -1171,6 +1171,27 @@ export async function holdOrder() {
         log(error);
     }
 }
+
+export async function holdOrder() {
+    try {
+        let data = getOrderData();
+        if (!data.items.length) return;
+        delete data.enableScan;
+        delete data.itemsMode;
+        delete data.settigns;
+        let party = data.party_name;
+        let hd = JSON.stringify(data); //log(hd);
+        let res = await postData({ url: '/api/hold-order', data: { party, data: hd } });
+        if(res.data.insertId){
+            resetOrder();
+            refreshOrder();
+        }
+    } catch (error) {
+        log(error);
+    }
+}
+
+
 
 export function setEditStockBody(mb) {
     jq(mb).find('div.product').after('<div class="d-flex jcb aic gap-3 odd pcode-size"></div>');

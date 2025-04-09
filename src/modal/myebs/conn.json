@@ -1,9 +1,9 @@
 {
     "host": "ebsserver.in",
     "port": "3306",
-    "user": "cuztpotfucrj",
-    "password": "0caeccdef8409581dd5e236ecae70a31",
-    "database": "gbxecgjdbxwi",
+    "user": "sa_demo",
+    "password": "269608Raj$",
+    "database": "db_demo",
     "waitForConnections": true,
     "connectionLimit": 10,
     "queueLimit": 0,

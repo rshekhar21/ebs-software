@@ -502,7 +502,7 @@ function calculateTotal() {
             const addldisc = itemsArr.map(item => item.addl_disc).reduce((prev, curr) => prev + curr, 0);
             const pymt = pymtsArr.map(pymt => pymt.amount).reduce((prev, curr) => prev + curr, 0); //log(pymt);
 
-            let disc = addldisc || discount; log(disc);
+            let disc = addldisc || discount;
 
             if (discount && !disc_percent) disc = discount;
 
