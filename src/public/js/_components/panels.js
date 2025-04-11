@@ -1,7 +1,7 @@
-import help, { advanceQuery, calculateTotalTaxByGst, copyToClipboard, createEL, createNewPage, createStuff, createTable, doc, errorMsg, fd2obj, fetchTable, generateUniqueAlphaCode, getClientType, getFinYear, getForm, getSettings, getSqlDate, isAdmin, isRrestricted, jq, log, parseColumn, parseCurrency, parseData, parseLocals, parseNumber, popListInline, postData, queryData, setTable, shareOrder, showCalender, showErrors, showModal, showSuccess, showTable, storeId, viewOrder, viewOrderA4, xdb } from "../help.js";
+import help, { advanceQuery, calculateTotalTaxByGst, copyToClipboard, createEL, createNewPage, createStuff, createTable, doc, errorMsg, fd2obj, fetchTable, generateUniqueAlphaCode, getClientType, getFinYear, getForm, getSettings, getSqlDate, isAdmin, isRestricted, jq, log, parseColumn, parseCurrency, parseData, parseLocals, parseNumber, popListInline, postData, queryData, setTable, shareOrder, showCalender, showErrors, showModal, showSuccess, showTable, storeId, titleCase, viewOrder, viewOrderA4, xdb } from "../help.js";
 import { loadSettings } from "./settings.js";
 import { icons } from "../svgs.js";
-import { _addPartyPymt, _delStock, _loadSrchstock, addPurchPymt, createStock, editParty, numerifyObject, purchEntry, sendOrderEmail, setEditStockBody } from "../module.js";
+import { _addPartyPymt, _delStock, _loadSrchstock, _viewOrderDetails, addPurchPymt, createStock, editParty, numerifyObject, purchEntry, sendOrderEmail, setEditStockBody } from "../module.js";
 import { getOrderData, hardresetData, loadOrderDetails, loadPartyDetails, quickData, refreshOrder, resetOrder, setItems, showOrderDetails, updateDetails } from "../order.config.js";
 import { setupIndexDB } from "../_localdb.js";
 
@@ -124,7 +124,7 @@ export function leftPanel() {
             jq(div).addClass(`d-xl-flex jcs text-center p-1 aic role-btn fw-300 ${menu?.class ? menu.class : ''} ${menu.id}`).append(menu.icon, link);
             let divId = generateUniqueAlphaCode(8);
             jq(div).click(async function () {
-                if (menu.rc) { if (await isRrestricted(menu.rc)) return }
+                if (menu.rc) { if (await isRestricted(menu.rc)) return }
                 const { pin_purch = null } = getOrderData();
                 if (pin_purch) { return; }
                 if (jq(this).hasClass('menu-item')) {
@@ -357,7 +357,6 @@ async function _empSales(id) {
     }
 }
 
-_unholdOrder(1)
 export async function _unholdOrder(id){
     try {
         // let div = document.getElementById(id); //log(div);
@@ -548,7 +547,7 @@ async function _viewPurch() {
 
                     jq('#editPOrder').click(async function () {
                         try {
-                            if (await isRrestricted('tfjlDGeL')) return;
+                            if (await isRestricted('tfjlDGeL')) return;
                             let [[data], items, pymts] = await Promise.all([
                                 await queryData({ key: 'editPurch', values: [id] }),
                                 await queryData({ key: 'purchasedStock', values: [id] }),
@@ -575,7 +574,7 @@ async function _viewPurch() {
                     })
 
                     jq('#deletePOrder').click(async function () {
-                        if (await isRrestricted('eVyiaFnt')) return;
+                        if (await isRestricted('eVyiaFnt')) return;
                         let cnf = confirm('Are you sure want to delete this Purchaes?'); //log(cnf);
                         if (cnf) {
                             await advanceQuery({ key: 'delPurch', values: [id] });
@@ -885,7 +884,7 @@ async function _viewPartys() {
                     });
 
                     jq('#editParty').click(async function () {
-                        if (await isRrestricted('PUgTVuft')) return;
+                        if (await isRestricted('PUgTVuft')) return;
                         editParty(id, false,
                             async () => {
                                 let [party] = await queryData({ key: 'getpartyByid', values: [id] }); //log(party);
@@ -897,7 +896,7 @@ async function _viewPartys() {
                     })
 
                     jq('#delParty').click(async function () {
-                        if (await isRrestricted('PUgTVuft')) return;
+                        if (await isRestricted('PUgTVuft')) return;
                         let [x] = await db.get(id); log(x);
                         if (x.billing || x.payments) {
                             showErrors('Customers with No Billing/Payments can be Deleted!');
@@ -1403,6 +1402,7 @@ async function _viewClosing() {
                                         { key: 'View', id: 'viewOrder' },
                                         { key: 'Print Order', id: 'viewPrint' },
                                         { key: 'View Articles', id: 'viewItems' },
+                                        { key: 'View OrderDetails', id: 'orderDetails' },
                                         { key: 'Add Payment', id: 'addPymts' },
                                         { key: 'Delete', id: 'delOrder' },
                                         { key: 'Cancel' }
@@ -1452,6 +1452,10 @@ async function _viewClosing() {
                                         colsToTotal: ['qty', 'gross'],
                                     })
                                 });
+
+                                jq('#orderDetails').click(function(){
+                                    _viewOrderDetails(id);
+                                })
                             } catch (error) {
                                 log(error);
                             }
@@ -1555,6 +1559,7 @@ async function orderSubmenu(el, i, data, cb = null) {
             { key: 'Print Order', id: 'viewPrint' },
             { key: 'Email Order', id: 'emailOrder' },
             { key: 'View Articles', id: 'viewSold' },
+            { key: 'Order Details', id: 'orderDetails' },
             { key: 'Add Payment', id: 'addPymts' },
             { key: 'View Payments', id: 'viewPymts' },
             { key: 'Add/Edit Party', id: 'addParty' },
@@ -1598,7 +1603,7 @@ async function orderSubmenu(el, i, data, cb = null) {
     })
 
     jq('#editOrder').click(async function () {
-        if (await isRrestricted('fiSvlNab')) return;
+        if (await isRestricted('fiSvlNab')) return;
         let db = new xdb(storeId);
         let [data] = await db.getColumns({
             table: 'orders',
@@ -1646,7 +1651,7 @@ async function orderSubmenu(el, i, data, cb = null) {
 
     jq('#delOrder').click(async function () {
         try {
-            if (await isRrestricted('jFxGDeft')) return;
+            if (await isRestricted('jFxGDeft')) return;
             let cnf = confirm('Are you sure want to delete this order?');
             if (!cnf) return;
             let db = new xdb(storeId);
@@ -1708,7 +1713,7 @@ async function orderSubmenu(el, i, data, cb = null) {
 
     jq('#exportJson').click(async function () {
         try {
-            if (await isRrestricted('fiSvlNab')) return;
+            if (await isRestricted('fiSvlNab')) return;
             let db = new xdb(storeId);
             let items = await db.getColumns({
                 table: 'sold',
@@ -1733,7 +1738,7 @@ async function orderSubmenu(el, i, data, cb = null) {
 
     jq('#editDate').click(async function () {
         try {
-            if (await isRrestricted('ybaUOclE')) return;
+            if (await isRestricted('ybaUOclE')) return;
 
             let cal = showCalender().modal;
 
@@ -1768,7 +1773,7 @@ async function orderSubmenu(el, i, data, cb = null) {
 
     jq('#editInv').click(async function () {
         try {
-            if (await isRrestricted('fiSvlNab')) return;
+            if (await isRestricted('fiSvlNab')) return;
             createStuff({
                 title: 'Edit Inv Number',
                 table: 'editInvNo',
@@ -1789,7 +1794,7 @@ async function orderSubmenu(el, i, data, cb = null) {
 
     jq('#addParty').click(async function () {
         try {
-            if (await isRrestricted('fiSvlNab')) return;
+            if (await isRestricted('fiSvlNab')) return;
             createStuff({
                 title: 'Add / Edit Party',
                 table: 'addeditparty',
@@ -1814,5 +1819,9 @@ async function orderSubmenu(el, i, data, cb = null) {
 
     jq('#emailOrder').click(async function () {
         sendOrderEmail(id);
+    })
+
+    jq('#orderDetails').click(async function(){
+        _viewOrderDetails(id);
     })
 }

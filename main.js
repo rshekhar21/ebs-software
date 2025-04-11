@@ -5,16 +5,18 @@ const path = require('node:path');
 const fs = require('fs-extra');
 const os = require('os');
 const { autoUpdater } = require('electron-updater');
-const elog = require('electron-log');
-
 const lock = app.requestSingleInstanceLock();
 if (!lock) { app.quit(); return; }
+const elog = require('electron-log');
+elog.transports.file.resolvePathFn = () => path.resolve('C:/Users/RAJ/Desktop/NodeJS Apps/ebs-software', 'main.log');
 
 
 require(path.join(__dirname, 'server'));
 
 let win;
 let splashWindow;
+let updateAvailable = false;
+autoUpdater.autoDownload = false;
 
 function createSplashScreen() {
     splashWindow = new BrowserWindow({
@@ -61,7 +63,7 @@ function createWindow() {
         minHeight: 600,
         autoHideMenuBar: true,
         center: true,
-        title: `EBS - v${appVersion}`,
+        title: `EBS - ${appVersion}`,
         show: false,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
@@ -83,6 +85,7 @@ function createWindow() {
 app.whenReady().then(() => {
     createSplashScreen();
     createWindow();
+    autoUpdater.checkForUpdates();
 
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {
@@ -102,13 +105,20 @@ app.on('window-all-closed', () => {
 
 console.log("Electron is using Node.js version:", process.version);
 
+autoUpdater.on('error', (err) => {
+    elog.error('Error in auto-updater:', err);
+    win.webContents.send('update-error', err.message);
+});
+
 // Electron AutoUpdater Events (Fixed `mainWindow` Reference)
 autoUpdater.on('update-available', () => {
-    log.info('Update available.');
-    win.webContents.send('update-available');
+    elog.info('Update available.');
+    updateAvailable = true;
+    if (win) win.webContents.send('update-available');
 });
 
 autoUpdater.on('download-progress', (progressObj) => {
+    elog.info('Update progress.', progressObj.percent);
     win.webContents.send('download-progress', progressObj.percent);
 });
 
@@ -116,9 +126,10 @@ autoUpdater.on('update-downloaded', () => {
     win.webContents.send('update-downloaded');
 });
 
-autoUpdater.on('error', (err) => {
-    log.error('Error in auto-updater:', err);
-    win.webContents.send('update-error', err.message);
+ipcMain.on('check-if-update-already-available', (event) => {
+    if (updateAvailable) {
+        event.sender.send('update-available');
+    }
 });
 
 ipcMain.on('download-update', () => {

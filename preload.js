@@ -50,6 +50,12 @@ const api = {
     loadProfile: (data) => ipcRenderer.invoke('load-profile', data),
     ebsstore: (operation, ...args) => ipcRenderer.invoke('ebs-store', operation, ...args),
     quit: () => ipcRenderer.invoke('quit-app'),
+    checkIfUpdateAvailable: () => ipcRenderer.send('check-if-update-already-available'),
+    onUpdateAvailable: (callback) => ipcRenderer.on('update-available', callback),
+    onDownloadProgress: (callback) => ipcRenderer.on('download-progress', (event, percent) => callback(percent)),
+    onUpdateDownloaded: (callback) => ipcRenderer.on('update-downloaded', callback),
+    requestDownload: () => ipcRenderer.send('download-update'),
+    requestInstall: () => ipcRenderer.send('install-update'),
     mystore: async (operation, ...args) => {
         try {
             return await ipcRenderer.invoke('ebs-store', operation, ...args);

@@ -1,5 +1,5 @@
 import { setupIndexDB } from "./_localdb.js";
-import help, { doc, jq, log, clickModal, confirmMsg, advanceQuery, postData, queryData, createStuff, getActiveEntity, parseNumber, fetchTable, parseData, createTable, getData, getFinYear, xdb, myIndexDBName, storeId, createEL, fd2json, getSettings, showErrors, isRrestricted, errorMsg, sumArray } from "./help.js";
+import help, { doc, jq, log, clickModal, confirmMsg, advanceQuery, postData, queryData, createStuff, getActiveEntity, parseNumber, fetchTable, parseData, createTable, getData, getFinYear, xdb, myIndexDBName, storeId, createEL, fd2json, getSettings, showErrors, isRestricted, errorMsg, sumArray, showModal, titleCase } from "./help.js";
 import { getOrderData, loadPartyDetails, refreshOrder, resetOrder, updateDetails } from "./order.config.js";
 
 const modules = {}
@@ -136,7 +136,7 @@ export async function createEditSupplier({ update_id = null, callback = false, a
 
 export async function editPayment(id, cb = false) {
     try {
-        if (await isRrestricted('LChUNnYK')) return;
+        if (await isRestricted('LChUNnYK')) return;
         const mb = help.showModal({ title: 'Edit Pyament', applyButtonText: 'Update' }).modal;
         let { form, res } = await help.getForm({ table: 'editPymt', qryobj: { key: 'editPymt', values: [id] } });
         jq(mb).find('div.modal-body').html(form);
@@ -174,7 +174,7 @@ modules.editPayment = editPayment;
 
 export async function deletePayment(id, cb = false) {
     try {
-        if (await isRrestricted('WKPOZyqL')) return;
+        if (await isRestricted('WKPOZyqL')) return;
         let confirm = confirmMsg('Are you sure want to delete this Payment?');
         if (!confirm) return;
         await help.advanceQuery({ key: 'deletePymt', values: [id] });
@@ -1182,7 +1182,7 @@ export async function holdOrder() {
         let party = data.party_name;
         let hd = JSON.stringify(data); //log(hd);
         let res = await postData({ url: '/api/hold-order', data: { party, data: hd } });
-        if(res.data.insertId){
+        if (res.data.insertId) {
             resetOrder();
             refreshOrder();
         }
@@ -1278,6 +1278,28 @@ export async function addPurchPymt(id, balance) {
             const totalAmount = cashValue + bankValue;
             amountInput.value = parseNumber(totalAmount); // Format to two decimal places
         }
+    } catch (error) {
+        log(error);
+    }
+}
+
+export async function _viewOrderDetails(id) {
+    try {
+        let [res] = await queryData({ key: 'orderdetailsbyid', values: [id] });
+        let mb = showModal({
+            title: 'Order Details',
+            modalSize: 'modal-md',
+            showFooter: false
+        }).modal; //log(mb);
+        let ul = jq('<ul></ul>').addClass('list-group');
+        for (let k in res) {
+            let key = jq('<span></span>').addClass('fw-500').text(titleCase(k));
+            let value = jq('<span></span>').addClass('fw-300').text(res[k]);
+            let li = jq('<li></li>').addClass('list-group-item d-flex jcb aic').append(key, value);
+            jq(ul).append(li);
+        }
+        jq(mb).find(`div.modal-body`).html(ul);
+        new bootstrap.Modal(mb).show();
     } catch (error) {
         log(error);
     }

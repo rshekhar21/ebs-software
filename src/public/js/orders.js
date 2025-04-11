@@ -1,5 +1,5 @@
 import { setupIndexDB } from './_localdb.js';
-import help, { jq, log, doc, fetchTable, parseNumber, pageHead, popListInline, displayDatatable, showCalender, advanceQuery, fd2json, sumArray, showModal, getForm, showTable, parseData, createTable, createEL, createStuff, xdb, storeId, getActiveEntity, encrypt, postData, showSuccess, getSettings, queryData, isRrestricted, getFinYear, shareOrder, viewOrder, } from './help.js';
+import help, { jq, log, doc, fetchTable, parseNumber, pageHead, popListInline, displayDatatable, showCalender, advanceQuery, fd2json, sumArray, showModal, getForm, showTable, parseData, createTable, createEL, createStuff, xdb, storeId, getActiveEntity, encrypt, postData, showSuccess, getSettings, queryData, isRestricted, getFinYear, shareOrder, viewOrder, } from './help.js';
 import { _addPartyPymt, sendOrderEmail } from './module.js';
 
 doc.addEventListener('DOMContentLoaded', function () {
@@ -207,7 +207,7 @@ function setData(data) {
 
             jq('#editDate').click(async function () {
                 try {
-                    if (await isRrestricted('ybaUOclE')) return;
+                    if (await isRestricted('ybaUOclE')) return;
 
                     let cal = showCalender().modal;
 

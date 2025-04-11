@@ -47,7 +47,7 @@ const numberInputs = document.querySelectorAll('input[type="number"]');
 help.roundOff = num => Math.round((num + Number.EPSILON) * 100) / 100;
 help.back = back;
 help.user_id = user_id;
-doc.title = 'EBS';
+// doc.title = 'EBS';
 help.myIndexDBName = myIndexDBName;
 
 doc.qs = function (selector) { return this.querySelector(selector) };
@@ -112,9 +112,61 @@ export const Cookie = {
 
 export const storeId = Cookie.get('store_id');
 
-document.addEventListener('DOMContentLoaded', (event) => {
+function initializeSpecialInputs() {
+    const specialInputs = document.querySelectorAll('.special-input');
 
-});
+    specialInputs.forEach(input => {
+        // Check if the input already has a sibling label
+        if (!input.nextElementSibling || !input.nextElementSibling.classList.contains('special-input-label')) {
+            // Create the label element
+            const labelText = input.getAttribute('data-label') || input.getAttribute('placeholder') || 'Label';
+            const label = document.createElement('label');
+            label.classList.add('special-input-label');
+            label.textContent = labelText;
+            label.setAttribute('for', input.id || input.name); // Associate label with input
+
+            // Wrap the input and label in a container
+            const container = document.createElement('div');
+            container.classList.add('special-input-container');
+            input.parentNode.insertBefore(container, input);
+            container.appendChild(input);
+            container.appendChild(label);
+
+            // Clear the placeholder to avoid it overlapping the floating label
+            input.placeholder = '';
+        }
+
+        const labelElement = input.nextElementSibling;
+
+        // Handle initial values on page load
+        if (input.value) {
+            labelElement.classList.add('focused'); // You can add a class for more specific styling if needed
+        } else {
+            labelElement.classList.remove('focused');
+        }
+
+        // Add event listeners for focus and blur (though CSS mostly handles this now)
+        input.addEventListener('focus', () => {
+            labelElement.classList.add('focused');
+        });
+
+        input.addEventListener('blur', () => {
+            if (!input.value) {
+                labelElement.classList.remove('focused');
+            }
+        });
+
+        input.addEventListener('input', () => {
+            if (input.value) {
+                labelElement.classList.add('focused');
+            } else {
+                labelElement.classList.remove('focused');
+            }
+        });
+    });
+}
+
+initializeSpecialInputs();
 
 // Example starter JavaScript for disabling form submissions if there are invalid fields
 // (() => {
@@ -2624,7 +2676,7 @@ function fallbackCopyToClipboard(text) {
     document.body.removeChild(textArea);
 }
 
-export async function isRrestricted(rc) {
+export async function isRestricted(rc) {
     let admin = await isAdmin();
     if (admin) {
         return false;
@@ -2686,12 +2738,13 @@ const updteAvavilable = `
 export function updateApplication() {
     try {
 
-        const newVersionDiv = document.querySelector('.new-version');
+        const newVersionDiv = document.querySelector('.new-version'); 
         const downloadButton = document.querySelector('.download');
-        const downloadProgress = document.querySelector('.progress');
+        const downloadProgress = document.querySelector('.progress'); log(newVersionDiv)
 
         // Show the update available notification
         window?.app?.onUpdateAvailable(() => {
+            log('yes');
             newVersionDiv.classList.remove('d-none');
         });
 
@@ -2886,3 +2939,8 @@ export function changeCase(arr, caseType) {
         return newItem;
     });
 }
+
+
+
+// Call the function when the DOM is loaded
+//   document.addEventListener('DOMContentLoaded', initializeSpecialInputs);

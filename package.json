@@ -1,16 +1,16 @@
 {
   "name": "myebs-app",
-  "version": "1.0.1",
+  "version": "1.0.11",
   "main": "main.js",
   "scripts": {
     "start": "electron --no-sandbox .",
     "dev": "nodemon server.js",
     "build": "electron-builder",
-    "release": "electron-builder --publish=always"
+    "dist": "electron-builder --publish=always"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/rshekhar21/ebs_software"
+    "url": "https://github.com/rshekhar21/ebs-software"
   },
   "build": {
     "appId": "com.ebs-software.app",
@@ -48,10 +48,10 @@
     ]
   },
   "keywords": [],
-  "author": "",
+  "author": "Raj Shekhar Singh",
   "license": "ISC",
   "type": "commonjs",
-  "description": "",
+  "description": "Easy Billing System Desktop Application",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.758.0",
     "axios": "^1.8.1",

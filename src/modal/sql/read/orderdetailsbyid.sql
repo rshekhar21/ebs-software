@@ -1,6 +1,5 @@
--- Active: 1728019028452@@ebsserver.in@3306@db_demo
 SELECT 
-    DATE_FORMAT(`order_date`, '%d-%m-%Y') as `dated`, 
+    DATE_FORMAT(o.`timestamp`, '%d-%m-%Y - %r') as `dated`,
     o.`order_type`,
     p.`party_name`,
     p.`party_id`,
@@ -29,9 +28,7 @@ SELECT
     o.`location`,
     o.`notes`,
     o.`order_id`,
-    u.`username` as `biller`,
-    DATE_FORMAT(o.`timestamp`, '%d-%m-%Y - %r') as `timestamp`,
-    DATE_FORMAT(o.`timestamp`, '%r') as `time`
+    u.`username` as `biller`
 FROM `orders` o 
 LEFT JOIN (
     SELECT `order_id`, count(`order_id`) `pymt_entries`, sum(`amount`) `payment`, sum(`cash`) as `cash`, sum(`bank`) as `bank` FROM `pymtfyear` GROUP BY order_id
@@ -46,4 +43,5 @@ JOIN (
     FROM `sold` GROUP BY `order_id`
 ) l ON l.`order_id` = o.`id`
 JOIN `users` u ON u.`id` = o.`user_id`
+WHERE o.`id` = ?
 ORDER BY o.`order_date` DESC;

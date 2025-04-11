@@ -1,5 +1,5 @@
 import { _unholdOrder, _viewHistory, _viewholds, leftPanel, rightPanel } from "./_components/panels.js";
-import help, { advanceQuery, changeCase, convertToDecimal, createEL, createStuff, createTable, doc, errorMsg, fd2json, fd2obj, generateUniqueAlphaCode, getData, getSettings, isRrestricted, jq, log, parseCurrency, parseData, parseDecimal, parseLocal, parseLocals, parseNumber, popConfirm, popListInline, postData, queryData, removeDecimal, roundOff, separateDecimal, setTable, showError, showTable, Storage, storeId, sumArray, xdb } from "./help.js";
+import help, { advanceQuery, changeCase, convertToDecimal, createEL, createStuff, createTable, doc, errorMsg, fd2json, fd2obj, generateUniqueAlphaCode, getData, getSettings, getSqlDate, isRestricted, jq, log, parseCurrency, parseData, parseDecimal, parseLocal, parseLocals, parseNumber, popConfirm, popListInline, postData, queryData, removeDecimal, roundOff, separateDecimal, setTable, showError, showTable, Storage, storeId, sumArray, xdb } from "./help.js";
 import { createEditParty, _loadSrchstock, numerifyObject, _scanProduct, _searchProduct, salesChart, _refreshSalesChart, holdOrder, _searchParty, _scanEAN } from "./module.js";
 import { getOrderData, hardresetData, loadBankModes, loadBanks, loadBillNumber, loadOrderDetails, loadPartyDetails, loadPymtMethods, quickData, refreshOrder, resetOrder, saveOrder, setItems, setTaxOnAllItems, showOrderDetails, updateDetails, updateOrder } from "./order.config.js";
 
@@ -122,9 +122,11 @@ doc.addEventListener('DOMContentLoaded', () => {
     // jq('#addNewParty').hover(function () { jq(this).find('svg').prop('fill', '#ffff'); });
     jq('span.show-party-details').click(function () { $('div.party-data').toggleClass('d-none'); })
 
-    jq('#setOrderDate').on('change', function (e) {
-        updateDetails({ order_date: this.value })
-    })
+    jq('#setOrderDate').on('change', async function () {
+        const date = getSqlDate();
+        if (date !== this.value && await isRestricted('ybaUOclE')) { jq(this).val(date); return; }
+        updateDetails({ order_date: this.value });
+    });
 
     $('#equation').keyup(function (e) {
         if (e.key == 'Escape') {
@@ -202,7 +204,7 @@ doc.addEventListener('DOMContentLoaded', () => {
     });
 
     jq('#manualEntry').click(async function () {
-        if (await isRrestricted('YhMtmjLe')) return;
+        if (await isRestricted('YhMtmjLe')) return;
         if (jq(this).is(':checked')) {
             jq('#addManually').parent('div').removeClass('d-none');
             updateDetails({ itemsMode: 'manual' });
@@ -595,7 +597,7 @@ doc.addEventListener('DOMContentLoaded', () => {
     discountInput.addEventListener('input', function () {
         if (percentCheckbox.checked) {
             const value = parseFloat(this.value);
-            if ( value < 0 || value > 100) {
+            if (value < 0 || value > 100) {
                 this.classList.add('is-invalid');
                 this.title = 'Percent can only range between 0 - 100';
             } else {
@@ -1083,7 +1085,7 @@ doc.addEventListener('DOMContentLoaded', () => {
     })
 
     jq('a.add-bank').click(async function () {
-        if (await isRrestricted('FnhxaHlT')) return;
+        if (await isRestricted('FnhxaHlT')) return;
         createStuff({
             title: 'Add New Bank',
             modalSize: 'modal-md',
@@ -1145,7 +1147,7 @@ doc.addEventListener('DOMContentLoaded', () => {
         let data = await db.all();
         if (!data.length) return;
         jq('div.ihold-panel').removeClass('d-none');
-        _viewholds('inv-hold');     
+        _viewholds('inv-hold');
         // _unholdOrder(1);   
     })
 

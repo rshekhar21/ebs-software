@@ -1,4 +1,4 @@
-import help, { advanceQuery, controlBtn, createEL, cuser, displayDatatable, doc, errorMsg, fd2json, fetchTable, getCookie, getForm, isAdmin, isRrestricted, jq, log, pageHead, popListInline, setTable, showModal } from "./help.js";
+import help, { advanceQuery, controlBtn, createEL, cuser, displayDatatable, doc, errorMsg, fd2json, fetchTable, getCookie, getForm, isAdmin, isRestricted, jq, log, pageHead, popListInline, setTable, showModal } from "./help.js";
 
 doc.addEventListener('DOMContentLoaded', function () {
     pageHead({ title: 'USERS', viewSearch: false, spinner: false });
@@ -7,7 +7,7 @@ doc.addEventListener('DOMContentLoaded', function () {
             {
                 title: 'Add New User',
                 cb: async () => {
-                    if (await isRrestricted('CrOdiKbL')) return;
+                    if (await isRestricted('CrOdiKbL')) return;
                     help.createStuff({
                         title: 'Add User',
                         modalSize: 'modal-md',
@@ -56,7 +56,7 @@ async function loadData() {
 
                 jq('#editRestictions').click(async function () {
                     try {
-                        if (await isRrestricted('CrOdiKbL')) return;
+                        if (await isRestricted('CrOdiKbL')) return;
                         let res = await advanceQuery({ key: 'userRestrictions', values: [id] });
                         if (!res.data.length) return;
                         let obj = res.data[0];  //log(obj);
@@ -127,7 +127,7 @@ async function loadData() {
                             alert('This User Cannot be Deleted!');
                             return;
                         }
-                        if (await isRrestricted('CrOdiKbL')) return;
+                        if (await isRestricted('CrOdiKbL')) return;
                         let cnf = confirm('Are you sure want to delete this user');
                         if (!cnf) return;
                         await advanceQuery({ key: 'delUser', values: [id] });

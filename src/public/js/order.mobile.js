@@ -1,6 +1,6 @@
 import './order.mobile.js';
 import { deleteIndexDB, initLocaldb } from "./_localdb.js";
-import help, { Storage, advanceQuery, create, createEL, createStuff, createTable, doc, fd2json, getSettings, isRrestricted, jq, log, parseData, parseNumber, queryData, setAppID, showCalender, showModal, storeId, sumArray, updatePopupPosition, xdb } from "./help.js";
+import help, { Storage, advanceQuery, create, createEL, createStuff, createTable, doc, fd2json, getSettings, isRestricted, jq, log, parseData, parseNumber, queryData, setAppID, showCalender, showModal, storeId, sumArray, updatePopupPosition, xdb } from "./help.js";
 import { _searchParty, createEditParty, editParty, numerifyObject } from "./module.js";
 import { resetOrder, setDate, updateDetails, loadOrderDetails, skuMode, srchMode, showBilledItems, loadBillNumber, setItems, getOrderData, showOrderDetails, executeOrder, saveOrder, refreshOrder, loadPartyDetails, loadBanks, loadBankModes, loadPymtMethods } from "./order.config.js";
 import './_purchase/purch.js';
@@ -11,7 +11,7 @@ doc.addEventListener('DOMContentLoaded', () => {
     // setImages();  
     jq('div.order-date').click(async function () {
         try {
-            if (await isRrestricted('ybaUOclE')) return;
+            if (await isRestricted('ybaUOclE')) return;
             let cal = showCalender().modal;
             jq(cal).modal('show');
             jq('#calendarModal').off('calendarUpdated').on('calendarUpdated', function () {

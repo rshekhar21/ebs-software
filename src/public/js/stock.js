@@ -1,5 +1,5 @@
 import { setupIndexDB } from './_localdb.js';
-import help, { jq, log, doc, fetchTable, parseNumber, parseLocal, advanceQuery, pageHead, displayDatatable, searchData, parseData, createStuff, createEL, myIndexDBName, xdb, storeId, createTable, showErrors, postData, getSettings, queryData, isRrestricted } from './help.js';
+import help, { jq, log, doc, fetchTable, parseNumber, parseLocal, advanceQuery, pageHead, displayDatatable, searchData, parseData, createStuff, createEL, myIndexDBName, xdb, storeId, createTable, showErrors, postData, getSettings, queryData, isRestricted } from './help.js';
 import { _delStock, _loadSrchstock, setEditStockBody } from './module.js';
 import temp from "./temps.js";
 
@@ -13,7 +13,7 @@ doc.addEventListener('DOMContentLoaded', function () {
             {
                 title: 'Add Stock',
                 cb: async () => {
-                    if (await isRrestricted('gibIeSGN')) return;
+                    if (await isRestricted('gibIeSGN')) return;
                     let res = await createStuff({
                         title: 'Add Stock',
                         table: 'stock',
@@ -266,7 +266,7 @@ function showData(data) {
 
                 jq('#editStock').click(async function () {
                     try {
-                        if (await isRrestricted('ChkBjNwf')) return;
+                        if (await isRestricted('ChkBjNwf')) return;
                         let db = new xdb(storeId, 'stock'); //log(id);
                         let [arr] = await db.getColumns({ key: id, indexes: ['id'], columns: ['id', 'purch_id'], limit: 1, });
                         let table = 'stock';
@@ -295,14 +295,14 @@ function showData(data) {
                 })
 
                 jq('#delete').click(async function () {
-                    if (await isRrestricted('BcmUCgFW')) return;
+                    if (await isRestricted('BcmUCgFW')) return;
                     let key = jq('#search').val();
                     _delStock(id, () => loadData(key));
                 })
 
                 jq('#classicSKU').click(async function () {
                     try {
-                        if (await isRrestricted('ChkBjNwf')) return;
+                        if (await isRestricted('ChkBjNwf')) return;
                         let cnf = confirm('Update to Classic SKU?');
                         if (!cnf) return;
                         let { data: res } = await postData({ url: '/api/set-classic-sku', data: { data: { id } } });
@@ -318,7 +318,7 @@ function showData(data) {
 
                 jq('#dynamciSKU').click(async function () {
                     try {
-                        if (await isRrestricted('ChkBjNwf')) return;
+                        if (await isRestricted('ChkBjNwf')) return;
                         let cnf = confirm('Update to Dynamic SKU?');
                         if (!cnf) return;
                         let { data: res } = await postData({ url: '/api/set-dynamic-sku', data: { data: { id } } });

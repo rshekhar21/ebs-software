@@ -1,6 +1,6 @@
 
 import { initLocaldb } from './_localdb.js';
-import { jq, log, doc, create, isRrestricted, quickData, controlBtn, Storage} from './help.js';
+import { jq, log, doc, create, isRestricted, quickData, controlBtn, Storage} from './help.js';
 import list from './home-list.js';
 import { icons } from './svgs.js';
 doc.addEventListener('DOMContentLoaded', function () {
@@ -65,7 +65,7 @@ async function loadMenuItems1(list) {
             }
 
             jq(card).click(async function () {
-                if (k.rc) { if (await isRrestricted(k.rc)) return; }
+                if (k.rc) { if (await isRestricted(k.rc)) return; }
                 if (version !== 'pro' && k.version === 'pro') return;
                 window.location.href = k.url;
             })
@@ -112,7 +112,7 @@ async function loadMenuItems(list) {
             card.click(async function () {
                 try {
                     // 7. Check for restrictions (if any)
-                    if (item.rc && await isRrestricted(item.rc)) {
+                    if (item.rc && await isRestricted(item.rc)) {
                         return;
                     }
 

@@ -1,4 +1,4 @@
-import help, { displayDatatable, doc, fd2json, fetchTable, getForm, isRrestricted, jq, log, pageHead, queryData, searchData } from "./help.js";
+import help, { displayDatatable, doc, fd2json, fetchTable, getForm, isRestricted, jq, log, pageHead, queryData, searchData } from "./help.js";
 
 doc.addEventListener('DOMContentLoaded', function () {
     pageHead({ title: 'EXPENSE' });
@@ -64,7 +64,7 @@ function showData(data) {
                 });
                 jq('#editExp').click(async function () {
                     try {
-                        if (await isRrestricted('nvWYRrLe')) return;
+                        if (await isRestricted('nvWYRrLe')) return;
                         let mb = help.showModal({ title: 'Exit Expense', applyButtonText: 'Update' }).modal;
                         let { form, res } = await help.getForm({ table: 'expense', qryobj: { key: 'editExpense', values: [id] } });
                         jq(mb).find('div.modal-body').html(form);
@@ -95,7 +95,7 @@ function showData(data) {
                 })
                 jq('#deleteExp').click(async function () {
                     try {
-                        if (await isRrestricted('yYMmqZwl')) return;
+                        if (await isRestricted('yYMmqZwl')) return;
                         let confirm = help.confirmMsg('Are you sure want to delete this Expense?');
                         if (!confirm) return;
                         await help.advanceQuery({ key: 'deleteExp', values: [id] });

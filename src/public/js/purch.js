@@ -1,5 +1,5 @@
 import { setupIndexDB } from './_localdb.js';
-import help, { jq, log, doc, fetchTable, pageHead, displayDatatable, searchData, parseData, createStuff, parseNumber, popListInline, advanceQuery, storeId, xdb, queryData, isRrestricted, showTable } from './help.js';
+import help, { jq, log, doc, fetchTable, pageHead, displayDatatable, searchData, parseData, createStuff, parseNumber, popListInline, advanceQuery, storeId, xdb, queryData, isRestricted, showTable } from './help.js';
 import { addPurchPymt } from './module.js';
 import { getOrderData, quickData, updateDetails } from './order.config.js';
 
@@ -11,7 +11,7 @@ doc.addEventListener('DOMContentLoaded', function () {
             {
                 title: 'New Entry',
                 cb: async () => {
-                    if (await isRrestricted('FROKLrJs')) return;
+                    if (await isRestricted('FROKLrJs')) return;
                     window.location.href = '/apps/app/orders/create'
                 }
             },

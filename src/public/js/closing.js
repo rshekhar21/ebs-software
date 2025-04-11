@@ -1,4 +1,4 @@
-import help, { addTableColumnsTotal, clickModal, createEL, createTable, doc, fetchTable, getSqlDate, isRrestricted, jq, log, pageHead, parseColumn, parseData, parseLocal, parseLocals, showCalender, showTable } from './help.js';
+import help, { addTableColumnsTotal, clickModal, createEL, createTable, doc, fetchTable, getSqlDate, isRestricted, jq, log, pageHead, parseColumn, parseData, parseLocal, parseLocals, showCalender, showTable } from './help.js';
 
 doc.addEventListener('DOMContentLoaded', function () {
     pageHead({ title: 'closing', viewSearch: false, spinner: false });
@@ -31,7 +31,7 @@ doc.addEventListener('DOMContentLoaded', function () {
 
     async function dateClosing() {
         try {
-            if (await isRrestricted('ybaUOclE')) return;
+            if (await isRestricted('ybaUOclE')) return;
             let cal = showCalender().modal;
             jq(cal).modal('show');
             jq('#calendarModal').off('calendarUpdated').on('calendarUpdated', function () {
