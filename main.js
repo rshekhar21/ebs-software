@@ -8,7 +8,7 @@ const { autoUpdater } = require('electron-updater');
 const lock = app.requestSingleInstanceLock();
 if (!lock) { app.quit(); return; }
 const elog = require('electron-log');
-elog.transports.file.resolvePathFn = () => path.resolve('C:/Users/RAJ/Desktop/NodeJS Apps/ebs-software', 'main.log');
+// elog.transports.file.resolvePathFn = () => path.resolve('C:/Users/RAJ/Desktop/NodeJS Apps/ebs-software', 'main.log');
 
 
 require(path.join(__dirname, 'server'));

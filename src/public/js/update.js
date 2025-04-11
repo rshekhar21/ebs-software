@@ -13,9 +13,7 @@ function updateApplication() {
 
         // Show the update available notification
         window?.app?.onUpdateAvailable(() => {
-            console.log('update available');
             jq('div.new-version').removeClass('d-none');
-            // newVersionDiv.classList.remove('d-none');
         });
 
         // Handle download button click
