@@ -1,0 +1,223 @@
+<?-include('../_inc/start.ejs') ?>
+<!-- show status -->
+<div class="container d-flex aic status vh-50">
+    <div class="spinner-border text-primary mx-auto" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
+
+<div class="container-fluid py-4 view-order bg-white d-none" style="width: max(768px, 75%);">
+    <div class="d-flex jcs aic gap-3 aic my-4 d-print-none d-none">
+        <button type="button" class="btn btn-primary save-pdf my-3">Save PDF</button>
+        <button type="button" class="btn btn-light close" aria-label="Close" title="Exit Page">Close</button>
+    </div>
+
+    <div class="text-black mx-auto border border-black small">
+        <div class="entity py-1 my-1 d-flex jcc aic text-black flex-column">
+            <span class="name lead fw-bold"></span>
+            <span class="tagline mb-2"></span>
+            <span class="address"></span>
+            <div class="d-flex jcc aic">
+                <span class="city"></span>,
+                <span class="state mx-2"></span>
+                <span class="pin"></span>
+            </div>
+            <span class="contact"></span>
+            <div class="d-flex jcc aic">
+                <span class="email"></span>
+                <span class="website ms-2"></span>
+            </div>
+            <div class="d-flex jcb aic gstin d-none">
+                <span class="fw-bold me-2">GSTIN:</span>
+                <span class="fw-bold gstin font-monospace"></span>
+            </div>
+        </div>
+
+        <div class="order-type border-top border-bottom border-black d-flex jcc aic py-2">
+            <span class="fw-bold doc-type"></span>
+        </div>
+
+        <div class="row m-0 py-2">
+            <div class="col-4">
+                <div class="d-flex jcs aic">
+                    <span>Bill Number:</span>
+                    <span class="bill-number fw-bold ms-3"></span>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="d-flex jcc aic bill-type">
+                    <span class="small bill-type" role="button"
+                        title="Click To Toggle bewteen (ORIGINAL, DUPLICATE, TRIPLICATE)">(ORIGINAL)</span>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="d-flex jce aic">
+                    <span>Bill Date:</span>
+                    <span class="bill-date fw-bold ms-3"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="party-details border-top border-black">
+            <div class="row m-0">
+                <div class="col-6 p-2 billing-info d-flex flex-column">
+                    To,
+                    <div class="d-flex jcs aic mt-1">
+                        <span class="party-title"></span>
+                        <span class="fw-bold party-name"></span>
+                    </div>
+                    <span class="bill-address"></span>
+                    <div class="d-flex jcs aic mb-2">
+                        <span class="bill-city"></span>
+                        <span class="bill-state mx-2"></span>
+                        <span class="bill-pin"></span>
+                    </div>
+                    <div class="flex jcs aic">
+                        <span>State Code:</span>
+                        <span class="state-code ms-2"></span>
+                    </div>
+                    <div class="d-flex jcs aic mt-1">
+                        <span class="fw-bold">GSTIN:</span>
+                        <span class="ms-2 party-gstin fw-bold font-monospace"></span>
+                    </div>
+
+                </div>
+                <div class="col-6 p-2 shipping-info d-flex flex-column border-start border-black">
+                    <span class="text-decoration-underline">Shipping Address</span>
+                    <div class="d-flex jcs aic mt-1">
+                        <span class="party-title"></span>
+                        <span class="fw-bold party-name"></span>
+                    </div>
+                    <span class="ship-address"></span>
+                    <div class="d-flex jcs aic mb-2">
+                        <span class="ship-city"></span>
+                        <span class="ship-state mx-2"></span>
+                        <span class="ship-pin"></span>
+                    </div>
+                    <!-- <div class="flex jcs aic">
+              <span>State Code:</span>
+              <span class="state-code ms-2"></span>
+            </div> -->
+                </div>
+            </div>
+        </div>
+
+        <div class="order-items border-top border-bottom border-black px-1 pb-2" style="min-height: 100px;"></div>
+
+        <div class="row m-0 px-1">
+            <div class="col-4 m-0 p-0 py-2 bank-details border-end border-black">
+                <table class="table table-sm tbl-custom text-black table-borderless">
+                    <tbody class="">
+                        <tr>
+                            <td class="fw-500">Bank Details</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-500">-</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-500">Bank</td>
+                            <td class="bank-name bank-info">-</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-500">A/c Number</td>
+                            <td class="account-number font-monospace bank-info">-</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-500">IFS Code</td>
+                            <td class="ifscode font-monospace bank-info">-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-4 m-0 p-0 py-2 border-end border-black">
+                <div class="totals ms-auto">
+                    <table class="table table-sm text-end table-borderless">
+                        <tbody class="">
+                            <tr>
+                                <td class="fw-500">Qty. Sold</td>
+                                <td class="gs">0.00</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-500" >Qty. Returned</td>
+                                <td class="gr">0.00</td>
+                            </tr>
+                            <tr class="disc">
+                                <td class="fw-500">Discount</td>
+                                <td class="disc">0.00</td>
+                            </tr>
+                            <tr class="freight">
+                                <td class="fw-500">Freight/Shipping</td>
+                                <td class="freight">0.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-4 m-0 p-0 py-2">
+                <div class="totals ms-auto">
+                    <table class="table table-sm text-end table-borderless p-0">
+                        <tbody class="">
+                            <tr>
+                                <td class="nettotal fw-500">Net Total</td>
+                                <td class="subtotal">0.00</td>
+                            </tr>
+                            <tr class="cgst">
+                                <td class="fw-500">Central Tax</td>
+                                <td class="cgst">0.00</td>
+                            </tr>
+                            <tr class="cgst">
+                                <td class="fw-500">State Tax</td>
+                                <td class="sgst">0.00</td>
+                            </tr>
+                            <tr class="igst">
+                                <td class="fw-500">Integrated Tax</td>
+                                <td class="igst">0.00</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-500">Total</td>
+                                <td class="total fw-bold">0.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="border-top border-black p-1 ">
+            <div class="d-flex jcb aic">
+                <span class="fw-bold">Total Amount (in words):</span>
+                <div class="total-inwords"></div>
+            </div>
+        </div>
+
+        <div class="footer border-top border-black">
+            <div class="row m-0">
+                <div class="col-8 m-0 p-2 border-end border-black">
+                    <div class="d-flex flex-column jcs">
+                        <span class="fw-bold text-decoration-underline">Decelaration</span>
+                        <span class="decleration">
+                            we Declare that this invoice shows the actual price of the goods described and that all
+                            particulars are true and correct.
+                        </span>
+                        <span class="fw-bold mt-4">E & OE</span>
+                    </div>
+                </div>
+                <div class="col-4 m-0 p-2">
+                    <div class="d-flex flex-column align-items-end justify-content-end">
+                        <span class="mb-7">Authorised Signatory</span>
+                        <div class="d-flex jce aic">
+                            <div class="me-2">FOR</div>
+                            <span class="entity-for fw-bold"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/formatb.js" type="module"></script>
+<?-include('../_inc/close.ejs') ?>

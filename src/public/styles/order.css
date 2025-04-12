@@ -1,0 +1,22 @@
+@import url('/styles/fonts.css');
+@import url('/styles/root.css');
+
+.bg-cart {
+    background-image: url('/img/shopping-cart.jpg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+.bg-items {
+    background: rgb(255, 255, 255);
+    background: -moz-linear-gradient(180deg, rgba(255, 255, 255, 1) 30%, rgba(215, 229, 250, 1) 100%);
+    background: -webkit-linear-gradient(180deg, rgba(255, 255, 255, 1) 30%, rgba(215, 229, 250, 1) 100%);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 1) 30%, rgba(215, 229, 250, 1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#ffffff", endColorstr="#d7e5fa", GradientType=1);
+}
+
+.ebs-link:hover {
+    color: var(--ebs-blue1) !important;
+}
+

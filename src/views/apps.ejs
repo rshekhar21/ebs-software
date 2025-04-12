@@ -1,0 +1,26 @@
+<?-include('./_inc/start.ejs') ?>
+<div class="position-fixed top-0 end-0 w-100 h-100" style="background-image: url('/img/layered-waves.svg'); background-repeat: no-repeat; background-position: center; background-size: cover;"></div>
+
+<div class="container-fluid">
+    <div class="container-md" style="min-width: 300px; min-height: 600px;">
+        <div class="d-flex jcc aic vh-80">
+            <div class="d-flex aic flex-column p-2 h-100 w-100 z-5">
+                <div class="spinner-border text-primary process my-auto" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+
+                <div class="d-flex flex-column apps gap-2 w-100 my-auto rounded border p-2 d-none"></div>
+
+                <div class="btn-group mt-auto w-100">                    
+                    <!-- <a href="/settings" class="btn btn-lg btn-primary flex-fill" title="App Settings"><i class="bi bi-gear"></i> Settings</a> -->
+                    <button class="btn btn-lg btn-primary flex-fill settings" title="App Settings"><i class="bi bi-gear"></i> Settings</button>
+                    <button href="/signout" class="btn btn-lg btn-primary flex-fill signout" title="App Signout"><i class="bi bi-power"></i> Sign-Out</button>
+                </div>
+            </div>
+        </div>
+    </div>    
+</div>
+
+    <script type="module" src="js/apps.js"></script>
+<?-include('./_inc/close.ejs') ?>
+

@@ -1,0 +1,299 @@
+<div class="position-absolute menu-body ps-1 top-0 start-0 overflow-auto bg-white w-100 h-100 d-flex flex-column gap-4 flex-fill position-relative z-2 d-none" id="purchase-order" style="scrollbar-gutter: stable;">
+    <!-- hold-panel -->
+    <div class="position-absolute top-0 end-0 overflow-auto bg-white border-start border-primary border-2 h-100 p-2 d-flex flex-column gap-2 z-5 quick-panel d-none" style="width: 275px;">
+      <div class="d-flex jcb aic gap-2 mb-4">
+        <h5 class="panel-name mb-0">HOLDS</h5>
+        <button type="button" class="btn btn-close close-panel"></button>
+      </div>
+      <div class="panel-body h-90 overflow-auto"></div>
+    </div>
+
+    <!-- show success/error message -->
+    <div class="p-2 d-flex jcb aic text-white d-none" id="purch-status-msg">
+      <div class="msg"></div>
+      <button type="button" class="btn btn-close"></button>
+    </div>
+
+    <!-- add supplier -->
+    <div class="d-flex jcb aic gap-2 px-3 pt-1 d-print-none w-100">
+      <div class="position-relative w-50 pe-1">
+        <div class="input-group srch-sup">
+          <span class="input-group-text role-btn sync-sup" title="Refresh Data"><i class="bi bi-search"></i></span>
+          <span class="input-group-text role-btn sync-sup-success text-success d-none"><i class="bi bi-patch-check-fill"></i></span>
+          <input type="search" class="form-control flex-fill w-50 srch-supplier" name="supplier" placeholder="Search Supplier" title="Search Supplier By Name, Contact, Email">
+          <input type="text" class="form-control" id="searachBySupid" title="Search By Supplier ID" placeholder="Sup. ID" style="width: min(100px, 150px);">
+          <!-- <button type="button" class="input-group-text px-4 btn-light create-sup"
+                            title="Add Supplier"><i class="bi bi-plus-lg"></i></button> -->
+
+          <!-- <button type="button" class="input-group-text px-4 btn-light view-list"
+                            title="View Suppliers List"><i class="bi bi-view-list"></i></button> -->
+          <!-- <button type="button" class="input-group-text px-4 btn-light refresh-supdata"
+                            title="Refresh Suppliers Data"><i class="bi bi-arrow-clockwise"></i></button> -->
+        </div>
+        <div class="position-absolute top-0 left-0 w-100 bg-white rounded z-3 p-2 mt-5 rounded shadow d-none search-supplier z-5">
+        </div>
+      </div>
+
+      <!-- set bill details -->
+      <div class="d-flex jce aic gap-2 ms-auto w-50 pe-1">
+        <button class="btn btn-light px-4" id="addNewSupplier" title="Create New Supplier"><i class="bi bi-person-plus-fill"></i></button>
+        <button class="btn btn-light supplier-list" title="View Supplier List"><i class="bi bi-view-list"></i></button>
+        <button class="btn btn-light pin-purch" title="Pin Purchase"><i class="bi bi-pin-angle-fill"></i></button>
+        <button class="btn btn-light unpin-purch d-none" title="Unpin Purchase"><i class="bi bi-pin-fill"></i></button>
+
+        <input type="date" name="bill_date" id="bill-date" class="form-control bill_date ms-auto" style="max-width: 160px;">
+        <input type="text" class="form-control text-center" id="bill-num" placeholder="Bill Number" aria-label="Bill Number" style="max-width: 150px;" name="bill_number">
+      </div>
+    </div>
+
+    <!-- purchse body -->
+    <div class="d-flex flex-column gap-4 px-3 overflow-auto d-print-none h-100" style="scrollbar-gutter: stable;">
+
+      <!-- pordertype, execute -->
+      <div class="d-flex jcb aci gap-2 py-1 w-100">
+        <div class="d-flex jcs aic gap-2 pe-1 w-50">
+          <select name="po-type" id="po-type" class="form-select fw-bold bg-light border-0" style="max-width: 175px;">
+            <option value="purchase-order" selected>PURCHASE</option>
+            <option value="debitnote">DEBIT NOTE</option>
+          </select>
+        </div>
+
+        <!-- hold/execute -->
+        <div class="d-flex jce aic gap-2 w-50">
+          <!-- hold -->
+          <div class="dropdown ms-1 me-auto">
+            <button type="button" class="btn btn-light btn-lg" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-list"></i>
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item role-btn hold-purch">Hold</a></li>
+              <li><a class="dropdown-item role-btn unhold-purch">Un Hold</a></li>
+            </ul>
+          </div>
+          <h5 class="text-secondary mb-0 me-5 completed"></h5>
+          <div class="spinner-border text-primary porder-status d-none" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+
+          <!-- new & execute -->
+          <button type="button" class="btn btn-outline-success px-4 new-po">NEW</button>
+          <button type="button" class="btn btn-outline-primary execute-po" style="width: 150px;">EXECUTE</button>
+        </div>
+      </div>
+
+      <!-- supplier details -->
+      <div class="d-flex jcb aci py-2 w-100">
+        <div class="d-flex jcb aci gap-2 w-50 sup-details d-none">
+          <h3 class="supplier-name mb-0"></h3>
+          <div class="d-flex jce aic ms-5 gap-5 flex-fill supplier-actions">
+            <span class="role-btn fs-5 edit-sup ms-auto" title="Edit Supplier"><i class="bi bi-pencil-square"></i></span>
+            <span class="role-btn fs-5 view-sup-history" title="View History"><i class="bi bi-clock-history"></i></span>
+            <span class="role-btn fs-5 supplier-info pe-1"><i class="bi bi-info-circle-fill"></i></span>
+          </div>
+        </div>
+
+        <div class="d-flex jce aic gap-5 w-50 ms-auto">
+          <h3 class="mb-0 paid-status text-danger fw-light"></h3>
+          <h5 class="mb-0 show-calc role-btn" title="Show Calculator"><i class="bi bi-calculator"></i>
+          </h5>
+          <h3 class="mb-0 purchqty text-secondary" title="Order Quantity">0</h3>
+          <h3 class="mb-0 purchamt" title="Order Amount">0</h3>
+        </div>
+      </div>
+
+      <!-- add items, paymens -->
+      <div class="d-flex jcb aci gap-2">
+        <!-- scan/searach -->
+        <div class="d-flex jcb aic w-md-70 w-xl-50 position-relative" id="hybrid-mode">
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input type="text" class="form-control" id="add-product" placeholder="Search / Scan Product" aria-label="add-product" aria-describedby="add-product">
+            <div class="input-group-text bg-white" title="Enable Scan">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="scan-entry" tabindex="1">
+                <label class="form-check-label" for="scan-entry">Scan</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex flex-column gap-1 w-100 rounded position-absolute top-0 start-0 position-relative bg-white border shadow z-5 d-none" id="hybrid-list" style="margin-top: 50px; min-width: 750px;">
+            <ul class="list-group list-group-flush px-2 overflow-auto" id="hybrid-search-list" style="max-height: 295px;">
+            </ul>
+
+            <div class="d-flex jcb aci p-2 bg-light rounded-bottom">
+              <span class="small resultcount" title="Total Items Found"></span>
+              <button class="btn btn-close close-hybridlist" title="Close List"></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- paymetn/manual -->
+        <div class="d-flex jce aic gap-3">
+          <!-- payment -->
+          <div class="btn-group">
+            <button type="button" class="btn btn-light add-purchpymt" title="Add Payment"><i class="bi bi-plus-lg"></i> Pymt</button>
+            <button type="button" class="btn btn-light dropdown-toggle dropdown-toggle-split px-3" data-bs-toggle="dropdown" aria-expanded="false">
+              <span class="visually-hidden">Toggle Dropdown</span>
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item role-btn new-purchpymt">New Entry</a></li>
+              <li><a class="dropdown-item role-btn list-pymtentries">View Entries</a></li>
+              <li><a class="dropdown-item role-btn del-purchpymt">Delete All</a></li>
+            </ul>
+          </div>
+
+          <!-- manual -->
+          <button type="button" class="btn btn-light" id="manual-entry" title="Add Product Manually"><i class="bi bi-pencil-square"></i> Manual</button>
+        </div>
+      </div>
+
+      <!-- items table -->
+      <div class="table-responsives" id="purch-table">
+        <table class="table align-middle table-hover table-sm css-serial tbl-custom mb-0">
+          <thead class="align-middle tbl-fixedhead" style="line-height: 2.5">
+            <tr>
+              <th>#</th>
+              <th class="d-none">id</th>
+              <th class="" date-key="ean" title="Barcode">EAN</th>
+              <th class="inline-hsn">HSN</th>
+              <th class="pcode" title="Product Code" tabindex="Prodcut Code">PCODE</th>
+              <th class="">PRODUCT</th>
+              <th class="inline-size">SIZE</th>
+              <th class="update-unit">UNIT</th>
+              <th class="text-center" title="Quantity">QTY</th>
+              <th class="text-end" title="Purchase Price">P. PRICE</th>
+              <th class="text-end" title="Selling Price">S. PRICE</th>
+              <th class="text-end d-none" title="Purchase Discount">DISC</th>
+              <th class="text-end" title="Purchase Discount">DISC</th>
+              <th class="text-end" title="Calculate Cost">COST</th>
+              <th class="text-end update-gst" title="Cost GST">GST</th>
+              <th class="text-end d-none">NET</th>
+              <th class="text-end">TAX</th>
+              <th class="text-end">TOTAL</th>
+              <th class="d-none">calc</th>
+              <th class="d-none adl-disc">adl disc</th>
+              <th class="text-end" title="Delete All Entries">
+                <div class="dropdown">
+                  <span class="role-btn ps-3" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-gear-fill"></i>
+                  </span>
+                  <ul class="dropdown-menu small" style="line-height: 1.5;">
+                    <li><a class="dropdown-item role-btn clear-items">Delete All</a></li>
+                    <li>
+                      <a class="dropdown-item role-btn importjson">Import JSON</a>
+                      <input type="file" id="import-excel" accept=".xlsx" style="display: none;">
+                    </li>
+                    <li>
+                      <a class="dropdown-item role-btn import-online">Import Online</a>
+                    </li>
+                    <li><a class="dropdown-item fit-page role-btn">Fit on Page</a></li>
+                    <li><a class="dropdown-item role-btn">Cancel</a></li>
+                  </ul>
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody class="align-middle" id="items-body"></tbody>
+        </table>
+      </div>
+
+      <!-- total details -->
+      <div class="row mb-2 mt-auto d-flex jce">
+        <div class="d-flex jcb ais gap-3">
+          <!-- 1st box -->
+          <div class="w-25 d-none d-xl-block">
+            <div class="form-floating" title="Add Comments">
+              <textarea class="form-control" placeholder="Leave a comment here" id="purch-comments" style="height: 100px"></textarea>
+              <label for="purch-comments">Comments</label>
+            </div>
+          </div>
+
+          <!-- 2nd box -->
+          <div class="d-flex jce small position-relative purchase-gst"></div>
+
+          <!-- 3rd box -->
+          <div class="d-flex jce small position-relative pe-2 border-end">
+            <ul class="list-group list-group-flush">
+              <!-- gst roundoff -->
+              <li class="list-group-item d-flex jce aic gap-3 py-1">
+                <span class="role-btn" data-bs-toggle="tooltip" data-bs-placement="left" style="padding-top: 1px;" data-bs-title="Apply GST Round-Off. To Remove Press Ctrl Click"><i class="bi bi-info-circle"></i></span>
+                <span class="roundup role-btn" title="Apply Round Off">GST RND.OFF</span>
+                <span class="text-end roundoff" style="min-width: 95px;">0</span>
+                <input type="number" step="0.01" class="form-control form-control-sm gst-roundOff text-end d-none" style="max-width: 95px;">
+              </li>
+
+              <!-- freight -->
+              <li class="list-group-item d-flex jce aic gap-3 py-1 ps-2">
+                <button class="freight-paid btn btn-sm btn-light me-auto px-2" title="Add Freight/Shipping">
+                  <i class="bi bi-plus-lg"></i>
+                </button>
+                FREIGHT
+                <span class="text-end freight-paid role-btn" style="min-width: 95px;">0</span>
+                <input type="number" step="0.01" class="form-control form-control-sm freight-paid text-end d-none" style="max-width: 95px;">
+              </li>
+
+              <!-- payments -->
+              <li class="list-group-item d-flex jce aic gap-3 py-1">
+                PAYMENT
+                <span class="text-end purcpymt" style="min-width: 95px;">0</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- 4th box -->
+          <div class="d-flex jce small position-relative">
+            <ul class="list-group list-group-flush">
+              <!-- subtotal -->
+              <li class="list-group-item d-flex jce aic gap-3 py-1 fw-500"> SUB TOTAL
+                <span class="text-end subtotal" title="Subtotal" style="min-width: 95px;">0</span>
+              </li>
+
+              <!-- discount -->
+              <li class="list-group-item d-flex jce aic gap-3 py-1">
+                <span class="role-btn" data-bs-toggle="tooltip" data-bs-placement="left" style="padding-top: 1px;" data-bs-title="Caution: This Discount will be applied to all the articles equally"><i class="bi bi-info-circle"></i></span>
+                <span class="purchdisc role-btn" title="Click to add Discount">DISCOUNT</span>
+                <span class="text-end purcdisc" title="Discount" style="min-width: 95px;">0</span>
+              </li>
+
+              <!-- gst -->
+              <li class="list-group-item d-flex jce aic gap-3 py-1">
+                <span class="role-btn" data-bs-toggle="tooltip" data-bs-placement="left" style="padding-top: 1px;" data-bs-title="Apply GST to All Items. Caution: Pleae Provie value in Percent only (5% / 12%)"><i class="bi bi-info-circle"></i></span>
+                <span class="purchgst role-btn" title="Click to apply GST">GST</span>
+                <span class="text-end purchtax" title="Tax Amount" style="min-width: 95px;">0</span>
+                <form class="mb-0 purchgst d-none">
+                  <input type="number" step="0.01" name="gst" class="form-control form-control-sm purchgst text-end" style="max-width: 95px;">
+                  <button type="submit" class="d-none">apply</button>
+                </form>
+              </li>
+
+              <!-- total -->
+              <li class="list-group-item d-flex jce aic gap-3 py-1 fw-bold">TOTAL
+                <span class="text-end purchamt" style="min-width: 95px;">0</span>
+              </li>
+
+              <!-- balance -->
+              <li class="list-group-item d-flex jce aic gap-3 py-1">BALANCE
+                <span class="text-end pbalance" style="min-width: 95px;">0</span>
+              </li>
+
+              <li class="list-group-item text-end text-danger error-msg d-none"></li>
+            </ul>
+            <!-- disc -->
+            <div class="position-absolute bottom-0 end-0 bg-light rounded d-flex flex-column gap-3 h-100 p-2 purchdisc-box d-none" style="width: 275px;">
+              <h6 class="text-center">Discount</h6>
+              <form class="d-flex flex-column gap-2 mb-0 h-100" id="purch-disc-form">
+                <div class="d-flex jcb aic gap-2">
+                  <input type="number" name="disc_per" step="0.01" class="form-control disctype-percent" placeholder="%">
+                  <input type="number" name="disc_val" step="0.01" class="form-control disctype-value" placeholder="#">
+                </div>
+                <div class="btn-group btn-group-sm mt-auto">
+                  <button type="button" class="btn btn-secondary closedisc-box">Close</button>
+                  <button type="submit" class="btn btn-secondary">Apply</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

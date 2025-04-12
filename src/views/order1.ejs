@@ -1,0 +1,277 @@
+<?-include('./_inc/start.ejs') ?>
+<div class="p-2 w-100 bg-primary text-white" style="min-width: 300px;">
+    <!-- form mobile device -->
+    <div class="d-sm-none d-flex jcb aic gap-2 px-1">
+        <div class="order-amount fw-bold">0.00</div>
+        <div class="dropdown">
+            <div class="role-btn" data-bs-toggle="dropdown"><i class="bi bi-list"></i></div>
+            <ul class="dropdown-menu mt-3">
+                <li><a class="dropdown-item text-end" href="/apps/app">Home</a></li>
+                <li><a class="dropdown-item text-end" href="/apps/app/orders">View Orders</a></li>
+                <li><a class="dropdown-item text-end" href="/apps/app/closing">View Closing</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- for tabs and desktop -->
+    <div class="d-none d-sm-flex jcs aci gap-2">
+        <a href="/apps" class="navbar-brand fs-5">EBS</a>
+        <ul class="d-flex jce aic gap-4 text-white mb-0" style="list-style: none;">
+            <a class="nav-link" href="/apps/app">Home</a>
+            <a class="nav-link" href="/apps/app/orders">Orders</a>
+            <a class="nav-link" href="/apps/app/closing">Closing</a>
+            <li class="nav-item">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                    aria-expanded="false">View</a>
+                <ul class="dropdown-menu mt-2">
+                    <li><a class="dropdown-item" href="/apps/app/partys">Partys</a></li>
+                    <li><a class="dropdown-item" href="/apps/app/sales">Sales</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" href="/apps/app/purch">Purchase</a></li>
+                </ul>
+            </li>
+            <li class="nav-item d-none">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                    aria-expanded="false">Create</a>
+                <ul class="dropdown-menu mt-2">
+                    <li><a class="dropdown-item" href="#">Action</a></li>
+                    <li><a class="dropdown-item" href="#">Another action</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                </ul>
+            </li>
+        </ul>
+        <ul class="ms-auto text-white mb-0 me-5" style="list-style: none;">
+            <li class="nav-item ms-5">
+                <a class="nav-link dropdown-toggle fs-5" href="#" role="button" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                    <i class="bi bi-person"></i>
+                </a>
+                <ul class="dropdown-menu mt-2">
+                    <li><a class="dropdown-item" href="#">Action</a></li>
+                    <li><a class="dropdown-item" href="#">Another action</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>
+
+
+
+
+<div class="container-fluid mt-2 px-2" style="min-width: 300px;">
+    <!-- for mobile device -->
+    <div class="d-sm-none d-flex flex-column gap-3 bg-white p-2 overflow-auto" style="height: calc(100dvh - 50px);">
+        <div class="d-flex jcb aic gap-2 small">
+            <div class="role-btn order-date py-1"></div>
+            <div class="role-btn select-party mx-3"> <i class="bi bi-person-plus-fill"></i></div>
+            <div class="ms-auto d-flex jce aic gap-2">
+                <div class="role-btn order-number" title="click to change order number"></div>
+                <form class="input-group input-group-sm order-number flex-nowrap d-none mb-0">
+                    <input type="text" class="form-control order-number text-end" style="width: 140px;"
+                        placeholder="bill number" aria-label="Order Number" aria-describedby="Order Number">
+                    <button type="submit" class="input-group-text"><i class="bi bi-check2"></i></button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="position-relative party-details d-flex jcb aic gap-2 d-none">
+            <div class="position-relative">
+                <div class="party-name fw-400 pe-2"></div>
+                <span
+                    class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger p-1"><span
+                        class="visually-hidden">customer has due balance</span></span>
+            </div>
+            <div class="party-info text-primary" style="padding-right: 1px;"><i class="bi bi-info-circle-fill"></i>
+            </div>
+            <ul class="party-info-box list-group small w-50 position-absolute top-0 end-0 z-1 d-none">
+                <li class="list-group-item  list-group-item-action bg-light d-flex jcb aic">
+                    Party Details
+                    <span class="close-info-box role-btn"><i class="bi bi-x-lg"></i></span>
+                </li>
+                <li class="list-group-item d-flex jcb aic">
+                    Billing
+                    <span class="billing">0.00</span>
+                </li>
+                <li class="list-group-item d-flex jcb aic">
+                    Last Bill
+                    <span class="last-billing">0.00</span>
+                </li>
+                <li class="list-group-item d-flex jcb aic">
+                    Payments
+                    <span class="payments">0.00</span>
+                </li>
+                <li class="list-group-item d-flex jcb aic">
+                    Dues
+                    <span class="due-amount">0.00</span>
+                </li>
+            </ul>
+        </div>
+        <div class="srch-party w-100 position-relative d-none"></div>
+
+        <div class="d-flex jcb aic gap-1">
+            <span class="small text-secondary">SET ITEM MODE</span>
+            <select class="form-select form-select-sm set-article-mode" aria-label="Select Articles Mode"
+                style="width: 110px;">
+                <option value="sku">SKU</option>
+                <option value="search">SEARCH</option>
+                <option value="manual">MANUAL</option>
+            </select>
+        </div>
+
+        <div class="insert-articles position-relative">
+            <div class="inputs"></div>
+            <div class="articles-box d-flex flex-column gap-1 d-none mt-2">
+                <div class="articles-list overflow-auto px-2 border rounded" style="max-height: 280px;"></div>
+                <div class="d-flex jcb aic small bg-light rounded p-2">
+                    <div class="d-flex jcs aic gap-2">
+                        <span class="text-secondary">Result:</span>
+                        <span class="entries-found">21</span>
+                    </div>
+                    <span class="close-result text-primary role-btn">Close</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- <div class="items-list d-flex flex-column gap-1 border rounded p-1 overflow-auto max-height-25dvh d-none"></div> -->
+        <div class="items-list border rounded py-2 d-flex flex-column gap-2 d-none">
+            <ul class="list-group list-group-flush items-list overflow-auto max-height-25dvh bg-white"
+                style="max-height: 40dvh !important;">
+                <li class="list-group-item d-none">
+                    <div class="d-flex jcb aic gap-2 position-relative">
+                        <div class="product-details d-flex flex-column gap-1 flex-fill">
+                            <span class="product-name fw-400">LONG JACKET</span>
+                            <div class="d-flex jcs aic gap-3 small text-secondary">
+                                <div class="d-flex jcs aic gap-1">
+                                    QTY. <span class="qty">21</span>
+                                </div>
+                                <div class="d-flex jcs aic gap-1">
+                                    PRICE <span class="price">2100</span>
+                                </div>
+                                <div class="d-flex jcs aic gap-1">
+                                    DISC. <span class="disc">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="product-amount fw-bold">2100</div>
+                        <div class="position-absolute top-0 end-0 btn-item-ctrl role-btn"><i
+                                class="bi bi-three-dots"></i></div>
+                    </div>
+                </li>
+            </ul>
+            <div class="position-absolute top-0 start-0 w-100 h-100 bg-white position-relative item-ctrl d-none"
+                style="min-width: 300px;">
+                <form class="d-flex flex-column gap-2 h-100">
+                    <div class="d-flex jcc aic py-2 bg-secondary mb-2">
+                        <span class="fw-bold text-light">EDIT ITEM</span>
+                    </div>
+                    <div class="p-2 d-flex flex-column gap-2">
+                        <div class="form-floating">
+                            <input type="number" class="form-control edit-price" placeholder="Price">
+                            <label for="floatingInput">PRODUCT</label>
+                        </div>
+
+                        <div class="form-floating">
+                            <input type="number" class="form-control edit-price" placeholder="Price">
+                            <label for="floatingInput">PRICE</label>
+                        </div>
+
+                        <div class="d-flex jcb aic gap-2">
+                            <div class="form-floating w-50">
+                                <input type="number" class="form-control edit-qty" placeholder="Price">
+                                <label for="floatingInput">QTY</label>
+                            </div>
+                            <div class="btn-group btn-group-lg w-50">
+                                <button type="button" class="btn btn-light py-3 minus"><i
+                                        class="bi bi-dash-lg"></i></button>
+                                <button type="button" class="btn btn-light py-3 plus"><i
+                                        class="bi bi-plus-lg"></i></button>
+                            </div>
+                        </div>
+
+                        <div class="d-flex jcb aci gap-2">
+                            <div class="form-floating w-50">
+                                <input type="text" class="form-control edit-disc" placeholder="Price">
+                                <label for="floatingInput">SIZE</label>
+                            </div>
+                            <div class="form-floating w-50">
+                                <input type="number" class="form-control edit-disc" placeholder="Price">
+                                <label for="floatingInput">GST</label>
+                            </div>
+                        </div>
+
+                        <div class="d-flex jcb aci gap-2">
+                            <div class="form-floating w-50">
+                                <input type="number" class="form-control edit-disc" placeholder="Price">
+                                <label for="floatingInput">DISCOUNT</label>
+                            </div>
+                            <div class="form-floating w-50">
+                                <input type="number" class="form-control edit-disc" placeholder="Price">
+                                <label for="floatingInput">DISC %</label>
+                            </div>
+                        </div>
+
+                        <div class="d-flex jcb aci gap-2">
+                            <div class="form-floating w-50">
+                                <input type="text" class="form-control edit-disc" placeholder="Price">
+                                <label for="floatingInput">UNIT</label>
+                            </div>
+                            <div class="form-floating w-50">
+                                <input type="number" class="form-control edit-disc" placeholder="Price">
+                                <label for="floatingInput">HSN</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex jcb aic bg-light mt-auto">
+                        <button type="button"
+                            class="btn btn-light w-50 py-3 text-danger remove-item">DELETE</button>
+                        <button type="button"
+                            class="btn btn-light w-50 py-3 text-secondary close-item-edit">CANCEL</button>
+                    </div>
+                    <div class="bg-primary">
+                        <button type="submit" class="btn btn-primary py-3 w-100">APPLY</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="d-flex jcb aic gap-2 bg-light rounded p-2">
+            <span class="qty">21</span>
+            <span class="amount">2100</span>
+        </div>
+
+        <div class="mt-auto btn-group">
+            <button type="button" class="btn btn-primary w-25 new-order">NEW</button>
+            <button type="button" class="btn btn-primary w-75 exc-order">EXECUTE</button>
+        </div>
+    </div>
+
+    <!-- for tabs and desktops -->
+    <div class="d-none d-sm-flex">
+        <div class="main p-2 flex-fill">main</div>
+        <div class="utility-box border-start d-none d-lg-block p-2" style="min-width: 220px;">utitlity</div>
+    </div>
+</div>
+
+<!-- <div id="popup" class="position-absolute bg-white shadow border rounded small p-2 z-3 d-none" style="min-width: 200px;">
+    <svg fill="#c2c2c2" class="arrow position-absolute" aria-hidden="true" width="18" height="18" viewBox="0 0 18 18">
+        <path d="M1 12h16L9 4l-8 8Z"></path>
+    </svg>
+    <div class="d-flex flex-column gap-2">
+        <span class="pop-msg"></span>
+        <div class="d-flex jce aic gap-2">
+            <button class="button btn btn-sm btn-light pop-cancel">cancel</button>
+            <button class="button btn btn-sm btn-light pop-apply">yes</button>
+        </div>
+    </div>
+</div> -->
+<script type="module" src="/js/order.js"></script>
+<?-include('./_inc/close.ejs') ?>

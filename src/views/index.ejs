@@ -1,0 +1,117 @@
+<?-include('./_inc/start.ejs') ?>
+
+<div class="container-fluid vh-100 gred-blues" style="background-image: url('https://ik.imagekit.io/dc4yyiiq7/EBS/myebs/public/qYtxqVxkic5Jzb8?updatedAt=1741426502289'); background-repeat: no-repeat; background-size: cover;">
+  <div class="position-fixed top-0 end-0 m-4 text-white d-none d-md-flex flex-column align-items-end">
+    <div class="clock  monoton-regular" style="font-size: 5rem; letter-spacing: 8px;"></div>
+    <div class="date nothing-you-could-do-regular " style="font-size: 3rem;"></div>
+    <div class="day nothing-you-could-do-regular " style="font-size: 3rem;"></div>
+  </div>
+
+  <div class="position-fixed top-0 start-0 m-4">
+    <p class="text-light mb-0 fs-1 fw-light">EBS</p>
+  </div>
+
+  <div class="position-fixed bottom-0 start-0 m-4">
+    <span class="fw-light text-light d-block">Easy Billing System</span>
+    <span class="fw-light text-light copyright small"></span>
+  </div>
+
+
+  <div class="d-flex jcc aic h-100">
+    <div class="d-flex p-3 rounded flex-column bg-light w-25" style="min-width: 350px;">
+      <form class="d-flex flex-column jcc gap-3 mb-0 h-100" id="login-form">
+        <span class="h5 text-center">User Login</span>
+        <div class="form-floating">
+          <input type="text" class="form-control" id="loign-email" name="username" placeholder="Username" value="<?= uid ?>" tabindex="1">
+          <label for="loign-email">USERNAME</label>
+        </div>
+        <div class="form-floating">
+          <input type="password" class="form-control" id="login-pwd" name="password" placeholder="Password" tabindex="2">
+          <label for="login-pwd">PASSWORD</label>
+        </div>
+        <!-- <div class="g-recaptcha" data-sitekey="6LfK6JIqAAAAABwMIEJCqaqTaKfyqL1HnOpsd0LG"></div> -->
+        <div class="d-flex jcb aic mb-2">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="remember-me" tabindex="3">
+            <label class="form-check-label" for="remember-me">
+              Remember Me
+            </label>
+          </div>
+          <!-- <button class="btn btn-sm btn-primary px-3" type="submit">Submit</button> -->
+          <button class="g-recaptcha btn btn-primary px-3" tabindex="4" data-sitekey="6LfK6JIqAAAAABwMIEJCqaqTaKfyqL1HnOpsd0LG" data-callback='onReCaptchaVerified' data-action='submit' type="submit">SUBMIT</button>
+          <!-- <p class="register link-primary mb-0" role="button">Register</p> -->
+        </div>
+
+        <p class="forgot-pwd link-primary mb-0 text-center" role="button">Forgot Password?</p>
+
+        <div class="error d-flex jcc aic text-danger p-2 d-none">
+          <span class="error-msg">Invalid Details</span>
+        </div>
+      </form>
+
+      <form class="d-flex flex-column jcc gap-3 mb-0 h-100 d-none" id="reg-form">
+        <p class="h4">Register</p>
+        <div class="form-floating">
+          <input type="text" class="form-control" id="reg-email" name="email" placeholder="name@example.com">
+          <label for="reg-email">Email</label>
+        </div>
+        <div class="form-floating">
+          <input type="text" class="form-control" id="reg-pwd" name="password" placeholder="Password">
+          <label for="reg-pwd">Password</label>
+        </div>
+        <div class="form-floating">
+          <input type="text" class="form-control" id="appid" name="app_id" placeholder="AppID">
+          <label for="reg-pwd">AppID</label>
+        </div>
+        <button class="btn btn-primary" type="submit">Register</button>
+        <div class="d-flex jce aic">
+          <p class="register link-primary" role="button">Login</p>
+        </div>
+      </form>
+
+      <form class="d-flex flex-column jcc gap-3 h-100 mb-0 d-none" id="reset-pwd">
+        <div class="d-flex jcb aic">
+          <span class="me-auto fw-bold">Reset Password</span>
+          <div class="spinner-border spinner-border-sm text-primary sending-status d-none" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <span class="btn btn-sm btn-light back" title="Back"><i class="bi bi-arrow-left"></i></span>
+        </div>
+
+        <div class="form-floatings">
+          <input type="email" class="form-control" id="acnt-email" name="email_id" placeholder="Enter Account Linked Email">
+          <!-- <label for="reg-pwd">Enter Recovery Email</label> -->
+        </div>
+
+        <div class="d-flex jcb aci gap-2 send-reset-code px-1">
+          <span class="small mb-0 role-btn text-primary have-code">Already have Code</span>
+          <span class="small mb-0 text-secondary send-reset-code">Send Reset Code</span>
+        </div>
+        <p class="small server-msg d-none"></p>
+
+        <div class="reset-pwd d-flex flex-column gap-3 d-none">
+          <div class="form-floating">
+            <input type="text" class="form-control" id="username" name="username" placeholder="activation code">
+            <label for="reg-pwd">Existing Username</label>
+          </div>
+          <div class="form-floating">
+            <input type="text" class="form-control" id="password" name="password" placeholder="password">
+            <label for="reg-pwd">New Password</label>
+          </div>
+          <div class="form-floating">
+            <input type="text" class="form-control" id="resetcode" name="resetcode" placeholder="activation code">
+            <label for="reg-pwd">Password Reset Code</label>
+          </div>
+          <button class="btn btn-primary btn-lg" type="submit">Reset</button>
+          <div class="resp-code d-flex jcc aic small px-1 py-2 d-none"></div>
+          <span class="btn btn-outline-primary show-login d-none" type="button">Login</span>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.google.com/recaptcha/api.js"></script>
+<script type="module" src="js/index.js"></script>
+
+<?-include('./_inc/close.ejs') ?>

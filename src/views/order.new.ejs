@@ -1,0 +1,816 @@
+<div class="position-absolute menu-body ps-1 top-0 start-0 overflow-auto bg-white w-100 h-100 d-flex flex-column gap-4 flex-fill position-relative z-2" id="new-order" style="scrollbar-gutter: stable;">
+
+  <!-- hold-panel -->
+  <!-- background-color: #ddf4ff; -->
+  <div class="position-absolute top-0 end-0 overflow-auto bg-light-subtle border-start border-primary border-1 h-100 p-2 d-flex flex-column gap-2 z-5 ihold-panel d-none" style="width: 275px;">
+    <div class="d-flex jcb aic gap-2 mb-4">
+      <h5 class="panel-name mb-0">HOLDS</h5>
+      <!-- <button type="button" class="btn btn-close close-ipanel"></button> -->
+      <span class="close-ipanel role-btn" title="close"><svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-x">
+          <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z"></path>
+        </svg></span>
+    </div>
+    <div class="panel-body h-90 overflow-auto" id="inv-hold"></div>
+  </div>
+  <!-- show success/error message -->
+  <div class="p-2 d-flex jcb aic text-white rounded-top d-none" id="statusMsg">
+    <div class="msg"></div>
+    <button type="button" class="btn btn-close"></button>
+  </div>
+
+  <!-- add party -->
+  <div class="d-flex jcb aic gap-2 pt-1 px-3 d-print-none w-100">
+    <div class="position-relative w-50">
+      <div class="input-group">
+        <span class="input-group-text role-btn sync-partys" title="Refresh Data"><i class="bi bi-search"></i></span>
+        <span class="input-group-text role-btn sync-success text-success d-none"><i class="bi bi-patch-check-fill"></i></span>
+        <input type="search" class="form-control flex-fill w-50" id="searchParty" name="supplier" placeholder="Search Party" title="Search Party By Name, Contact, Email">
+        <input type="text" class="form-control" id="searchByMemid" title="Search By Cutomer ID" placeholder="Cust. ID" style="width: min(100px, 150px);">
+      </div>
+
+      <!-- <div class="d-flex jcb aic gap-2"> </div> -->
+      <div class="position-absolute top-0 left-0 w-100 bg-white rounded z-3 p-2 mt-5 rounded shadow d-none search-party">
+      </div>
+    </div>
+
+    <!-- set bill details -->
+    <div class="d-flex jce aic gap-2 ms-auto w-50 pe-1">
+      <button class="btn btn-sm btn-light fs-5 ms-4 px-4" id="addNewParty" title="Create New Party"><i class="bi bi-person-plus-fill"></i></button>
+      <button class="btn btn-light party-list d-none" title="View Party List"><i class="bi bi-view-list"></i></button>
+      <input type="date" class="form-control ms-auto" id="setOrderDate" title="Order Date" style="max-width: 150px;">
+      <input type="text" class="form-control text-center" id="setOrderNumber" placeholder="Bill Number" aria-label="Bill Number" style="max-width: 150px;">
+    </div>
+  </div>
+
+  <!-- order body -->
+  <div class="d-flex flex-column gap-4 px-3 overflow-auto d-print-none w-100 h-100" style="scrollbar-gutter: stable;">
+
+    <!-- ordertype, location, execute -->
+    <div class="d-flex jcb aic gap-2 py-1 w-100">
+      <div class="d-flex jcb aic gap-2 w-50">
+        <select class="form-select fw-bold bg-light border-1" aria-label="Default select example" id="selectOrderType" title="Select Order Type" style="max-width: 175px;">
+          <option value="invoice">INVOICE</option>
+          <option value="taxinvoice">TAX-INVOICE</option>
+          <option value="cn">CREDIT NOTE</option>
+          <option value="refund">REFUND</option>
+          <!-- <option value="purchae">PURCHASE</option> -->
+        </select>
+
+        <span class="add-category fs-5 role-btn text-secondary ms-3" title="Add order Category"><i class="bi bi-bookmark-plus-fill"></i></span>
+        <span class="ms-auto role-btn fs-5 add-location text-secondary" title="Add Location"><i class="bi bi-geo-alt-fill"></i></span>
+        <span class="pin-location role-btn d-none" title="Pin Location"><i class="bi bi-pin-angle"></i></span>
+        <span class="unpin-location role-btn d-none" title="UnPin Location"><i class="bi bi-pin-fill"></i></span>
+        <form class="mb-0 d-none" style="width: max(25%, 198px);" id="location-form" title="Billing Location">
+          <input class="form-control text-uppercase" list="datalistOptions" id="location" name="location" placeholder="Add Location">
+          <datalist id="datalistOptions"></datalist>
+          <button type="submit" class="d-none">submit</button>
+        </form>
+      </div>
+
+      <!-- hold/execute -->
+      <div class="d-flex jcb aic gap-2 w-50">
+        <!-- hold -->
+        <div class="dropdown me-auto ms-4">
+          <button type="button" class="btn btn-light btn-lg" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-list"></i>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item role-btn hold">Hold</a></li>
+            <li><a class="dropdown-item role-btn unhold">Un Hold</a></li>
+            <li><a class="dropdown-item role-btn print-estimate">Print Estimate</a></li>
+            <li><a class="dropdown-item role-btn print-last">Print Last Order</a></li>
+            <li><a class="dropdown-item role-btn view-last">View Last Order</a></li>
+            <li><a class="dropdown-item role-btn quick-reset">Refresh All Data</a></li>
+            <li><a class="dropdown-item role-btn" id="hard-reset">Reset Order</a></li>
+          </ul>
+        </div>
+        <div class="spinner-border text-primary exec-process mx-auto d-none" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+
+        <span class="execute-progress text-secondary fs-4 me-3 d-none"></span>
+        <!-- execute -->
+        <button type="button" class="btn btn-outline-success px-4" id="neworder" title="New Order, Clear All Details">NEW</button>
+        <button type="button" class="btn btn-outline-primary" id="execute" title="Save Order" style="width: 150px;">EXECUTE</button>
+      </div>
+    </div>
+
+    <!-- party details -->
+    <div class="d-flex flex-column gap-2 order-details py-2 w-100">
+      <div class="d-flex jcb aic gap-2">
+        <!-- party name, edit party -->
+        <div class="w-50">
+          <div class="d-flex jcb aic gap-4 position-relative w-100 party-details d-none">
+            <div class="d-flex jcs aic gap-2">
+              <h4 class="party-name mb-0" title="Party Name"></h4>
+              <span class="ms-auto">/</span>
+              <h4 class="party-id text-secondary mb-0" title="Party ID"></h4>
+            </div>
+            <div class="party-actions d-none">
+              <div class="dropdown d-block d-xl-none" style="padding-right: 1px;">
+                <span class="role-btn" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bi bi-gear-fill"></i>
+                </span>
+                <ul class="dropdown-menu">
+                  <li><span class="dropdown-item role-btn edit-party">Edit Party</span></li>
+                  <li><span class="dropdown-item role-btn view-history">View History</span>
+                  </li>
+                  <li><span class="dropdown-item role-btn show-party-details">party-info</span>
+                  </li>
+                  <li>
+                    <hr class="dropdown-divider">
+                  </li>
+                  <li><span class="dropdown-item role-btn party-info">View Details</span></li>
+                </ul>
+              </div>
+  
+              <div class="d-none d-xl-flex jce aic ms-auto gap-4 flex-fill">
+                <span class="role-btn fs-5 add-party d-none" title="Add Party"><i class="bi bi-plus-square"></i></span>
+                <span class="role-btn fs-5 edit-party" title="Edit Party"><i class="bi bi-pencil-square"></i></span>
+                <span class="role-btn fs-5 view-history" title="View History"><i class="bi bi-hourglass"></i></span>
+                <span class="role-btn fs-5 show-party-details" title="Quick Details"><i class="bi bi-chevron-down"></i></span>
+                <span class="role-btn fs-5 party-info"><i class="bi bi-info-circle-fill"></i></span>
+              </div>
+            </div>
+  
+            <ul class="party-info-box list-group w-50 position-absolute top-0 end-0 z-4 shadow d-none">
+              <li class="list-group-item  list-group-item-action bg-light d-flex jcb aic fw-500">
+                Party Details
+                <span class="close-info-box role-btn"><i class="bi bi-x-lg"></i></span>
+              </li>
+              <li class="list-group-item d-flex jcb aic">
+                Orders
+                <span class="orders-cnt fst-italic">0.00</span>
+              </li>
+              <li class="list-group-item d-flex jcb aic">
+                Billing
+                <span class="billing fw-500">0.00</span>
+              </li>
+              <li class="list-group-item d-flex jcb aic">
+                Last Bill
+                <span class="last-bill">0.00</span>
+              </li>
+              <li class="list-group-item d-flex jcb aic">
+                Payments
+                <span class="payments">0.00</span>
+              </li>
+              <li class="list-group-item d-flex jcb aic text-success">
+                Rewards
+                <span class="rewards fw-500">0.00</span>
+              </li>
+              <li class="list-group-item d-flex jcb aic">
+                Dues
+                <span class="due-amount fw-500">0.00</span>
+              </li>
+              <li class="list-group-item d-flex jcb aic">
+                Opening Balance
+                <span class="opening-bal fw-500">0.00</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- qty, total -->
+        <div class="d-flex jce aic gap-5 w-50">
+          <h3 class="order-status ms-4 mb-0 fw-500 fst-italic"></h3>
+          <h5 class="text-secondary mb-0 order-emp" title="Employee ID for this Order"></h5>
+          <div class="dropstart">
+            <button type="button" class="btn btn-light " data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-three-dots-vertical"></i>
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item select-emp role-btn">Add Employee</a></li>
+              <li><a class="dropdown-item remove-emp role-btn">Remove Employee</a></li>
+              <!-- <li><a class="dropdown-item test-pdf">Refresh Data</a></li> -->
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              <li><a class="dropdown-item refresh-emp role-btn">Refresh EMP Data</a></li>
+            </ul>
+          </div>
+
+          <h5 class="mb-0 show-calc role-btn" title="Calculator"><i class="bi bi-calculator"></i>
+          </h5>
+          <h3 class="order-qty text-secondary mb-0" title="Order Quantity">0</h3>
+          <h3 class="order-amount mb-0" title="Order Amount">0</h3>
+        </div>
+      </div>
+
+      <div class="party-data d-none">
+        <div class="d-flex jcs ais gap-5">
+          <!-- basics -->
+          <div class="d-flex flex-column ais">
+            <div class="small">
+              <span class="text-secondary">ID</span>
+              <span class="partyid me-4" title="ID"></span>
+              <span class="text-secondary">Cust_ID</span>
+              <span class="party-id text-primary fw-500" title="Customer ID"></span>
+            </div>
+            <div class="d-flex jcs aic gap-3">
+              <span class="contact" title="Contact Number"></span>
+              <span class="copy-contact role-btn" title="Copy Contact"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#434343"><path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Zm160-240v-480 480Z"/></svg></span>
+              <span class="contact-copy-status d-none" style="color: rgb(23, 133, 23);">Copied</span>
+            </div>
+            <span class="email"></span>
+            <span class="gstin mt-auto font-monospace" title="GST Number"></span>
+          </div>
+
+          <!-- address -->
+          <div class="d-flex jcb gap-5 party-addreses">
+            <!-- billing -->
+            <div class="d-flex flex-column jcs billing ps-3 border-start" title="Billing Address">
+              <span class="fw-500 small pb-1">BILLING ADDRESS</span>
+              <span class="address"></span>
+              <div class="d-flex jcs aic gap-2">
+                <span class="city"></span>
+                <span class="pincode"></span>
+              </div>
+              <div class="d-flex jcs gap-3 aic">
+                <span class="state" title="State"></span>
+                <span class="state-code" title="State Code"></span>
+              </div>
+            </div>
+
+            <!-- shipping -->
+            <div class="d-flex flex-column jcs shipping ps-3 border-start" title="Shipping Address">
+              <!-- <div class="d-flex jcc ais p-0">                                
+                                </div> -->
+              <div class="d-flex jcs aic gap-3">
+                <span class="fw-500 small pb-1">SHIPPING ADDRESS</span>
+                <div class="form-check mb-0 pb-0">
+                  <input class="form-check-input" type="checkbox" value="" id="sameAsBilling" checked>
+                  <label class="form-check-label" for="sameAsBilling">
+                    Same as billing
+                  </label>
+                </div>
+                <span class="role-btn" title="Add Shipping Address" id="addShipAddress"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#434343">
+                    <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
+                  </svg>
+                </span>
+                <span class="role-btn small pt-1 d-none" title="Edit Shipping Address" id="editShipAddress"><i class="bi bi-pencil-square"></i></span>
+              </div>
+              <span class="address"></span>
+              <div class="d-flex jcs aic gap-2">
+                <span class="city"></span>
+                <span class="pincode"></span>
+              </div>
+              <span class="state"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- add items, payments -->
+    <div class="d-flex jcb aic gap-2 w-100">
+      <!-- scan/search  w-md-70 w-xl-50-->
+      <div class="d-flex jcb aic w-50 position-relative" id="hybridMode">
+        <form class="input-group mb-0" id="add-item">
+          <span class="input-group-text sync-stock role-btn" title="Refresh Data"><i class="bi bi-search"></i></span>
+          <span class="input-group-text role-btn sync-stock-success text-success d-none"><i class="bi bi-patch-check-fill"></i></span>
+          <input type="text" class="form-control" id="addProduct" placeholder="Search / Scan Product" aria-label="Username" aria-describedby="addProduct">
+          <div class="input-group-text bg-white" title="Enable Scan">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" value="" id="scanEntry" tabindex="1">
+              <!-- <label class="form-check-label pt-1" for="scanEntry"><i class="bi bi-upc-scan"></i></label> -->
+              <label class="form-check-label" for="scanEntry">Scan</label>
+            </div>
+          </div>
+          <div class="input-group-text bg-white">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" value="" id="returnItem" tabindex="1">
+              <label class="form-check-label" for="returnItem">Return</label>
+            </div>
+          </div>
+
+          <!-- <div class="input-group-text role-btn bg-white" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-three-dots-vertical"></i>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">Base Price SP</a></li>
+                                <li><a class="dropdown-item" href="#">Base Price WSP</a></li>
+                                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#">Separated link</a></li>
+                              </ul>
+                        </div> -->
+        </form>
+
+        <div class="d-flex justify-content-start aic gap-2 w-100 p-2 flex-wrap overflow-auto d-none z-3 mt-5 position-absolute top-0 start-0 position-relative bg-white rounded border" id="viewItems" style="max-height: 500px;"></div>
+
+        <div class="d-flex flex-column gap-1 w-100 rounded position-absolute top-0 start-0 position-relative bg-white border shadow z-3 d-none" id="hybridList" style="margin-top: 50px; min-width: 750px;">
+          <ul class="list-group list-group-flush px-2 overflow-auto" id="hybridSearchList" style="max-height: 295px;">
+          </ul>
+
+          <div class="d-flex jcb aci p-2 bg-light rounded-bottom">
+            <span class="small result-count" title="Total Items Found">0</span>
+            <button class="btn btn-close close-hybrid-list" title="Close List"></button>
+          </div>
+
+          <div class="position-absolute top-0 rounded bg-light d-none view-tags p-2 position-relative" style="min-width: 220px; right: -230px;">
+            <form id="tag-form">
+              <input type="search" class="form-control" name="tag" id="input-tag" placeholder="Search/Add Tag">
+              <button type="submit" class="d-none"></button>
+            </form>
+            <button tabindex="1" class="position-absolute top-0 p-2 btn btn-close close-view-tags" style="right: -2.3rem;"><i class="bi bi-x-lg"></i>
+            </button>
+            <ul class="list-group list-group-flush tags-list"></ul>
+          </div>
+        </div>
+      </div>
+
+
+
+      <!-- payment/manual -->
+      <div class="d-flex jce aic gap-2 w-50 position-relative">
+        <!-- <div class="form-check mb-0 ms-4" title="Order Category">
+                            <input class="form-check-input" type="checkbox" value="" id="order-category">
+                            <label class="form-check-label" for="order-category">
+                              WS
+                            </label>
+                        </div> -->
+        <!-- <button class="show-category btn btn-light btn-lg ms-4" title="Add order Category"><i class="bi bi-bookmark-plus-fill"></i></button> -->
+        <!-- <span class="add-category fs-5 ms-4 ps-3 role-btn text-secondary" title="Add order Category"><i class="bi bi-bookmark-plus-fill"></i></span> -->
+        <div class="category d-flex jcs aic gap-2 ms-4 d-none">
+          <div style="width: max(30px, 60%)" title="Order Category">
+            <input class="form-control" list="categoryList" id="category" placeholder="Category">
+            <datalist id="categoryList">
+              <option value="WS">
+              <option value="EVENT">
+            </datalist>
+          </div>
+
+          <div class="hold-category d-none">
+            <input type="checkbox" class="btn-check" id="hold-category" autocomplete="off">
+            <label class="btn btn-light" for="hold-category"><i class="bi bi-pause" title="Hold Category"></i></label>
+          </div>
+        </div>
+
+        <div class="btn-group ms-auto pymt-btn-group">
+          <button type="button" class="btn btn-light add-payment" title="Add Payment"><i class="bi bi-plus-lg"></i> Pymt</button>
+          <button type="button" class="btn btn-light dropdown-toggle dropdown-toggle-split px-3" data-bs-toggle="dropdown" aria-expanded="false">
+            <span class="visually-hidden">Toggle Dropdown</span>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item role-btn card-pymt">All Cash</a></li>
+            <li><a class="dropdown-item role-btn cash-pymts">All Card</a></li>
+            <li><a class="dropdown-item role-btn new-pymt">New Entry</a></li>
+            <li><a class="dropdown-item role-btn view-pymts">View Entries</a></li>
+            <li><a class="dropdown-item role-btn delete-pymts">Remove Pymts</a></li>
+            <li><a class="dropdown-item role-btn add-bank">Add New Bank</a></li>
+            <li><a class="dropdown-item role-btn view-banks">View Banks</a></li>
+          </ul>
+        </div>
+
+        <button class="btn btn-light add-pymt d-none" id="addPymt" title="View Stock Item"><i class="bi bi-plus-lg"></i> Payment</button>
+
+        <!-- <div class="" title="Scan to add product / item">
+                        <input class="btn-check" type="checkbox" id="scanEntry">
+                        <label class="btn btn-light" for="scanEntry"><i class="bi bi-upc-scan"></i>
+                            Scan</label>
+                        </div> -->
+
+        <div class="" title="Add Product Manually">
+          <input type="checkbox" class="btn-check" id="manualEntry" autocomplete="off">
+          <label class="btn btn-light" for="manualEntry"><i class="bi bi-pencil-square"></i>
+            Manual
+          </label>
+        </div>
+
+        <!-- pymt form -->
+        <div class="position-absolute top-0 end-0 rounded bg-light z-3 d-none p-3 pymtform" style="min-width: 450px;">
+          <form class="d-flex flex-column gap-2 mb-0" id="pymtForm">
+            <div class="d-flex jcb aci gap-2">
+              <div class="form-floating">
+                <input type="number" class="form-control cash" step="0.01" name="cash" id="p_cash" placeholder="">
+                <label>Cash</label>
+              </div>
+              <div class="form-floating">
+                <input type="number" class="form-control" step="0.01" name="bank" id="p_bank" placeholder="">
+                <label>Bank</label>
+              </div>
+            </div>
+
+            <div class="d-flex jcb aic gap-2">
+              <div class="form-floating">
+                <input type="number" class="form-control" step="0.01" name="other" id="p_other" placeholder="">
+                <label>Other</label>
+              </div>
+              <div class="form-floating w-50">
+                <select class="form-select" name="bank_mode" id="bankModes" aria-label="Bank Mode"></select>
+                <label for="bankModes">Bank Mode</label>
+              </div>
+            </div>
+
+            <div class="d-flex jcb aci gap-2">
+              <div class="form-floating w-50">
+                <select class="form-select" name="pymt_method" id="pymtMehtods" aria-label="Payment Method">
+                </select>
+                <label for="pymtMehtods">Pymt Method</label>
+              </div>
+              <div class="form-floating w-50">
+                <select class="form-select" name="bank_id" id="bankslist" aria-label="Bank Account">
+                </select>
+                <label for="bankslist">Bank Account</label>
+              </div>
+            </div>
+
+            <div class="d-flex jcb aci gap-2">
+              <div class="form-floating w-50">
+                <input type="number" class="form-control disabled" name="amount" id="received" readonly placeholder="">
+                <label>Payment</label>
+              </div>
+              <div class="form-floating w-50">
+                <input type="text" class="form-control" name="balance" id="pymtBalance" readonly placeholder="">
+                <label>Balance</label>
+              </div>
+            </div>
+
+            <div class="form-floating">
+              <textarea class="form-control" name="notes" placeholder="Leave a comment here" id="pymt-notes"></textarea>
+              <label for="pymt-notes">Comments</label>
+              <input type="hidden" name="index" value="0">
+            </div>
+
+            <!-- quick online pymts -->
+            <div class="btn-group mt-2">
+              <button type="button" class="btn btn-outline-secondary quick-pay" value="cash">Cash</button>
+              <button type="button" class="btn btn-outline-secondary quick-pay" value="gpay">G-Pay</button>
+              <button type="button" class="btn btn-outline-secondary quick-pay" value="paytm">PayTm</button>
+              <button type="button" class="btn btn-outline-secondary quick-pay" value="ppay">PhonePay</button>
+            </div>
+
+            <div class="d-flex jce aci gap-4 mt-2">
+              <button type="reset" class="btn btn-light px-4 me-auto">Reset</button>
+              <button type="button" class="btn btn-light px-4 close-pymtform">Close</button>
+              <button type="submit" class="btn btn-primary px-4 apply-pymt" value="add">Apply</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- pymt Entries -->
+        <div class="position-absolute top-0 end-0 rounded bg-light z-3 d-none p-1 shadow pymtEntries" style="min-width: 100%;">
+          <div class="d-flex jcb aic p-2">
+            <span class="fw-500">Payment Entries</span>
+            <button class="btn btn-close close-pymt-tbale"></button>
+          </div>
+          <div class="data-table p-2"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- item details -->
+    <div class="table-responsives" id="orders-table">
+      <table class="table align-middle table-hover table-sm css-serial tbl-custom mb-0" id="order-table">
+        <thead class="align-middle" style="line-height: 2.5;">
+          <tr>
+            <th>#</th>
+            <th class="d-none" data-key="sku">SKU</th>
+            <th class="d-none" data-key="hsn">HSN</th>
+            <th class="d-none" data-key="emp_id" title="Employee Code">EMP</th>
+            <th class="d-none" data-key="category" title="Product Category">CAT</th>
+            <th class="d-none pcode" data-key="pcode" title="Product Code">PCODE</th>
+            <th class="" data-key="product">PRODUCT</th>
+            <th class="text-center" data-key="size">SIZE</th>
+            <th class="text-center" title="Quantity">QTY</th>
+            <th class="d-none text-end unit " data-key="unit">UNIT</th>
+            <th class="text-end" data-key="price">PRICE</th>
+            <th class="text-end d-none" data-key="disc" title="Discount">DISC</th>
+            <th class="text-end d-none" data-key="addl_disc" title="Additional Discount">AD</th>
+            <th class="text-end d-none" data-key="gst">GST</th>
+            <th class="text-end">NET</th>
+            <th class="text-end d-none" data-key="tax">TAX</th>
+            <th class="text-end">TOTAL</th>
+            <th class="d-none">calc</th>
+            <th class="d-none">id</th>
+            <th class="d-none">disc_type</th>
+            <th class="d-none">disc_val</th>
+            <th class="d-none">disc_per</th>
+            <th class="d-none">img</th>
+            <th class="text-end">
+              <div class="dropdown">
+                <span class="role-btn ps-3" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-gear-fill"></i></span>
+                <ul class="dropdown-menu small" style="line-height: 1.5;">
+                  <li><a class="dropdown-item role-btn clear-allitems">Clear All</a></li>
+                  <li class="d-none">
+                    <a class="dropdown-item role-btn import-json">Import JSON</a>
+                    <input type="file" id="jsonFileInput" accept=".json" style="display: none;">
+                  </li>
+                  <li><a class="dropdown-item role-btn show-empid">Show EMPID</a></li>
+                  <li>
+                    <hr class="dropdown-divider">
+                  </li>
+                  <li><a class="dropdown-item role-btn disabled">Set Product</a></li>
+                  <li><a class="dropdown-item role-btn sort-byproduct">Sort Assending</a></li>
+                  <li><a class="dropdown-item role-btn set-titlecase">Title Case</a></li>
+                  <li><a class="dropdown-item role-btn set-uppercase">Uppercase</a></li>
+                  <li><a class="dropdown-item role-btn set-lowercase">Lowercase</a></li>
+                  <li>
+                    <hr class="dropdown-divider">
+                  </li>
+                  <li><a class="dropdown-item role-btn">Cancel</a></li>
+                </ul>
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bill-body align-middle" id="itemsBody"></tbody>
+      </table>
+    </div>
+
+    <!-- order total details -->
+    <div class="row mb-2 mt-auto d-flex jce">
+      <div class="d-flex jcb ais gap-3">
+        <!-- 1st box -->
+        <div class="w-25 d-none d-xl-block">
+          <div class="form-floating" title="Add Comments">
+            <textarea class="form-control" placeholder="Leave a comment here" id="order-comments" style="height: 100px"></textarea>
+            <label for="order-comments">Comments</label>
+          </div>
+        </div>
+        <!-- 2nd box -->
+        <div class="d-flex jce small position-relative order-gst"></div>
+
+        <!-- 3rd box -->
+        <div class="d-flex jce small position-relative pe-2 border-end">
+          <ul class="list-group list-group-flush">
+            <!-- savings -->
+            <li class="list-group-item d-flex jce aic gap-3 py-1" title="Customer Savings">
+              SAVINGS
+              <span class="text-end savings" style="min-width: 95px;">0</span>
+            </li>
+
+            <!-- GST -->
+            <li class="list-group-item d-flex jce aic gap-3 py-1">
+              <div class="d-flex jcb aic gap-2 w-100">
+                <span class="gst-config me-auto role-btn px-2" title="GST Settigns">
+                  <i class="bi bi-gear"></i>
+                </span>
+                <span class="tax-type text-secondary fst-italic" title="GST Type"></span>
+                <span>GST</span>
+              </div>
+              <span class="text-end tax" style="min-width: 95px;" title="Tax Amount">0</span>
+            </li>
+
+            <!-- GST RND.OFF -->
+            <li class="list-group-item d-flex jce aic gap-3 py-1">
+              <!-- <span class="round-off me-auto role-btn px-2" title="Round any amount in Paisa">
+                                        <i class="bi bi-plus-lg"></i>
+                                    </span> -->
+              <span class="roundoff-gst role-btn" title="Click to Round Off Total">ROUND OFF</span>
+              <span class="text-end gst-roundoff" style="min-width: 95px;">0 </span>
+              <!-- <input type="number" step="0.01"
+                                        class="form-control form-control-sm round-off text-end d-none"
+                                        style="max-width: 95px;"> -->
+            </li>
+
+            <!-- FREIGHT -->
+            <li class="list-group-item d-flex jce aic gap-3 py-1">
+              <span class="add-freight me-auto role-btn px-2" title="Add Freight/Shipping">
+                <i class="bi bi-plus-lg"></i>
+              </span>
+              SHIPPING
+              <span class="text-end freight role-btn" style="min-width: 95px;">0 </span>
+              <input type="number" step="0.01" class="form-control form-control-sm add-freight text-end d-none" style="max-width: 95px;">
+            </li>
+
+            <!-- OLD BALANCE -->
+            <li class="list-group-item d-flex jce aic gap-3 py-1">
+              <!-- <span class="add-obal me-auto role-btn px-2" title="Add Payment"><i class="bi bi-plus-lg"></i> -->
+              <div class="dropstart flex-fill add-quick-pymt">
+                <span class="role-btn d-flex jcb aic" data-bs-toggle="dropdown">
+                  <span class="px-2"><i class="bi bi-plus-lg"></i></span>
+                  <span class="ms-auto"></span>
+                </span>
+                <ul class="dropdown-menu">
+                  <li><span class="dropdown-item role-btn add-due">Add</span></li>
+                  <li><span class="dropdown-item role-btn rem-due">Remvoe</span></li>
+                </ul>
+              </div>
+              </span> PREV. DUE <span class="text-end old-bal" style="min-width: 95px;">0</span>
+            </li>
+
+            <!-- ERROR -->
+            <li class="list-group-item text-end text-danger error-msg d-none"></li>
+
+          </ul>
+        </div>
+
+        <!-- 4th box -->
+        <div class="d-flex jce small position-relative">
+          <!-- subtotal -->
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex jce aic gap-3 py-1 fw-500">
+              SUB TOTAL
+              <span class="text-end sub-total" title="Subtotal" style="min-width: 95px;">0</span>
+            </li>
+
+            <!-- DISCOUNT -->
+            <li class="list-group-item d-flex jce aic gap-3 py-1">
+              <span class="add-disc me-auto role-btn px-2" title="Add Discount">
+                <i class="bi bi-plus-lg"></i>
+              </span>
+
+              <!-- <div class="mx-auto d-none" title="Click to apply discount in Percent">
+                                        <input type="checkbox" class="btn-check" id="percent" autocomplete="off" checked>
+                                        <label class="btn bgn-sm btn-light py-0" for="percent">
+                                            <i class="bi bi-percent"></i>
+                                        </label>
+                                    </div> -->
+
+              <div class="d-flex jce aic gap-1">
+                <span class="about-disc text-secondary role-btn d-none" data-bs-toggle="tooltip" data-bs-placement="top" style="padding-top: 1px;" data-bs-title="Caution: This is an Additional Discount will be applied post-GST calculation"><i class="bi bi-info-circle"></i></span>
+                <span class="disc role-btn" title="Additional Discount">DISCOUNT</span>
+              </div>
+
+              <span class="text-end discount" title="Additional Discount" style="min-width: 95px;">0</span>
+              <form class="mb-0 add-disc d-flex jce aic gap-2 d-none">
+                <!-- <div class="ms-auto" title="Click to apply discount in Percent"> </div> -->
+                <input type="checkbox" class="btn-check" name="percent" id="percent" autocomplete="off" checked>
+                <label class="btn bgn-sm btn-light py-0" for="percent" title="Percent Discount">
+                  <i class="bi bi-percent"></i>
+                </label>
+                <input type="number" step="0.01" name="disc" class="form-control form-control-sm add-disc text-end" style="max-width: 95px;">
+                <button type="submit" class="d-none">submit</button>
+              </form>
+            </li>
+
+
+            <!-- TOTAL -->
+            <li class="list-group-item d-flex jce aic gap-3 py-1 fw-bold">TOTAL <span class="text-end order-amount" style="min-width: 95px;">0</span>
+            </li>
+
+            <!-- PAYMENTS -->
+            <li class="list-group-item d-flex jce aic gap-3 py-1">
+              <!-- <div class="dropstart flex-fill add-quick-pymt">
+                                        <span class="role-btn d-flex jcb aic" data-bs-toggle="dropdown">
+                                            <span class="px-2"><i class="bi bi-plus-lg"></i></span>
+                                            <span class="ms-auto"></span>
+                                        </span>
+                                        <ul class="dropdown-menu">
+                                            <li><span class="dropdown-item role-btn all-cash">Cash Pymt</span></li>
+                                            <li><span class="dropdown-item role-btn all-card">Card Pymt</span></li>
+                                            <li><span class="dropdown-item role-btn payment">New Entry</span></li>
+                                            <li><span class="dropdown-item role-btn remove-pymts">Remove Pymt</span>
+                                            </li>
+                                        </ul>
+                                    </div> -->
+              <span class="small text-secondary fst-italic collect-pymt" title="Payment to Collect"></span>
+              <span class="add-quick-pymt">PAYMENT</span>
+              <span class="text-end total-pymt" style="min-width: 95px;">0</span>
+            </li>
+
+            <!-- BALANCE -->
+            <li class="list-group-item d-flex jce aic gap-3 py-1">BALANCE <span class="text-end balance" style="min-width: 95px;">0</span>
+            </li>
+
+          </ul>
+
+          <!-- gst -->
+          <div class="position-absolute bottom-0 end-0 p-3 bg-light rounded gst-box d-none">
+            <form class="d-flex flex-column gap-2 mb-0" id="gstConfig" style="min-width: 320px; min-height: 240px;">
+              <div class="d-flex jcc aic mb-2">
+                <span class="fw-500">GST Settings</span>
+                <!-- <button type="button" class="btn-close close-gstbox p-2" title="Close"></button> -->
+              </div>
+
+              <div class="form-floating">
+                <select name="taxType" id="set-tax-type" class="form-select">
+                  <option value="">N/A</option>
+                  <option value="inc">Inclusive</option>
+                  <option value="exc">Exclusive</option>
+                </select>
+                <label for="set-tax-type">TAX TYPE</label>
+              </div>
+
+              <div class="form-floating">
+                <select name="gstType" id="set-gst-for" class="form-select">
+                  <option value="">N/A</option>
+                  <option value="igst">IGST</option>
+                  <option value="local">LOCAL (CGST/IGST)</option>
+                </select>
+                <label for="set-gst-for">GST TYPE</label>
+              </div>
+
+              <div class="d-flex jce aic gap-2 mt-auto">
+                <button type="button" class="btn btn-sm btn-light close-gstbox">Close</button>
+                <button type="submit" class="btn btn-sm btn-primary px-3 apply-gstconfig">Apply</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- discount -->
+          <div class="position-absolute bottom-0 end-0 p-3 bg-light rounded disc-box d-none">
+            <form class="d-flex flex-column gap-2 mb-0" id="disc-form" style="min-width: 320px; min-height: 240px;">
+              <div class="d-flex jcc aic mb-2">
+                <span class="fw-500">Discount</span>
+              </div>
+
+              <div class="d-flex jcb aic gap-2">
+                <div class="form-floating" style="width: 180px;">
+                  <select name="disc_id" id="disc-type" class="form-select" aria-placeholder="Discount Type"></select>
+                  <label for="disc-type">Discount Type</label>
+                </div>
+                <span class="discType" title="Discount Type">#</span>
+                <div class="form-floating" style="max-width: 120px;">
+                  <input type="number" name="disc" step="0.01" id="disc-value" class="form-control" placeholder="">
+                  <label for="disc-percent">Value</label>
+                </div>
+              </div>
+
+              <input type="hidden" id="discType" name="disc_type" value="#">
+              <input type="hidden" id="discPerc" name="disc_percent" value="">
+
+              <div class="form-floating">
+                <input type="text" name="coupoun" id="apply-coupoun" class="form-control" placeholder="">
+                <label for="apply-coupoun">Apply Coupoun</label>
+              </div>
+
+              <div class="d-flex jcb aci gap-2 mt-auto">
+                <button type="button" class="btn btn-sm btn-light remove-disc me-auto">Remvoe
+                  Discount</button>
+                <button type="button" class="btn btn-sm btn-light close-discbox">Close</button>
+                <button type="submit" class="btn btn-sm btn-primary px-3">Apply</button>
+              </div>
+
+              <!-- <div class="d-flex jcb aic mt-auto border-top py-2">
+                                        <span class="fw-500">Discount</span>
+                                        <h6 class="mb-0">0.00</h6>
+                                    </div> -->
+            </form>
+          </div>
+        </div>
+
+        <!-- manual form -->
+        <div class="position-absolute top-0 start-0 bg-light z-5 p-3 border-bottom w-100 d-none" id="formContainer">
+          <form class="d-flex flex-column gap-2" id="addManually">
+            <div class="d-flex jcb aci gap-2">
+              <div class="form-floating w-50">
+                <input type="text" name="product" class="form-control form-control-lg text-uppercase" placeholder="">
+                <label>PRODUCT</label>
+              </div>
+              <div class="d-flex jcb aic gap-2 w-50">
+                <div class="form-floating">
+                  <input type="number" name="price" step="0.01" class="form-control form-control-lg" placeholder="" title="Product Price">
+                  <label>PRICE</label>
+                </div>
+                <div class="form-floating">
+                  <input type="number" name="qty" step="0.001" class="form-control form-control-lg" placeholder="">
+                  <label>QTY</label>
+                </div>
+                <div class="form-floating">
+                  <input type="number" name="gst" step="0.01" class="form-control form-control-lg" placeholder="">
+                  <label>GST</label>
+                </div>
+                <div class="form-floating">
+                  <input type="text" name="size" class="form-control form-control-lg" placeholder="">
+                  <label>SIZE</label>
+                </div>
+              </div>
+            </div>
+            <div class="d-flex jcb aic gap-2">
+              <div class="d-flex jcb aci gap-2 w-50">
+                <div class="form-floating" style="max-width: 100px;">
+                  <input type="number" name="disc_per" step="0.01" class="form-control form-control-lg" placeholder="">
+                  <label>DISC %</label>
+                </div>
+                <div class="form-floating">
+                  <input type="number" name="disc_val" step="0.01" class="form-control form-control-lg" placeholder="">
+                  <label>DISCOUNT</label>
+                </div>
+
+                <div class="form-floating">
+                  <input type="text" name="unit" class="form-control form-control-lg" placeholder="">
+                  <label>UNIT</label>
+                </div>
+                <div class="form-floating">
+                  <input type="text" name="hsn" class="form-control form-control-lg" placeholder="">
+                  <label>HSN</label>
+                </div>
+
+                <input type="hidden" name="sku">
+                <input type="hidden" name="pcode">
+                <input type="hidden" name="index">
+                <input type="hidden" name="order_id">
+              </div>
+
+              <div class="ms-auto d-flex jcb aic gap-2 w-50">
+                <div class="form-floating" style="max-width: 165px;">
+                  <input type="text" name="category" class="form-control form-control-lg" placeholder="">
+                  <label>Category</label>
+                </div>
+                <div class="form-floating emp-id d-none" style="max-width: 165px;">
+                  <input type="text" name="emp_id" class="form-control" placeholder="">
+                  <label>EMPID</label>
+                </div>
+
+                <button type="button" class="btn btn-light px-3 d-flex jcc aic gap-2 reset-manual ms-auto">Reset</button>
+                <button type="button" class="btn btn-light px-3 d-flex jcc aic gap-2 close-manual">Close</button>
+                <button type="submit" value="add" class="btn btn-primary px-5 d-flex jcc aic gap-2">Add</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

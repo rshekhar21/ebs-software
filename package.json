@@ -1,0 +1,96 @@
+{
+  "name": "myebs-app",
+  "version": "1.0.18",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron --no-sandbox .",
+    "dev": "nodemon server.js",
+    "build": "electron-builder",
+    "dist": "electron-builder --publish=always"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rshekhar21/ebs-software"
+  },
+  "build": {
+    "appId": "com.ebs-software.app",
+    "asar": true,
+    "asarUnpack": "unpack",
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "installerIcon": "icon.ico",
+      "uninstallerIcon": "icon.ico",
+      "uninstallDisplayName": "Uninstaller",
+      "license": "license.md",
+      "allowToChangeInstallationDirectory": true,
+      "runAfterFinish": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "EBS",
+      "perMachine": true,
+      "deleteAppDataOnUninstall": true,
+      "createDesktopShortcut": "always"
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "rshekhar21",
+        "releaseType": "release",
+        "private": false,
+        "channel": "latest",
+        "vPrefixedTagName": true
+      }
+    ]
+  },
+  "keywords": [],
+  "author": "Raj Shekhar Singh",
+  "license": "ISC",
+  "type": "commonjs",
+  "description": "Easy Billing System Desktop Application",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.758.0",
+    "axios": "^1.8.1",
+    "bcrypt": "^5.1.1",
+    "body-parse": "^0.1.0",
+    "bootstrap": "^5.3.5",
+    "bootstrap-icons": "^1.11.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "crypto-js": "^4.2.0",
+    "dotenv": "^16.4.7",
+    "ejs": "^3.1.10",
+    "electron-is-dev": "^3.0.1",
+    "electron-log": "^5.3.1",
+    "electron-updater": "^6.3.9",
+    "express": "^4.21.2",
+    "express-ejs-layouts": "^2.5.1",
+    "fs-extra": "^11.3.0",
+    "googleapis": "^146.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "md5": "^2.3.0",
+    "mkdirp": "^3.0.1",
+    "mongoose": "^8.12.1",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.13.0",
+    "node-jose": "^2.2.0",
+    "nodemailer": "^6.10.0",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0",
+    "short-uuid": "^5.2.0",
+    "shortid": "^2.2.17",
+    "sqlite3": "^5.1.7",
+    "uuid": "^11.1.0",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "electron": "^35.0.0",
+    "electron-builder": "^25.1.8",
+    "electron-reload": "^2.0.0-alpha.1"
+  }
+}

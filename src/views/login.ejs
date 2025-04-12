@@ -1,0 +1,59 @@
+<?-include('./_inc/start.ejs') ?>
+
+<div class="position-fixed top-0 end-0 w-100 h-100" style="background-image: url('https://ik.imagekit.io/dc4yyiiq7/EBS/myebs/public/layered-waves.svg?updatedAt=1741426929246'); 
+    background-repeat: no-repeat; background-position: center; background-size: cover;"></div>
+
+<div class="container d-flex ais fcol gap-5 py-5 mb-5 position-relative">
+  <div class="d-flex jcb aic gap-2">
+    <div class="d-flex jcc aic fs-2 app-name"></div>
+    <div class="d-flex jcc aic fs-2">Select App User</div>
+  </div>
+  <div class="d-flex flex-column flex-md-row justify-content-around aic gap-3 my-auto user-list mx-auto mx-md-0 users-list">
+  </div>
+  <div class="btn-group mt-5">
+    <button href="/apps" class="btn btn-lg btn-light back switch"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000">
+        <path d="M335.38-120q-27.61 0-46.11-18.5t-18.5-46.12v-86.15h-86.15q-27.62 0-46.12-18.5-18.5-18.5-18.5-46.11v-67.7h40v67.7q0 10.76 6.92 17.69 6.93 6.92 17.7 6.92h86.15v-313.85q0-27.61 18.5-46.11t46.11-18.5h313.85v-86.15q0-10.77-6.92-17.7-6.93-6.92-17.69-6.92h-67.7v-40h67.7q27.61 0 46.11 18.5t18.5 46.12v86.15h86.15q27.62 0 46.12 18.5 18.5 18.5 18.5 46.11v440q0 27.62-18.5 46.12Q803-120 775.38-120h-440Zm0-40h440q9.24 0 16.93-7.69 7.69-7.69 7.69-16.93v-440q0-9.23-7.69-16.92-7.69-7.69-16.93-7.69h-440q-9.23 0-16.92 7.69-7.69 7.69-7.69 16.92v440q0 9.24 7.69 16.93 7.69 7.69 16.92 7.69ZM120-498.46v-113.85h40v113.85h-40Zm0-209.23v-67.69q0-27.62 18.5-46.12Q157-840 184.62-840h67.69v40h-67.69q-10.77 0-17.7 6.92-6.92 6.93-6.92 17.7v67.69h-40ZM347.69-800v-40h113.85v40H347.69Zm-36.92 640v-489.23V-160Z" />
+      </svg> Switch App</button>
+    <button href="/signout" class="btn btn-lg btn-light signout"><i class="bi bi-power"></i> Sign-out</button>
+  </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="loginModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="loginModalLabel">Enter Password</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="user-login">
+          <input type="text" name="username" id="user-name" class="form-control form-control-lg mb-3" readonly>
+          <!-- <input type="hidden" name="password" id="pwd" autocomplete="false"> -->
+          <input type="password" name="password" id="pass-word" class="form-control form-control-lg" placeholder="Password">
+        </form>
+
+        <form id="forgot-pwd" class="d-none">
+          <input type="text" name="password" id="new-pwd" class="form-control form-control-lg" placeholder="New Passwrod">
+          <input type="text" name="authkey" id="api-key" class="form-control form-control-lg my-3" placeholder="Auth Key">
+          <div class="form-text">
+            Note: The authorization key has been or will be sent to your registered email address during the account linking process..
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-link my-3 me-auto fg-pwd">Forgot Passwrod?</button>
+        <div class="loading-status d-none"></div>
+        <button type="submit" form="user-login" class="btn btn-primary px-5 my-3 login">Login</button>
+        <button type="button" class="btn btn-light cancel d-none">Cancel</button>
+        <button type="submit" form="forgot-pwd" class="btn btn-primary px-5 my-3 fgpwd d-none">Submit</button>
+      </div>
+      <div class="d-flex jcc aic modal-msg"></div>
+    </div>
+  </div>
+</div>
+
+
+<script type="module" src="/js/login.js"></script>
+<?-include('./_inc/close.ejs') ?>
