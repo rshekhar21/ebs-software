@@ -8,7 +8,7 @@ let showList = false;
 let url = document.URL;
 let page = `${window.location.origin}/apps/app/orders/create`;
 
-doc.addEventListener('keydown', function (e) {
+doc.addEventListener('keydown', async function (e) {
     if (e.altKey && e.key.toLowerCase() == 'q' && url === page) { jq('div.pymtform').toggleClass('d-none'); }
 
     if (e.ctrlKey && e.key.toLowerCase() == 's' && url === page) {
@@ -19,6 +19,14 @@ doc.addEventListener('keydown', function (e) {
     if (e.altKey && e.key.toLowerCase() == 'c' && url === page) {
         let modal = jq('#ebsModal').is(':visible');
         if (!modal) jq('div.calculator').toggleClass('d-none'); jq('#equation').focus()
+    }
+
+    if(e.ctrlKey && e.shiftKey && e.key.toLowerCase() == 'm' && url === page){
+        let cnf = await window?.app?.confirmIt('Create Order?'); //log(cnf); return; //|| confirm('Create Order?');
+        if(!cnf) return;
+
+        let { update = faslse } = getOrderData();
+        update ? updateOrder() : saveOrder();
     }
 })
 
@@ -1151,7 +1159,6 @@ doc.addEventListener('DOMContentLoaded', () => {
         // _unholdOrder(1);   
     })
 
-
     let lastWin = null;
     jq('a.view-last').click(async function () {
         try {
@@ -1271,7 +1278,8 @@ doc.addEventListener('DOMContentLoaded', () => {
 
     jq('span.view-history').click(function () {
         jq('#history').removeClass('d-none');
-        _viewHistory();
+        let { party } = getOrderData();
+        _viewHistory(party);
     })
     jq('button.close-history').click(function () { jq('#history').addClass('d-none') });
 

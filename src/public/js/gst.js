@@ -1,4 +1,4 @@
-import { controlBtn, doc, fetchTable, jq, log, Months, pageHead, parseData, queryData } from "./help.js";
+import { controlBtn, doc, fetchTable, jq, log, Months, pageHead, parseData, queryData, Storage } from "./help.js";
 import 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
 const XLSX = window.XLSX;
 
@@ -21,17 +21,26 @@ doc.addEventListener('DOMContentLoaded', function () {
         exportToJsonFile(arr);
     }).prop('title', 'Export as JSON File')
 
-    let print = jq('<button></button>').addClass('btn btn-sm btn-primary').html('<i class="bi bi-printer"></i>').click(function () { window.print() }).prop('title', 'Print Page');
+    let print = jq('<button></button>').addClass('btn btn-sm btn-primary').html('<i class="bi bi-printer"></i>').click(async function () {
+        let printer = Storage.get('Printer') || null;
+        if (printer) {
+            printer = await window?.app?.showPrinters();
+            Storage.set('Printer', printer);
+            window?.app?.printPage(printer);
+            return;
+        };
+        window.print();
+    }).prop('title', 'Print Page');
 
     jq('div.quick-btns').append(print, json, excel);
 
-    jq('button.apply-filter').click(function(){
+    jq('button.apply-filter').click(function () {
         let month = jq('#selectMonth').val();
         let year = jq('#selectYear').val();
         createReport(month, year);
     })
 
-    jq('#myTab button').click(function(){
+    jq('#myTab button').click(function () {
         jq('#myTab button').addClass('d-print-none');
         jq(this).removeClass('d-print-none')
     })
@@ -92,7 +101,7 @@ function appenedFrame() {
 
     let body = `
   <div class="container-md d-flex flex-column gap-2">
-    <div class="d-flex justify-content-between align-items-center py-2">
+    <div class="d-flex flex-column gap-2 flex-md-row justify-content-md-between align-items-md-center py-2">
       <ul class="nav nav-tabs " id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
           <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#panel-one" type="button" role="tab" aria-controls="panel-one" aria-selected="true">GST Report</button>
@@ -109,7 +118,7 @@ function appenedFrame() {
       </ul>
 
       <div class="d-flex jcb aic gap-2 d-print-none">
-        <span class="me-3">FILTER</span>
+        <span class="me-auto me-md-3">FILTER</span>
         <select class="form-select form-select-sm" id="selectMonth" style="width: 125px;"></select>
         <input class="form-control form-control-sm" id="selectYear" value="${new Date().getFullYear()}" style="width: 100px;" />
         <button class="btn btn-sm btn-primary apply-filter" title="Filter Data">Apply</button>
@@ -141,10 +150,11 @@ async function createReport(month, year) {
             fetchTable({ key: 'gstRepDateWise', values: [month, year] }),
             fetchTable({ key: 'gstRepBillWise', values: [month, year] }),
             fetchTable({ key: 'gstRepByHSN', values: [month, year] }),
-        ]); 
+        ]);
 
         let [a, b, c, d] = res;
-        arr = [a.data, b.data, c.data, d.data]; 
+        arr = [a.data, b.data, c.data, d.data];
+
         if (a.data.length) jq('div.quick-btns button').removeClass('disabled');
 
         parseData({
@@ -152,20 +162,20 @@ async function createReport(month, year) {
             colsToRight: ['sales', 'tax'],
             colsToTotal: ['sales', 'tax']
         });
-    
+
         parseData({
             tableObj: b,
             colsToRight: ['total', 'tax'],
             colsToTotal: ['total', 'tax'],
         });
-    
+
         parseData({
             tableObj: c,
             colsToRight: ['price', 'gst', 'tax', 'net', 'gross'],
             colsToParse: ['qty', 'price', 'gst'],
             colsToTotal: ['qty', 'tax', 'net', 'gross']
         })
-    
+
         parseData({
             tableObj: d,
             colsToRight: ['sale', 'tax', 'net', 'gross'],
@@ -177,7 +187,6 @@ async function createReport(month, year) {
         jq('#panel-two').html(b.table);
         jq('#panel-three').html(c.table);
         jq('#panel-four').html(d.table);
-
 
     } catch (error) {
         log(error);

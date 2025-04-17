@@ -1,69 +1,85 @@
 <html>
 
 <head>
-    <meta charset="utf-8">
-    <link type="image/png" sizes="32x32" rel="icon" href="/img/favicon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>EBS Mobile</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="/styles/fonts.css">
-    <link rel="stylesheet" href="/styles/style.css">
-    <link rel="stylesheet" href="/styles/elastic-width.css">
-    <style type="text/css" media="print">
-        @page {
-            size: auto;
-            /* auto is the initial value */
-            margin: 0mm;
-            /* this affects the margin in the printer settings */
-        }
+  <meta charset="utf-8">
+  <link type="image/png" sizes="32x32" rel="icon" href="/img/favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>EBS Mobile</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="/styles/main.css">
 
-        html {
-            background-color: #FFFFFF;
-            margin: 0px;
-            /* this affects the margin on the html before sending to printer */
-        }
 
-        body {
-            margin: 0mm;
-            /* margin you want for the content */
-        }
-    </style>
-    <script src="/js/_lib/moment.js" defer></script>
+  <style type="text/css">
+    @page {
+      size: auto;
+      margin: 0mm;
+    }
+
+    html {
+      background-color: #FFFFFF;
+      margin: 0;
+    }
+
+    body {
+      margin: 0 auto;
+      padding: 5px;
+      font-family: 'Arial Narrow', Arial, sans-serif;
+      font-size: 1.5rem !important;
+      /* font-weight: normal; */
+      color: black;
+      max-width: 450px;
+      min-width: 58mm;
+    }
+
+    @media print {
+      body {
+        margin: 0mm;
+        padding: 5px;
+        font-family: 'Arial Narrow', Arial, sans-serif;
+        /* font-weight: normal; */
+        font-size: .8rem !important;
+        color: black;
+        max-width: 80mm;
+        min-width: 58mm;
+        /* margin you want for the content */
+      }
+    }
+  </style>
+  <script src="/js/_lib/moment.js" defer></script>
 </head>
 
 <body>
-    <div class="container d-flex flex-column gap-3 py-2"
-        style="font-size: 0.8rem !important; min-width: 200px; max-width: 350px; font-family: 'Arial Narrow', Arial, sans-serif;  color: black !important">
-
-        <h6 class="text-center fw-500 entity-name"></h6>
-
-        <div class="d-flex jcb aic">
-            <span class="fw-500">ESTIMATE</span>
-            <span class="est-date"></span>
-        </div>
-
-        <h6 class="text-center fw-500">Details</h6>
-
-        <div class="show-details d-flex flex-column gap-2 small text-black"></div>
-
-        <div class="show-totals flex-column gap-2 small text-black my-4"></div>
-
-        <div class="comments text-center"></div>
-
-        <div class="d-flex jcc aic gap-2 d-print-none">
-            <button class="btn btn-light print" title="Print Estimate"><i class="bi bi-printer"></i></button>
-            <button class="btn btn-light close" title="Close"><i class="bi bi-x-lg"></i></button>
-        </div>
+  <!-- full screen loading -->
+  <div class="d-flex jcc aic vh-100 w-100 z-5 position-fixed top-0 start-0 d-none" id="loading" style="background-color: rgba(245, 245, 245, 0.729);">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
     </div>
+  </div>
 
-    <script type="module" src="/js/estimate.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
+  <!-- control menu -->
+  <div class="btn-group d-print-none mb-2 w-100">
+    <button class="btn btn-outline-secondary print" title="Print"><i class="bi bi-printer"></i></button>
+    <button class="btn btn-outline-secondary d-none" id="setPrinter" title="Set Printer"><i class="bi bi-gear"></i></button>
+    <button class="btn btn-outline-secondary close" title="Close"><i class="bi bi-x-lg"></i></button>
+  </div>
+
+  <!-- estiamte body -->
+  <div class="container d-flex flex-column gap-3">
+    <div class="text-center entity-name fw-bold"></div>
+    <div class="d-flex jcb aic">
+      <span class="">ESTIMATE</span>
+      <span class="est-date "></span>
+    </div>
+    <div class="text-center  border-bottom">DETAILS</div>
+    <div class="show-details d-flex flex-column gap-2 small text-black"></div>
+    <div class="show-totals flex-column gap-2 small text-black my-4"></div>
+    <div class="comments text-center"></div>
+    <div class="text-center">***** END *****</div>
+  </div>
+  <script type="module" src="/js/estimate.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 
 </html>

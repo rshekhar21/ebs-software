@@ -55,14 +55,14 @@ doc.addEventListener('DOMContentLoaded', function () {
 async function loadData() {
     try {
         let db = new xdb(storeId, 'payments');
-        let data = await db.getColumns({
-            columns: ['id', 'dated', 'party_name', 'party', 'amount', 'cash', 'bank', 'other', 'forefiet', 'bank_name', 'bank_mode', 'payment_method', 'order_id', 'purch_id', 'notes'],
-            rename: { 'bank_name': 'account', 'payment_method': 'pymt_method', 'amount': 'payment', 'bank_mode': 'mode' },
-            sortby: 'id',
-            sortOrder: 'desc',
+        // let data = await db.getColumns({
+        //     columns: ['id', 'dated', 'party/supplier', 'party', 'amount', 'cash', 'bank', 'other', 'forefiet', 'bank_name', 'bank_mode', 'payment_method', 'order_id', 'purch_id', 'pymt_for', 'notes'],
+        //     rename: { 'bank_name': 'account', 'payment_method': 'pymt_method', 'amount': 'payment', 'bank_mode': 'mode' },
+        //     sortby: 'id',
+        //     sortOrder: 'desc',
 
-        });
-        let res = await help.fetchTable({ key: 'payments' }, true, true, data); //log(tbl);
+        // });
+        let res = await help.fetchTable({ key: 'payments' }, true, true, null);
         showData(res);
     } catch (error) {
         log(error);
@@ -86,6 +86,13 @@ function showData(data) {
                 jq('#delPymt').click(function () { deletePayment(id, loadData) });
             })
         })
+
+        jq(tbody).find(`[data-key="pymt_for"]`).each(function(i,e){
+            if(data.data[i].pymt_for == 'Purchase') {
+                jq(this).addClass('bg-warning');
+            }
+        })
+
         parseData({
             tableObj: data,
             colsToParse: ['payment', 'cash', 'bank', 'other', 'forfiet'],
@@ -94,7 +101,8 @@ function showData(data) {
             // colsToRename: [{ old: 'bank_name', new: 'account' }],
             hideBlanks: ['notes', 'purch_id'],
         })
-        displayDatatable(table);
+
+        displayDatatable(table, 'container-fluid');
     } catch (error) {
         log(error);
     }

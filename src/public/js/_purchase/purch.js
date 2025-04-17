@@ -202,10 +202,16 @@ doc.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
-    
+
     jq('span.edit-sup').click(function () {
         let id = getPurchData().supid; log(id);
         id && createEditSupplier({ update_id: id })
+    })
+
+    jq('span.view-sup-history').click(async function () {
+        let { supid } = getPurchData(); log(supid);
+        let url = window.location.origin + '/apps/app/supplier/ledger/?supplier=' + supid;
+        window?.app?.node() ? window.app?.showA4(url) : window.open(url, '_blank');       
     })
 
     // jq('button.refresh-supdata').click(async function () {

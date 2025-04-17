@@ -89,7 +89,7 @@ export const Storage = {
     set: (key, value) => { localStorage.setItem(key, JSON.stringify(value)) },
     get: (key) => {
         let obj = localStorage.getItem(key) || null;
-        return obj ? JSON.parse(obj) : null;
+        return obj !== "undefined" ? JSON.parse(obj) : null;
     },
     delete: (key) => { localStorage.removeItem(key) },
 }

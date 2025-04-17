@@ -3,11 +3,11 @@ SELECT
     s.*,
     DATE_FORMAT(
         COALESCE(u.`bill_date`, u.`order_date`),
-        '%d/%m/%Y'
+        '%d-%m-%Y'
     ) AS `prchd_on`,
     u.`bill_number`,
     u.`supid`,
-    p.`party_name` as `supplier`,
+    p.`supplier_name` as `supplier`,
     l.`sold`,
     r.`returned`,
     ds.`defect`,
@@ -17,7 +17,7 @@ SELECT
 FROM
     `stock` s
     LEFT JOIN `purchase` u ON u.`id` = s.`purch_id`
-    LEFT JOIN `party` p ON p.`id` = u.`supid`
+    LEFT JOIN `supplier` p ON p.`id` = u.`supid`
     LEFT JOIN (
         SELECT `sku`, SUM(`qty`) AS `sold`
         FROM `sold`
@@ -39,3 +39,6 @@ FROM
             `sku`
     ) ds on ds.`sku` = s.`sku`
 ORDER BY s.`id` ASC;
+
+
+

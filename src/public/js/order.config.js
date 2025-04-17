@@ -23,6 +23,7 @@ export const purchase = {
     disc: 0,
     round: 0,
     total: 0,
+    supid: null,
     sup_id: null,
     edit_id: null,
     supplier: '',
@@ -1353,7 +1354,7 @@ export async function saveOrder() {
             await postData({ url: '/aws/upload', data: { folder, orderid } });
 
             if (window?.app?.node()) {
-                let cnf = confirm('Print Order?');
+                let cnf = await window?.app?.confirmIt('Print Order?'); //|| confirm('Print Order?');
                 if (!cnf) return;
                 let order_id = data.order.order_id;
                 let url = `${window.location.origin}/apps/order/thermal/?orderid=${order_id}`; //log(url);

@@ -1,4 +1,4 @@
-import help, { advanceQuery, calculateTotalTaxByGst, copyToClipboard, createEL, createNewPage, createStuff, createTable, doc, errorMsg, fd2obj, fetchTable, generateUniqueAlphaCode, getClientType, getFinYear, getForm, getSettings, getSqlDate, isAdmin, isRestricted, jq, log, parseColumn, parseCurrency, parseData, parseLocals, parseNumber, popListInline, postData, queryData, setTable, shareOrder, showCalender, showErrors, showModal, showSuccess, showTable, storeId, titleCase, viewOrder, viewOrderA4, xdb } from "../help.js";
+import help, { advanceQuery, calculateTotalTaxByGst, copyToClipboard, createEL, createNewPage, createStuff, createTable, doc, errorMsg, fd2json, fd2obj, fetchTable, generateUniqueAlphaCode, getClientType, getFinYear, getForm, getSettings, getSqlDate, isAdmin, isRestricted, jq, log, parseColumn, parseCurrency, parseData, parseLocals, parseNumber, popListInline, postData, queryData, setTable, shareOrder, showCalender, showErrors, showModal, showSuccess, showTable, storeId, titleCase, viewOrder, viewOrderA4, xdb } from "../help.js";
 import { loadSettings } from "./settings.js";
 import { icons } from "../svgs.js";
 import { _addPartyPymt, _delStock, _loadSrchstock, _viewOrderDetails, addPurchPymt, createStock, editParty, numerifyObject, purchEntry, sendOrderEmail, setEditStockBody } from "../module.js";
@@ -357,11 +357,11 @@ async function _empSales(id) {
     }
 }
 
-export async function _unholdOrder(id){
+export async function _unholdOrder(id) {
     try {
         // let div = document.getElementById(id); //log(div);
         // if (jq(div).hasClass('d-none')) return;
-        let [data] = await queryData({ key: 'uholdOrder', values: [id]}); //log(data);
+        let [data] = await queryData({ key: 'uholdOrder', values: [id] }); //log(data);
         // let date = moment(data.dated).format('D-M-yyyy'); //log(date);
 
     } catch (error) {
@@ -420,14 +420,22 @@ export async function _viewholds_(id) {
 
 export async function _viewholds(id) {
     try {
-        let div = document.getElementById(id); //log(div);
+        let div = document.getElementById(id);
         if (jq(div).hasClass('d-none')) return;
-        let data = await queryData({ key: 'holdsList'}); //log(list);
+        let db = new xdb(storeId, 'holds');
+        let data1 = await db.getColumns({
+            columns: ['party_name', 'order_date', 'id'],
+            rename: { 'party_name': 'party', 'order_date': 'dated' },
+            sortby: 'id'
+        });
+        let data2 = await queryData({ key: 'holdsList' });
+
+        let data = data1.length ? [...data1, ...data2] : data2;
 
         let tbl = await setTable({ data, colsToHide: ['id'], colsToRight: ['dated'], serial: false, });
         jq(div).html('').html(tbl.table);
         jq(tbl.tbody).find(`[data-key="party"]`).each(function (e) {
-            let party = this.textContent; //log(party);
+            let party = this.textContent;
             if (party == '') jq(this).text('N/A');
         })
         jq(tbl.tbody).find('tr').addClass('role-btn').each(function (i, e) {
@@ -438,8 +446,9 @@ export async function _viewholds(id) {
                     if (!cnf) return;
                 }
                 let id = jq(this).closest('tr').find(`[data-key="id"]`).text();
-                // let [data] = await db.get(id);
-                let [{data}] = await queryData({ key: 'uholdOrder', values: [id]});
+                let [data1] = await db.get(id);
+                let [res] = await queryData({ key: 'uholdOrder', values: [id] });
+                let data = data1 || res?.data;
                 let pymts = data.pymts;
                 let items = data.items;
                 let payments = data.payments;
@@ -450,12 +459,12 @@ export async function _viewholds(id) {
                 updateDetails(data);
                 updateDetails({ pymts: [], items: [] });
                 updateDetails({ pymts, items });
-                // updateDetails({ items });
                 jq(this).closest('tr').remove();
                 loadOrderDetails();
                 refreshOrder();
                 jq('div.ihold-panel').addClass('d-none');
-                queryData({ key: 'delHoldById', values: [id]});
+                queryData({ key: 'delHoldById', values: [id] });
+                await db.delete(id);
             })
         })
     } catch (error) {
@@ -1391,7 +1400,7 @@ async function _viewClosing() {
                     jq(tbl.thead).find(`[data-key="pre_adj"]`).prop('title', 'Previous Dues Adjusted')
 
                     jq(tbl.tbody).find(`[data-key="id"]`).addClass('text-primary role-btn').each(function (i, e) {
-                        if(data[i].type == 'Pymt') jq(this).removeClass('text-primary role-btn')
+                        if (data[i].type == 'Pymt') jq(this).removeClass('text-primary role-btn')
                         jq(e).click(function () {
                             try {
                                 let { id, orderid, type } = data[i];
@@ -1453,7 +1462,7 @@ async function _viewClosing() {
                                     })
                                 });
 
-                                jq('#orderDetails').click(function(){
+                                jq('#orderDetails').click(function () {
                                     _viewOrderDetails(id);
                                 })
                             } catch (error) {
@@ -1493,9 +1502,9 @@ async function _viewClosing() {
     }
 }
 
-export async function _viewHistory(print=false) {
+export async function _viewHistory(party, print = false) {
     try {
-        let { party } = getOrderData();
+        // let { party } = getOrderData();
         let [pd] = await queryData({ key: 'party_stacks', values: [party] });
         jq('span.cal').click(function () { jq('#history-by-dates').parent('div').toggleClass('d-none'); })
         jq('h5.party').html(`Ledger of <span class="text-primary ms-3">${pd.party_name}</span>/${pd.party_id}`);
@@ -1507,7 +1516,6 @@ export async function _viewHistory(print=false) {
         jq('button.refresh-hist').click(function () { loadData() });
         jq('#history-by-dates').submit(async function (e) {
             e.preventDefault();
-            let { party } = getOrderData();
             let { to, from } = fd2json({ form: this });
             if (!to || !from) return;
             let tbl = await setTable({
@@ -1520,8 +1528,8 @@ export async function _viewHistory(print=false) {
             });
             jq('div.history-data').html(tbl.table || 'No Records Found');
             jq(this).parent('div').toggleClass('d-none');
-        }) 
-        
+        })
+
         loadData()
         async function loadData() {
             let tbl = await setTable({
@@ -1708,7 +1716,7 @@ async function orderSubmenu(el, i, data, cb = null) {
     });
 
     jq('#shareDetails').click(async function () {
-        shareOrder(order_id);        
+        shareOrder(order_id);
     });
 
     jq('#exportJson').click(async function () {
@@ -1821,7 +1829,7 @@ async function orderSubmenu(el, i, data, cb = null) {
         sendOrderEmail(id);
     })
 
-    jq('#orderDetails').click(async function(){
+    jq('#orderDetails').click(async function () {
         _viewOrderDetails(id);
     })
 }

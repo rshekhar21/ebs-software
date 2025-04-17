@@ -136,10 +136,11 @@ function showData(data) {
         let { table, tbody, thead } = data;
         jq(tbody).find(`[data-key="id"]`).addClass('text-primary role-btn').each(function (i, e) {
             jq(this).click(function () {
-                let id = this.textContent;
+                let { id } = data.data[i];
                 h.popListInline({
                     el: this, li: [
                         { key: 'Edit', id: 'editParty' },
+                        { key: 'View Ledger', id: 'viewLedger' },
                         { key: 'Delete', id: 'delParty' },
                         { key: 'Cancel', }
                     ]
@@ -157,6 +158,14 @@ function showData(data) {
                     }
                     loadData();
                 })
+                jq('#viewLedger').click(() => {
+                    try {
+                        let url = `${window.location.origin}/apps/app/party/ledger/?party=${id}`;
+                        window?.app?.node() ? window.app?.showA4(url) : window.open(url, '_blank');
+                    } catch (error) {
+                        log(error);
+                    }
+                })
             })
         })
 
@@ -172,7 +181,7 @@ function showData(data) {
         //         }
 
         //         jq(e).click(function () {
-                    
+
         //         })
         //     } catch (error) {
         //         log(error);

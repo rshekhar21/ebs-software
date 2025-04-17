@@ -1,5 +1,32 @@
--- Active: 1728019028452@@ebsserver.in@3306@pooja_samagri
-SELECT * FROM orders;
+-- Active: 1728019028452@@ebsserver.in@3306@db_rajimpex
+SELECT * FROM purchase;
+SHOW CREATE TABLE purchase;
+
+
+
+CREATE TABLE `purchase` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `supid` int DEFAULT NULL,
+  `order_date` date DEFAULT (curdate()),
+  `order_number` varchar(255) DEFAULT NULL,
+  `bill_date` date DEFAULT NULL,
+  `bill_type` varchar(255) DEFAULT NULL,
+  `bill_number` varchar(255) DEFAULT NULL,
+  `sub_total` decimal(9,2) DEFAULT NULL,
+  `discount` decimal(9,2) DEFAULT NULL,
+  `tax_amount` decimal(9,2) DEFAULT NULL,
+  `gst_roundoff` decimal(2,2) DEFAULT NULL,
+  `freight` decimal(9,2) DEFAULT NULL,
+  `bill_amount` decimal(9,2) DEFAULT NULL,
+  `quantity` decimal(9,2) DEFAULT NULL,
+  `ref_filename` varchar(255) DEFAULT NULL,
+  `fin_year` varchar(4) DEFAULT NULL,
+  `notes` varchar(255) DEFAULT NULL,
+  `user_id` int DEFAULT NULL,
+  `entity` int DEFAULT '1',
+  `timestamp` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
 
 show tables;
 desc test;
@@ -110,7 +137,7 @@ CREATE TABLE `payments` (
 
 show TABLES;
 
-ALTER Table `payments` add COLUMN `supplier` int default null after `party`;
+ALTER Table `payments` ADD COLUMN `supplier` int default null after `party`;
 
 CREATE OR REPLACE VIEW `pymtfyear` AS
 SELECT

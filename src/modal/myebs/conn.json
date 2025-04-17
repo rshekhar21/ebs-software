@@ -1,9 +1,9 @@
 {
     "host": "ebsserver.in",
     "port": "3306",
-    "user": "sa_demo",
-    "password": "269608Raj$",
-    "database": "db_demo",
+    "user": "sa_rajimpex",
+    "password": "e59c735a1fdfa91590cdc8b1a7be039f",
+    "database": "db_rajimpex",
     "waitForConnections": true,
     "connectionLimit": 10,
     "queueLimit": 0,

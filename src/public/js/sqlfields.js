@@ -1,7 +1,7 @@
 // import { banksList } from "./module.js";
 
 const gender = ['', 'Male', 'Female', 'N/A']
-const partyTypes = ['', 'Customer', 'Supplier', 'WS', 'Staff', 'Exempt', 'Reserved', 'Entity'];
+const partyTypes = ['', 'Customer', 'WS', 'Staff', 'Exempt', 'Reserved', 'Entity'];
 const bankModes = ['', 'Card', 'Online', 'Multiple', 'Cheque', 'Draft']
 const entityTypes = ['', 'Propritor', 'Partnership', 'Un-Registered', 'Pvt.ltd.', 'Other'];
 
@@ -365,7 +365,7 @@ export default {
   },
   editSupplier: {
     title: { label: "Title", type: 'select', select: ['', 'Mr.', 'Mrs', 'Ms', 'M/s', 'Dr.', 'Pro.'] },
-    party_name: { label: "Full Name", required: true },
+    supplier_name: { label: "Full Name", required: true },
     contact: "Contact Number",
     email: { label: "Email Address", lowercase: true },
     gst_number: { label: "GST Number", type: 'text', uppercase: true },

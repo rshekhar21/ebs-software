@@ -20,9 +20,8 @@ doc.addEventListener('DOMContentLoaded', async function () {
   await loadData(orderid);
   jq('div.status, div.view-order').toggleClass('d-none');
 
-  jq('#close-page').click(function () { window.close() });
-
-  jq('#print-page').click(async function () {
+  jq('button.close').click(function () { window.close() })
+  jq('#printPage').click(async function () {
     if (app) {
       let printer = Storage.get('POSPrinter') || null;
       if (!printer) {
@@ -39,7 +38,7 @@ doc.addEventListener('DOMContentLoaded', async function () {
 
 
   if (app) {
-    jq('#setPrinter').click(async function () {
+    jq('#setPrinter').removeClass('d-none').click(async function () {
       jq('#loading').removeClass('d-none');
       let printer = await window?.app?.showPrinters();
       jq('#loading').addClass('d-none');
@@ -55,6 +54,10 @@ async function loadData(orderid) {
     let { entity = {}, general = {} } = getSettings();
     if (!entity.entity_id) return;
     let { entity_name, tag_line, address, city, state, pincode, contact, email, gst_num, entity_id: folder } = entity;
+    let res = await fetchOrderData({ folder, orderid }); //log(res);
+    let { orderData, thermalitems: items, gsData: [{ gs }], grData: [{ gr }], partyDues, settingsData } = res; log(orderData);
+    let otype = orderData[0].order_type; log(otype);
+    let orderType = otype == "cn" ? 'CREDIT NOTE' : otype == "refund" ? 'REFUND' : gst_num ? 'TAX INVOICE' : 'BILL'; log(otype)
 
     let entstr = `
         <span class="fw-bold">${entity_name || ''}</span>
@@ -71,13 +74,10 @@ async function loadData(orderid) {
           <span class="me-1">GSTIN-</span>
           <span class="fw-bold " style="letter-spacing: 1px;">${gst_num || ''}</span>
         </div>
-        <div class="my-2 fw-500">${gst_num ? 'TAX INVOICE' : ''}</div>
+        <div class="my-2 fw-bold">${orderType}</div>
         `;
 
     if (general?.showEntity == 'Yes') { jq('div.entity').removeClass('d-none').html(entstr) }
-
-    let res = await fetchOrderData({ folder, orderid }); //log(res);
-    let { orderData, thermalitems: items, gsData: [{ gs }], grData: [{ gr }], partyDues, settingsData } = res;
 
     let od = orderData[0]; //log(od);
 
@@ -91,12 +91,12 @@ async function loadData(orderid) {
       <div class="d-flex jcb aic fw-500">
           PARTY <span class="fw-bold">${od?.party_name} / ${od?.party_id}</span>
       </div> 
-      <div class="d-flex jcb aic ${ general?.showPartyAddress == 'Yes'? od?.address ? '' : 'd-none': 'd-none'}">
+      <div class="d-flex jcb aic ${general?.showPartyAddress == 'Yes' ? od?.address ? '' : 'd-none' : 'd-none'}">
           <div class="ms-auto d-flex flex-column">
-            <span class="ms-auto ${od?.address ? '' : 'd-none'} text-end">${od?.address||''}</span>
-            <span class="ms-auto ${od?.city ? '' : 'd-none'}">${od?.city||''}</span>
-            <span class="ms-auto ${od?.pincode ? '' : 'd-none'}">${od?.pincode||''}</span>
-            <span class="ms-auto ${od?.state ? '' : 'd-none'}">${od?.state||''}</span>
+            <span class="ms-auto ${od?.address ? '' : 'd-none'} text-end">${od?.address || ''}</span>
+            <span class="ms-auto ${od?.city ? '' : 'd-none'}">${od?.city || ''}</span>
+            <span class="ms-auto ${od?.pincode ? '' : 'd-none'}">${od?.pincode || ''}</span>
+            <span class="ms-auto ${od?.state ? '' : 'd-none'}">${od?.state || ''}</span>
           </div>
       </div>`;
 
@@ -174,7 +174,7 @@ async function loadData(orderid) {
       </ul>`
       ;
 
-    jq('div.totals').html(strTotal);     
+    jq('div.totals').html(strTotal);
 
     jq('div.inv-msg').html(general.invoiceMessage); // 15-day Exchange with invoice<br/>Accessories & Imports Excluded.
 

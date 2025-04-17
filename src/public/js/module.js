@@ -1192,7 +1192,6 @@ export async function holdOrder() {
 }
 
 
-
 export function setEditStockBody(mb) {
     jq(mb).find('div.product').after('<div class="d-flex jcb aic gap-3 odd pcode-size"></div>');
     jq(mb).find('div.pcode, div.size').appendTo(jq(mb).find('div.pcode-size'));

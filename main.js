@@ -8,7 +8,7 @@ const { autoUpdater } = require('electron-updater');
 const lock = app.requestSingleInstanceLock();
 if (!lock) { app.quit(); return; }
 const elog = require('electron-log');
-// elog.transports.file.resolvePathFn = () => path.resolve('C:/Users/RAJ/Desktop/NodeJS Apps/ebs-software', 'main.log');
+elog.transports.file.resolvePathFn = () => path.resolve(app.getPath('userData'), 'logs', 'main.log');
 
 
 require(path.join(__dirname, 'server'));
@@ -103,7 +103,7 @@ app.on('window-all-closed', () => {
     }
 });
 
-console.log("Electron is using Node.js version:", process.version);
+// console.log("Electron is using Node.js version:", process.version);
 
 autoUpdater.on('error', (err) => {
     elog.error('Error in auto-updater:', err);
@@ -117,6 +117,12 @@ autoUpdater.on('update-available', () => {
     if (win) win.webContents.send('update-available');
 });
 
+ipcMain.on('check-if-update-already-available', (event) => {
+    if (updateAvailable) {
+        event.sender.send('update-available');
+    }
+});
+
 autoUpdater.on('download-progress', (progressObj) => {
     elog.info('Update progress.', progressObj.percent);
     win.webContents.send('download-progress', progressObj.percent);
@@ -124,12 +130,6 @@ autoUpdater.on('download-progress', (progressObj) => {
 
 autoUpdater.on('update-downloaded', () => {
     win.webContents.send('update-downloaded');
-});
-
-ipcMain.on('check-if-update-already-available', (event) => {
-    if (updateAvailable) {
-        event.sender.send('update-available');
-    }
 });
 
 ipcMain.on('download-update', () => {
@@ -293,3 +293,16 @@ ipcMain.handle('print-pdf', (e, fileName) => {
         })
     })
 })
+
+ipcMain.handle('confirmIt', async (e, msg) => {
+    const options = {
+      type: 'question',
+      buttons: ['OK', 'Cancel'],
+      defaultId: 0,
+      title: 'EBS',
+      message: msg,
+      icon: null,
+    };
+    const response = await dialog.showMessageBox(options);
+    return response.response === 0; // Returns true if 'OK' was clicked, false if 'Cancel' was clicked
+  })

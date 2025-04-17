@@ -1,16 +1,9 @@
 CREATE OR REPLACE VIEW `pymtfyear` AS
 SELECT
     y.`id`,
-    coalesce(
-        y.`party`,
-        o.`party`,
-        u.`supid`
-    ) as `party`,
-    coalesce(
-        y.`pymt_date`,
-        o.`order_date`,
-        u.`bill_date`
-    ) as `pymt_date`,
+    coalesce( y.`party`, o.`party` ) as `party`,
+    coalesce( y.`supplier`, u.`supid` ) as `supplier`,
+    coalesce( y.`pymt_date`, o.`order_date`, u.`bill_date` ) as `pymt_date`,
     y.`pymt_for`,
     y.`order_id`,
     y.`purch_id`,
@@ -31,23 +24,15 @@ SELECT
     IF(
         MONTH(
             COALESCE(
-                y.`pymt_date`,
-                o.`order_date`,
-                u.`bill_date`
+                y.`pymt_date`, o.`order_date`, u.`bill_date`
             )
-        ) > 3,
-        YEAR(
+        ) > 3, YEAR(
             COALESCE(
-                y.`pymt_date`,
-                o.`order_date`,
-                u.`bill_date`
+                y.`pymt_date`, o.`order_date`, u.`bill_date`
             )
-        ) + 1,
-        YEAR(
+        ) + 1, YEAR(
             COALESCE(
-                y.`pymt_date`,
-                o.`order_date`,
-                u.`bill_date`
+                y.`pymt_date`, o.`order_date`, u.`bill_date`
             )
         )
     ) AS `fin_year`

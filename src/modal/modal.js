@@ -489,7 +489,7 @@ async function updateRecord(req) {
 
 async function advanceQuery(req) {
     try {
-        let { data, ssid } = req.body; //log(req);
+        let { data, ssid } = req.body; //log(data);
         if (!data) throw 'no information found!'
         if (!ssid) throw 'invalid request';
         const key = data?.key;
@@ -502,7 +502,7 @@ async function advanceQuery(req) {
             if (!search) throw 'no search string found'
             sql = sql.replace(/search/gi, '%' + search + '%');
         }
-        if (data?.limit) { sql = sql.slice(0, -1) + ` LIMIT ${data.limit};` }
+        if (data?.limit) { sql = sql.slice(0, -1) + ` LIMIT ${data.limit};` }; //log(sql);
 
         const entity = data?.eid ?? null;
         if (entity) { values.push('1') }
