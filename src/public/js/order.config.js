@@ -464,7 +464,7 @@ export function setItems(obj) { //log('setitems')
 function setOrder() {
     try {
         let { discount, disc_percent, items, tax } = getOrderData();
-        if (tax === 0) {disc_percent = 0; discount = 0;}
+        if (tax === 0) { disc_percent = 0; discount = 0; }
         const itemsArr = items.filter(item => !item.hasOwnProperty('del'));
         const subtotal = itemsArr.map(item => (item.clc)).reduce((prev, curr) => prev + curr, 0);
         if (!items.length) return;
@@ -1153,12 +1153,12 @@ export async function loadPartyDetails() {
         })
         if (party?.state) {
             let { entity } = getSettings();
-            let estate = entity?.state ? entity.state.toLowerCase(): null;
-            if(!estate){
+            let estate = entity?.state ? entity.state.toLowerCase() : null;
+            if (!estate) {
                 updateDetails({ gstType: null });
                 return;
             }
-            party.state.toLowerCase() !== entity?.state.toLowerCase() ? updateDetails({ gstType: 'igst' }) : updateDetails({ gstType: null });
+            party.state.toLowerCase() !== entity?.state.toLowerCase() ? updateDetails({ gstType: 'IGST' }) : updateDetails({ gstType: null });
         }
         updateDetails({ enable_rewards: party.enable_rewards, reward_percent: party.reward_percent });
     } catch (error) {
@@ -1186,7 +1186,7 @@ export async function savePartysdata(party) {
 
 export async function loadOrderDetails() {
     let data = getOrderData();
-    let { entity } = getSettings(); //log(entity);
+    let { entity } = getSettings();
     jq('#side-panel .entity-name').text(entity?.entity_name || '')
     if (data?.party) {
         jq('div.party-details').removeClass('d-none');
@@ -1357,8 +1357,17 @@ export async function saveOrder() {
                 let cnf = await window?.app?.confirmIt('Print Order?'); //|| confirm('Print Order?');
                 if (!cnf) return;
                 let order_id = data.order.order_id;
-                let url = `${window.location.origin}/apps/order/thermal/?orderid=${order_id}`; //log(url);
-                window?.app?.showThermal(url);
+                let { defaultPrint } = getSettings().general
+
+                if (defaultPrint == "Thermal 80mm") {
+                    let url = `${window.location.origin}/apps/order/thermal/?orderid=${order_id}`; //log(url);
+                    window?.app?.showThermal(url)
+                };
+                if (defaultPrint == "A4") {
+                    // http://localhost:3300/view/order/format/b/?orderid=1745004728649
+                    let url = `${window.location.origin}/view/order/format/b/?orderid=${order_id}`; //log(url);
+                    window?.app?.showA4(url)
+                };
             }
 
             let sendEmail = getSettings().general.sendEmail;

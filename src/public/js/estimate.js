@@ -1,4 +1,4 @@
-import { convertToDecimal, doc, getActiveEntity, getSettings, jq, log, parseCurrency, parseDecimal, parseLocal, parseLocals, realDate } from "./help.js";
+import { convertToDecimal, doc, getActiveEntity, getSettings, jq, log, parseCurrency, parseDecimal, parseLocal, parseLocals, realDate, Storage } from "./help.js";
 import { getOrderData } from "./order.config.js";
 
 doc.addEventListener('keypress', async function (e) {

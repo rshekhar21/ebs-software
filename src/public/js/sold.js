@@ -1,5 +1,5 @@
 import { updateIndexDB } from "./_localdb.js";
-import h, { advanceQuery, displayDatatable, doc, isAdmin, jq, log, pageHead, parseData, popListInline, queryData, quickData, searchData, showError, showErrors, showTable, storeId, viewOrder, xdb } from "./help.js";
+import h, { advanceQuery, displayDatatable, doc, fetchTable, isAdmin, jq, log, pageHead, parseData, popListInline, queryData, quickData, searchData, showError, showErrors, showTable, storeId, viewOrder, xdb } from "./help.js";
 
 doc.addEventListener('DOMContentLoaded', function () {
     pageHead({ title: 'sold' });
@@ -12,7 +12,7 @@ doc.addEventListener('DOMContentLoaded', function () {
                 cb: async () => {
                     try {
                         jq('div.process').removeClass('d-none');
-                        let res = await queryData({ key: 'sold', limit: 500 }); //log(res); //return;
+                        let res = await queryData({ key: 'sold' });
                         // if (!res.length) return;
                         let db = new xdb(storeId, 'sold');
                         await db.clear();
@@ -25,6 +25,7 @@ doc.addEventListener('DOMContentLoaded', function () {
             }
         ]
     });
+    
     searchData({ key: 'srchsold', showData, loadData });
 
     // jq('#search').keyup(async function(){
@@ -56,6 +57,7 @@ async function loadData() {
             sortby: 'order_id', sortOrder: 'desc',
             limit: 500,
         });
+        // let data = await queryData({ key: 'sold' });
         jq('div.process').addClass('d-none');
         let res = await h.fetchTable({ key: 'sold', limit: 500 }, true, true, data);
         showData(res);
@@ -86,7 +88,7 @@ async function handleEmployeeClick(id) {
         modalSize: 'modal-md',
         serial: false
     }); //log(res); //return;
-    if(!res) {
+    if (!res) {
         showErrors('No Employees Found!');
         return;
     };
@@ -106,7 +108,7 @@ async function showData(prams) {
         })
         let admin = await isAdmin(); //log(admin)
 
-        jq(prams.tbody).find(`[data-key="id"]`).addClass('text-primary role-btn').each(function (i, e) {
+        jq(prams.tbody).find(`[data-key="order_id"]`).addClass('text-primary role-btn').each(function (i, e) {
             jq(e).click(function () {
                 popListInline({
                     el: e, li: [
@@ -170,12 +172,13 @@ async function showData(prams) {
                     let id = prams.data[i].id; //log(id);
                     if (!prams.data[i].emp_name) {
                         let span = jq('<span></span>')
-                            .addClass('role-btn italic text-secondary small text-end')
-                            .click(() => handleEmployeeClick(id))
-                            .text('Add Emp');
+                            .addClass('role-btn text-secondary small text-end')
+                            .click(() => { handleEmployeeClick(id) })
+                            .html('+ Emp')
+                            .prop('title', 'Add Employee who made this sale');
                         jq(e).html(span);
                     } else {
-                        jq(e).addClass('role-btn').click(() => handleEmployeeClick(id));
+                        jq(e).addClass('role-btn').click(() => { handleEmployeeClick(id) });
                     }
                 } catch (error) {
                     log(error);

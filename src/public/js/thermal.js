@@ -51,13 +51,13 @@ doc.addEventListener('DOMContentLoaded', async function () {
 async function loadData(orderid) {
   try {
     if (!orderid) return;
-    let { entity = {}, general = {} } = getSettings();
+    let { entity = {}, general = {} } = getSettings(); log(general);
     if (!entity.entity_id) return;
     let { entity_name, tag_line, address, city, state, pincode, contact, email, gst_num, entity_id: folder } = entity;
     let res = await fetchOrderData({ folder, orderid }); //log(res);
-    let { orderData, thermalitems: items, gsData: [{ gs }], grData: [{ gr }], partyDues, settingsData } = res; log(orderData);
-    let otype = orderData[0].order_type; log(otype);
-    let orderType = otype == "cn" ? 'CREDIT NOTE' : otype == "refund" ? 'REFUND' : gst_num ? 'TAX INVOICE' : 'BILL'; log(otype)
+    let { orderData, thermalitems: items, gsData: [{ gs }], grData: [{ gr }], partyDues, settingsData } = res;
+    let otype = orderData[0].order_type;
+    let orderType = general?.showOrderType == 'Yes' ? (otype == "cn" ? 'CREDIT NOTE' : otype == "refund" ? 'REFUND' : gst_num ? 'TAX INVOICE' : 'BILL') : '';
 
     let entstr = `
         <span class="fw-bold">${entity_name || ''}</span>
@@ -78,7 +78,6 @@ async function loadData(orderid) {
         `;
 
     if (general?.showEntity == 'Yes') { jq('div.entity').removeClass('d-none').html(entstr) }
-
     let od = orderData[0]; //log(od);
 
     let partystr = `

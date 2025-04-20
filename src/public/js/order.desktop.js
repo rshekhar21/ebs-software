@@ -28,6 +28,10 @@ doc.addEventListener('keydown', async function (e) {
         let { update = faslse } = getOrderData();
         update ? updateOrder() : saveOrder();
     }
+
+    if(e.key === 'Escape') {
+        jq('#addProduct').val('').focus();
+    }
 })
 
 doc.addEventListener('DOMContentLoaded', () => {
@@ -271,13 +275,13 @@ doc.addEventListener('DOMContentLoaded', () => {
 
     jq('#addNewParty, .add-party').click(async function () {
         try {
-            let { order_type } = getOrderData(); log('ok');
+            let { order_type } = getOrderData();
             let partyfields = getSettings().partyFields;
             let hideFields = getEmptyKeys(partyfields);
             let res = await createEditParty({
                 quick: order_type == 'taxinvoice' ? false : true,
                 focus: '#party_name',
-                hideFields,
+                hideFields: order_type == 'taxinvoice' ? [] : hideFields,
                 callback: () => {
                     let party = res?.insertId;
                     if (party) {

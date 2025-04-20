@@ -717,9 +717,9 @@ async function _viewOrders() {
             try {
                 jq(spinner).removeClass('d-none');
                 let [a, b, c] = await Promise.all([
-                    await advanceQuery({ key: 'orders', limit: 300 }),
-                    await advanceQuery({ key: 'sold', limit: 300 }),
-                    await advanceQuery({ key: 'payments', limit: 300 }),
+                    await advanceQuery({ key: 'orders' }),
+                    await advanceQuery({ key: 'sold' }),
+                    await advanceQuery({ key: 'payments' }),
                 ]);
                 let db = new xdb(storeId);
                 db.clearAll(['orders', 'sold', 'payments']);
@@ -1521,8 +1521,9 @@ export async function _viewHistory(party, print = false) {
             let tbl = await setTable({
                 // qryObj: { key: 'party_history_bydates', values: [party, to, from] },
                 qryObj: { key: 'partyledger_bydates', values: [party, to, from, party, to, from] },
-                colsToTotal: ['subtotal', 'discount', 'freight', 'tax', 'total', 'payment', 'balance'],
+                colsToTotal: ['subtotal', 'discount', 'freight', 'tax', 'total', 'payment'],
                 colsToRight: ['clear', 'timestamp'],
+                colsToParse: ['balance'],
                 hideBlanks: ['freight'],
                 alignRight: true,
             });
@@ -1534,8 +1535,9 @@ export async function _viewHistory(party, print = false) {
         async function loadData() {
             let tbl = await setTable({
                 qryObj: { key: 'partyLedger', values: [party, party] },
-                colsToTotal: ['subtotal', 'discount', 'freight', 'tax', 'total', 'payment', 'balance'],
+                colsToTotal: ['subtotal', 'discount', 'freight', 'tax', 'total', 'payment'],
                 colsToRight: ['clear', 'timestamp'],
+                colsToParse: ['balance'],
                 hideBlanks: ['freight'],
                 alignRight: true,
             });

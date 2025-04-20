@@ -303,7 +303,7 @@ doc.addEventListener('DOMContentLoaded', () => {
     jq('span.del-pymt').click(function () {
         let { total, pymt } = getOrderData();
         if (!total || !pymt) return;
-        let cnf = confirm('Delete Paymet?');
+        let cnf = confirm('Delete Payment?');
         if (!cnf) return;
         updateDetails({ pymts: [], pymt: 0 });
         loadOrderDetails();

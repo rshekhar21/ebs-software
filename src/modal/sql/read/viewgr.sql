@@ -1,30 +1,33 @@
 SELECT
     l.`id`,
-    date_format(o.`order_date`, '%d/%m/%Y') AS `sold_on`,
-    o.`id` AS `order_id`,
-    o.`inv_number` AS `inv`,
-    p.`party_name` AS `party`,
+    date_format(o.`order_date`, '%d-%m-%Y') AS `sold_on`,
+    l.`order_id`,
+    o.`inv_number`,
+    p.`party_name`,
     l.`sku`,
-    l.`product`,
-    l.`pcode`,
     COALESCE(l.`hsn`, s.`hsn`) AS `hsn`,
+    COALESCE(l.`category`, s.`category`) AS `category`,
+    l.`pcode`,
+    l.`product`,
+    l.`size`,
+    l.`unit`,
     l.`qty`,
-    l.`mrp` AS `rate`,
+    l.`price`,
     l.`disc`,
-    l.`disc_val` AS `dsic#`,
-    l.`disc_per` AS `disc%`,
+    l.`disc_val`,
+    l.`disc_per`,
     l.`gst`,
     l.`tax`,
     l.`net`,
     l.`gross`,
-    l.`emp_id` AS `emp`,
-    e.`emp_name` AS `name`
-FROM
-    `sold` l
+    l.`emp_id`,
+    e.`emp_name`,
+    o.`order_id` as `orderid`
+FROM `sold` l
     LEFT JOIN `orders` o ON l.`order_id` = o.`id`
     LEFT JOIN `party` p ON o.`party` = p.`id`
     LEFT JOIN `stock` s ON l.`sku` = s.`sku`
     LEFT JOIN `employee` e ON e.`id` = l.`emp_id`
 WHERE
     l.`qty` < 0
-ORDER BY o.`id` DESC;
+ORDER BY o.`id` DESC, l.`id` ASC;

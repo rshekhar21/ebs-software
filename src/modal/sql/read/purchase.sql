@@ -1,4 +1,4 @@
--- Active: 1728019028452@@ebsserver.in@3306@gzxynqgulilv
+-- Active: 1728019028452@@ebsserver.in@3306@db_demo
 SELECT
     `id`,
     DATE_FORMAT(`dated`, '%d/%m/%Y') AS `dated`,
@@ -22,7 +22,7 @@ FROM (
             u.`id`, u.`order_number`, COALESCE(u.`bill_date`, u.`order_date`) AS `dated`, p.`supplier_name` AS `supplier`, u.`supid`, u.`bill_type`, u.`bill_number`, u.`quantity` AS `qty`, u.`sub_total` AS `subtotal`, u.`discount` AS `disc`, u.`tax_amount` AS `tax`, u.`freight`, u.`bill_amount` AS `total`, y.`pymt`, u.`fin_year` AS `fyear`, u.`ref_filename`, COALESCE(u.`bill_date`, u.`order_date`) AS `bdate`
         FROM
             `purchase` u
-            LEFT JOIN `supplier` p on p.id = u.`supid`
+            LEFT JOIN `supplier` p on p.`id` = u.`supid`
             LEFT JOIN (
                 SELECT `purch_id`, sum(`amount`) AS `pymt`
                 FROM `pymtfyear`
@@ -43,3 +43,6 @@ FROM (
             AND y.`purch_id` IS NULL
     ) x
 ORDER BY x.`dated` desc, x.`id` DESC;
+
+
+

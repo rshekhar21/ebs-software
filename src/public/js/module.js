@@ -50,10 +50,9 @@ export async function createEditParty({ quick = false, update_id = null, callbac
             table = update_id ? 'editSupplier' : 'supplier';
         } else {
             title = update_id ? 'Edit Party' : 'Create Party';
-            table = update_id ? quick ? 'quickEditParty' : 'editParty' : quick ? 'quickParty' : 'party';
+            table = update_id ? quick ? 'quickEditParty' : 'editParty' : quick ? 'quickParty' : 'taxInv';
         }
 
-        // log(table); //return;
         let res = await createStuff({
             title, table,
             modalSize: quick ? 'modal-md' : 'modal-lg',

@@ -1,9 +1,11 @@
--- Active: 1728019028452@@ebsserver.in@3306@db_rajimpex
-SELECT * FROM purchase;
-SHOW CREATE TABLE purchase;
+-- Active: 1728019028452@@ebsserver.in@3306@gbxecgjdbxwi
+SELECT * FROM orders order by id DESC;
+UPDATE party set party_type = 'Customer' WHERE party_type = 'Supplier';
+SHOW CREATE TABLE supplier;
 
+SELECT DATE_FORMAT(`order_date`, '%d-%m-%Y') `dated`, l.`hsn`, SUM(l.`qty`) `qty`, SUM(l.`qty` * l.`price`) `sale`, SUM(l.`tax`) `tax`, SUM(l.`net`) `net`, SUM(l.`gross`) `gross` FROM `sold` l JOIN `orders` o ON o.`id` = l.`order_id` WHERE l.`hsn` IS NOT NULL AND l.`tax` IS NOT NULL AND MONTH(o.`order_date`) = '4' AND YEAR(o.`order_date`) = '2025' GROUP BY l.`hsn`, o.`order_date`;
 
-
+SELECT * from pymtfyear;
 CREATE TABLE `purchase` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `supid` int DEFAULT NULL,

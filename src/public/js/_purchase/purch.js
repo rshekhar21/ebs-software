@@ -204,7 +204,7 @@ doc.addEventListener('DOMContentLoaded', function () {
     });
 
     jq('span.edit-sup').click(function () {
-        let id = getPurchData().supid; log(id);
+        let id = getPurchData().supid;
         id && createEditSupplier({ update_id: id })
     })
 
@@ -224,9 +224,10 @@ doc.addEventListener('DOMContentLoaded', function () {
             function () { jq(this).html('<i class="bi bi-arrow-clockwise"></i>') },
             function () { jq(this).html('<i class="bi bi-search"></i>') })
         .click(async function () {
-            let { data } = await advanceQuery({ key: 'supplier' });
-            let db = new xdb(storeId, 'supplier'); db.clear
-            await db.put(data);
+            let data = await queryData({ key: 'supplier' });
+            let db = new xdb(storeId, 'supplier'); 
+            await db.clear()
+            await db.add(data);
             jq('span.sync-sup, span.sync-sup-success').toggleClass('d-none');
             setTimeout(() => {
                 jq('span.sync-sup, span.sync-sup-success').toggleClass('d-none');
@@ -239,11 +240,14 @@ doc.addEventListener('DOMContentLoaded', function () {
             let data = await db.getColumns({
                 columns: ['id', 'sup_id', 'supplier'], sortby: 'supplier',
             });
+            // let data = [];
             if (data.length == 0) {
                 let arr = await queryData({ key: 'supplier' });
-                db.put(arr);
+                await db.clear()
+                await db.add(arr);
                 return;
             }
+            // let data = await queryData({ key: "supplierList" });
             let { mb, tbody } = await showTable({
                 title: 'Select Supplier',
                 modalSize: 'modal-md',
@@ -1388,7 +1392,7 @@ async function saveOrder() {
         let rsp = await advanceQuery({ key: 'insertStock', bulk: true, bulkstr: str }); //log(rsp);
         jq('#purchase-order .completed').text('75%')
 
-        // add paymetns
+        // add payments
         if (pd.pymts.length) {
             for (let pymt of pd.pymts) {
                 pymt.purch_id = purch_id;
@@ -1545,87 +1549,6 @@ function setManualBody(mb) {
 
     jq(mb).find('div.cat-col').after('<div class="d-flex jcb aic gap-3 even upc-label"></div>');
     jq(mb).find('div.upc, div.label').appendTo(jq(mb).find('div.upc-label'));
-}
-
-let obj1 = {
-    "id": 42,
-    "sku": "1042",
-    "product": "Jeans",
-    "pcode": "JNS",
-    "mrp": 500,
-    "price": 500,
-    "wsp": 0,
-    "gst": 5,
-    "size": null,
-    "discount": 0,
-    "disc_type": null,
-    "brand": null,
-    "colour": null,
-    "label": null,
-    "section": null,
-    "season": null,
-    "category": null,
-    "upc": null,
-    "hsn": null,
-    "unit": "PCS",
-    "prchd_on": 0,
-    "purch_id": 3,
-    "prch_num": 0,
-    "supid": 19,
-    "supplier": 0,
-    "ean": 6565698,
-    "cost": 0,
-    "cost_gst": 5,
-    "purch_price": 0,
-    "qty": 1,
-    "sold": 0,
-    "defect": 0,
-    "gr": 0,
-    "avl": 20,
-    "original_name": "Jeans",
-    "tax": 0,
-    "net": 0,
-    "clc": 0,
-    "total": 0,
-    "disc": 0,
-    "purch_disc": 0
-}
-
-let obj2 = {
-    "product": "JEANS",
-    "pcode": "JNS",
-    "size": "M",
-    "size_group": "",
-    "unit": "PCS",
-    "qty": 25,
-    "purch_price": 900,
-    "cost_gst": 5,
-    "price": 2500,
-    "gst": 12,
-    "wsp": 1250,
-    "mrp": 3000,
-    "discount": "",
-    "disc_type": "",
-    "brand": "DIESEL",
-    "section": "",
-    "season": "",
-    "category": "PREMIUM",
-    "colour": "",
-    "upc": "",
-    "label": "",
-    "hsn": "",
-    "ean": "",
-    "cost": 900,
-    "index": "",
-    "update": "",
-    "purch_id": "",
-    "id": "",
-    "tax": 1125,
-    "net": 22500,
-    "clc": 22500,
-    "total": 23625,
-    "disc": 0,
-    "purch_disc": 0
 }
 
 

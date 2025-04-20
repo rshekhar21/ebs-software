@@ -45,7 +45,8 @@ async function loadData(supid) {
         // arr = [a.data, b.data, c.data, d.data];
 
         let { ob, supplier_name, sup_id, purchase, payments, balance } = e.data[0];
-        jq('.supplier').text(`LEDGER OF ${supplier_name} / ${sup_id}`)
+        // jq('.supplier').text(`LEDGER OF ${supplier_name} / ${sup_id}`)
+        jq('.supplier').html(`Ledger of <span class="text-primary ms-3">${supplier_name}</span>/${sup_id}`)
         jq('span.opening').text(parseLocals(ob));
         jq('span.payments').text(parseLocals(payments));
         jq('span.purchase').text(parseLocals(purchase));

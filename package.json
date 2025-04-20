@@ -1,6 +1,6 @@
 {
   "name": "myebs-app",
-  "version": "1.0.24",
+  "version": "1.0.29",
   "main": "main.js",
   "scripts": {
     "start": "electron --no-sandbox .",
@@ -89,7 +89,7 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
-    "electron": "^35.0.0",
+    "electron": "^35.1.5",
     "electron-builder": "^25.1.8",
     "electron-reload": "^2.0.0-alpha.1"
   }

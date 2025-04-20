@@ -153,40 +153,48 @@ async function createReport(month, year) {
         ]);
 
         let [a, b, c, d] = res;
-        arr = [a.data, b.data, c.data, d.data];
+        arr = [a?.data, b?.data, c?.data, d?.data];
 
         if (a.data.length) jq('div.quick-btns button').removeClass('disabled');
 
-        parseData({
-            tableObj: a,
-            colsToRight: ['sales', 'tax'],
-            colsToTotal: ['sales', 'tax']
-        });
+        if(a){
+            parseData({
+                tableObj: a,
+                colsToRight: ['sales', 'tax'],
+                colsToTotal: ['sales', 'tax']
+            });
+            jq('#panel-one').html(a.table);
+        }
 
-        parseData({
-            tableObj: b,
-            colsToRight: ['total', 'tax'],
-            colsToTotal: ['total', 'tax'],
-        });
+        if(b){
+            parseData({
+                tableObj: b,
+                colsToRight: ['total', 'tax'],
+                colsToTotal: ['total', 'tax'],
+            });
+            jq('#panel-two').html(b.table);
+        }
 
-        parseData({
-            tableObj: c,
-            colsToRight: ['price', 'gst', 'tax', 'net', 'gross'],
-            colsToParse: ['qty', 'price', 'gst'],
-            colsToTotal: ['qty', 'tax', 'net', 'gross']
-        })
+        if(c){
+            parseData({
+                tableObj: c,
+                colsToRight: ['price', 'gst', 'tax', 'net', 'gross'],
+                colsToParse: ['qty', 'price', 'gst'],
+                colsToTotal: ['qty', 'tax', 'net', 'gross']
+            })
+            jq('#panel-three').html(c.table);
+        }
 
-        parseData({
-            tableObj: d,
-            colsToRight: ['sale', 'tax', 'net', 'gross'],
-            colsToParse: ['qty', 'sale'],
-            colsToTotal: ['qty', 'tax', 'net', 'gross']
-        })
-
-        jq('#panel-one').html(a.table);
-        jq('#panel-two').html(b.table);
-        jq('#panel-three').html(c.table);
-        jq('#panel-four').html(d.table);
+        if(d){
+            parseData({
+                tableObj: d,
+                colsToRight: ['sale', 'tax', 'net', 'gross'],
+                colsToParse: ['qty', 'sale'],
+                colsToTotal: ['qty', 'tax', 'net', 'gross']
+            })
+            jq('#panel-four').html(d.table);
+        }       
+        
 
     } catch (error) {
         log(error);

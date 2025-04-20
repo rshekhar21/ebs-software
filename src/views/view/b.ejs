@@ -11,23 +11,38 @@
   <link rel="stylesheet" href="/styles/fonts.css">
   <link rel="stylesheet" href="/styles/style.css">
   <link rel="stylesheet" href="/styles/elastic-width.css">
-  <style type="text/css" media="print">
+  <style type="text/css">
     @page {
-      size: auto;
-      /* auto is the initial value */
       margin: 0mm;
-      /* this affects the margin in the printer settings */
     }
 
     html {
       background-color: #FFFFFF;
       margin: 10px;
-      /* this affects the margin on the html before sending to printer */
     }
 
     body {
       margin: 0mm;
-      /* margin you want for the content */
+      font-family: Verdana, Geneva, Tahoma, sans-serif;
+      font-size: 0.7rem !important;
+      font-weight: 300;
+      line-height: 1.2;
+      color: black;
+      min-width: 668px;
+    }
+
+    @media print {
+
+      body,
+      .view-order {
+        margin: 0;
+        font-family: Verdana, Geneva, Tahoma, sans-serif, sans-serif;
+        font-size: 0.7rem !important;
+        font-weight: 300;
+        line-height: 1.2;
+        color: black;
+        min-width: 668px;
+      }
     }
   </style>
   <script src="/js/_lib/moment.js" defer></script>
@@ -49,7 +64,7 @@
   </div>
   <!-- <button id="extractStylesButton">Extract Styles</button> -->
 
-  <div class="container-md d-flex flex-column gap-0 p-0 my-2 view-order d-none" id="order" style="color: black !important; font-size: 0.8rem !important; border: 1px solid black; min-height: 90%; min-width: 668px;">
+  <div class="container-md d-flex flex-column gap-0 p-0 my-2 view-order d-none" id="order" style="border: 1px solid black; min-height: 90%; ">
 
     <!-- ENTITY BLOCK -->
     <div class="entty-info d-flex flex-column aic position-relative p-2" id="entity" style="border-bottom: 1px solid black;">
@@ -59,7 +74,7 @@
       <span class="tax-type fw-500 mt-2" contenteditable="true">TAX INVOICE</span>
 
       <div class="position-absolute top-0 start-0 mt-2 ms-2 logo"></div>
-      <div class="position-absolute top-0 end-0 me-2 mt-2 copy-type fst-italic small role-btn" title="Click to switch between Original/Duplicate/Transport Copies">(ORIGINAL FOR RECIPIENT)</div>
+      <div class="position-absolute top-0 end-0 me-2 mt-2 copy-type fst-italic role-btn" title="Click to switch between Original/Duplicate/Transport Copies">(ORIGINAL FOR RECIPIENT)</div>
 
       <!-- <div
                 class="position-absolute bottom-0 end-0 mb-2 me-2 btn-group bg-light rounded text-dark d-print-none z-2">
@@ -112,7 +127,7 @@
 
     <div class="d-flex p-2">
       <div class="w-75 d-flex flex-column gap-0">
-        <span class="small fw-500 text-decoration-underline">Declaration</span>
+        <span class="fw-500 text-decoration-underline">Declaration</span>
         <span class="declaratin-msg" contenteditable="true">we Declare that this invoice shows the actual price of the goods described
           and that all particulars are true and correct.</span>
 
@@ -128,7 +143,7 @@
     </div>
   </div>
 
-  <div class="text-center mt-2 small fst-italic view-order d-none" contenteditable="true" style="min-width: 768px;"> (This is a
+  <div class="text-center mt-2 fst-italic view-order d-none" contenteditable="true" style="min-width: 768px;"> (This is a
     computer-generated document. No signature is required)
   </div>
 

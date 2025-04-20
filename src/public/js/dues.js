@@ -47,6 +47,7 @@ function showData(data) {
         parseData({
             tableObj: data,
             colsToParse: ['ob', 'total', 'pymt', 'balance'],
+            colsToRight: ['ob', 'total', 'pymt', 'balance'],
             alignRight: false,
 
         })

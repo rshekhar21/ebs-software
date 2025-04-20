@@ -1,7 +1,6 @@
--- Active: 1735393922891@@127.0.0.1@3306@jexlkjletykj
 SELECT
     l.`id`,
-    date_format(o.`order_date`, '%d/%m/%Y') AS `dated`,
+    date_format(o.`order_date`, '%d-%m-%Y') AS `dated`,
     l.`order_id`,
     o.`inv_number`,
     p.`party_name`,
@@ -29,5 +28,4 @@ FROM `sold` l
     LEFT JOIN `party` p ON o.`party` = p.`id`
     LEFT JOIN `stock` s ON l.`sku` = s.`sku`
     LEFT JOIN `employee` e ON e.`id` = l.`emp_id`
-WHERE o.`entity` = 1
-ORDER BY o.`id` DESC, l.`id` ASC;
+ORDER BY o.`id` DESC, l.`id` ASC LIMIT 300;

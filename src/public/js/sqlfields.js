@@ -4,6 +4,7 @@ const gender = ['', 'Male', 'Female', 'N/A']
 const partyTypes = ['', 'Customer', 'WS', 'Staff', 'Exempt', 'Reserved', 'Entity'];
 const bankModes = ['', 'Card', 'Online', 'Multiple', 'Cheque', 'Draft']
 const entityTypes = ['', 'Propritor', 'Partnership', 'Un-Registered', 'Pvt.ltd.', 'Other'];
+const titles = ['', 'Mr.', 'Mrs', 'Ms', 'M/s', 'Dr.', 'Pro.'];
 
 export default {
   expense: {
@@ -11,7 +12,7 @@ export default {
     amount: { label: 'Expense Amount', type: 'number', required: true },
     description: { label: 'Description', type: 'textarea' },
     exp_type: { label: 'Expense Type', type: 'select', select: ['', 'Official', 'Personal', 'Other'] },
-    pymt_mode: { label: 'Paymetn Mode', type: 'select', select: ['', 'Cash', 'Bank', 'Credit Card'] },
+    pymt_mode: { label: 'Paymt Mode', type: 'select', select: ['', 'Cash', 'Bank', 'Credit Card'] },
     bank_mode: { label: 'Bank Mode', type: 'select', select: bankModes },
     pymt_method: { label: 'Pymt Method', type: 'select', key: 'pymtmethodslist' },
     bank_id: { label: 'Bank Account', type: 'select', localobj: 'banks' },
@@ -37,7 +38,7 @@ export default {
     id: { type: 'hidden' }
   },
   selectBank: {
-    bank_id: { label: 'Bank Account', type: 'select', localobj: 'banks' }, 
+    bank_id: { label: 'Bank Account', type: 'select', localobj: 'banks' },
   },
   employee: {
     emp_name: { label: 'Employee Name', type: 'tex', required: true },
@@ -214,7 +215,7 @@ export default {
     notes: { label: 'Notes', type: 'textarea' },
     amount: { label: 'Amount', type: 'number', required: true, readonly: true },
     party: { label: 'Party', type: 'number', required: true, readonly: true },
-  },  
+  },
   editPymt: {
     pymt_date: { label: 'Payment Date', type: 'date', required: true },
     cash: { label: 'Cash', type: 'number' },
@@ -233,9 +234,9 @@ export default {
     forfiet: { type: 'hidden' },
     party: { type: 'hidden' },
     id: { type: 'hidden' },
-  },  
+  },
   quickParty: {
-    title: { label: "Title", type: 'select', select: ['', 'Mr.', 'Mrs', 'Ms', 'M/s', 'Dr.', 'Pro.'] },
+    title: { label: "Title", type: 'select', select: titles },
     party_name: { label: "Full Name", required: true },
     contact: "Contact Number",
     email: { label: "Email Address", lowercase: true },
@@ -250,7 +251,7 @@ export default {
     opening_cr: { type: 'hidden', default: '0.00' },
   },
   party: {
-    title: { label: "Title", type: 'select', select: ['', 'Mr.', 'Mrs', 'Ms', 'M/s', 'Dr.', 'Pro.'] },
+    title: { label: "Title", type: 'select', select: titles },
     party_name: { label: "Full Name", required: true },
     contact: "Contact Number",
     email: { label: "Email Address", lowercase: true },
@@ -259,14 +260,29 @@ export default {
     city: { label: 'City', type: 'text' },
     pincode: { label: 'Pincode', type: 'number' },
     state: { label: 'State', type: 'text' },
-    company: { label: 'Company / Ref', type: 'text' },
-    party_type: { type: 'hidden', default: 'Customer' },
     opening_bal: { label: "Opening Balance", type: 'number' },
+    company: { label: 'Company / Ref', type: 'hidden' },
+    party_type: { type: 'hidden', default: 'Customer' },
     opening_cr: { type: 'hidden', default: '0.00' },
   },
+  taxInv: {
+    title: { label: "Title", type: 'select', select: titles, default: 'M/s' },
+    party_name: { label: "Full Name", required: true },
+    contact: "Contact Number",
+    email: { label: "Email Address", lowercase: true },
+    address: { label: "Billing Address", type: 'textarea' },
+    city: { label: 'City', type: 'text' },
+    pincode: { label: 'Pincode', type: 'number' },
+    state: { label: 'State', type: 'text' },
+    state_code: { label: 'State Code', type: 'number' },
+    gst_number: { label: "GST Number", type: 'text', uppercase: true },
+    opening_bal: { label: "Opening Balance", type: 'hidden', default: '0.0' },
+    party_type: { type: 'hidden', default: 'Customer' },
+  },
+
   editParty: {
     party_type: { label: "Party Type", type: 'select', select: partyTypes, default: 'Customer' },
-    title: { label: "Title", type: 'select', select: ['', 'Mr.', 'Mrs', 'Ms', 'M/s', 'Dr.', 'Pro.'] },
+    title: { label: "Title", type: 'select', select: titles },
     party_name: { label: "Full Name", required: true },
     contact: "Contact Number",
     email: { label: "Email Address", lowercase: true },
@@ -298,7 +314,7 @@ export default {
     id: { type: 'hidden' }
   },
   quickEditParty: {
-    title: { label: "Title", type: 'select', select: ['', 'Mr.', 'Mrs', 'Ms', 'M/s', 'Dr.', 'Pro.'] },
+    title: { label: "Title", type: 'select', select: titles },
     party_name: { label: "Full Name", required: true },
     contact: "Contact Number",
     email: { label: "Email Address", lowercase: true },
@@ -335,7 +351,7 @@ export default {
     id: { type: 'hidden' }
   },
   supplier: {
-    title: { label: "Title", type: 'select', select: ['', 'Mr.', 'Mrs', 'Ms', 'M/s', 'Dr.', 'Pro.'], default: 'M/s' },
+    title: { label: "Title", type: 'select', select: titles, default: 'M/s' },
     supplier_name: { label: "Supplier Name", required: true, uppercase: true },
     gst_number: { label: "GST Number", type: 'text', uppercase: true },
     contact: "Contact Number",
@@ -364,7 +380,7 @@ export default {
     opening_cr: { type: 'hidden', default: '0.00' },
   },
   editSupplier: {
-    title: { label: "Title", type: 'select', select: ['', 'Mr.', 'Mrs', 'Ms', 'M/s', 'Dr.', 'Pro.'] },
+    title: { label: "Title", type: 'select', select: titles },
     supplier_name: { label: "Full Name", required: true },
     contact: "Contact Number",
     email: { label: "Email Address", lowercase: true },
@@ -385,7 +401,7 @@ export default {
     id: { type: 'hidden' }
   },
   empAdvance: {
-    pymt_date: { label: 'Paymetn Date', type: 'date' },
+    pymt_date: { label: 'Payment Date', type: 'date' },
     amount: { label: 'Amount', type: 'number', required: true },
     pymt_mode: { label: 'Payment Mode', type: 'select', select: ['', 'CASH', 'ONLINE/BANK', 'OTHER'] },
     purpose: { label: 'Purpose', type: 'textarea' },
@@ -559,6 +575,7 @@ export default {
     basePrice: { label: 'Stock Base Price', type: 'select', selectObj: [{ value: 'SP (Selling Price)', id: 'sp' }, { value: 'WSP (Wholesale Price)', id: 'wsp' }], default: 'sp', },
     productMode: { label: 'Default Product Mode', type: 'select', select: ['Scan', 'Search'] },
     thermalFormat: { label: 'Thermal Format', type: 'select', select: ['', 'Classic', 'Tabular'] },
+    defaultPrint: { label: 'Default Order Print', type: 'select', select: ['', 'Thermal 80mm', 'A4', 'A5'], default: 'Thermal'},
     chartType: { label: 'Chart Type', type: 'select', select: ['line', 'bar', 'doughnut', 'bubble', 'scatter'], default: 'line' },
     showPymt: { label: 'Show Pymt. & Bal.', type: 'select', select: ['', 'Yes', 'No'] },
     showBankOnInv: { label: 'Show Bank on A4/A5 Invoice', type: 'select', select: ['', 'Yes', 'No'] },
@@ -599,7 +616,7 @@ export default {
     opening_bal: { label: 'Opening Balance', type: 'checkbox', default: '' },
   },
   partyforinvoice: {
-    title: { label: "Title", type: 'select', select: ['', 'Mr.', 'Mrs', 'Ms', 'M/s', 'Dr.', 'Pro.'] },
+    title: { label: "Title", type: 'select', select: titles },
     party_name: { label: "Full Name", required: true, errormsg: 'Party Name is must to create party!' },
     contact: "Contact Number",
     email: { label: 'Email ID', type: 'email', case: 'lower' },
