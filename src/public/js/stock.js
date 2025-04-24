@@ -1,6 +1,6 @@
 import { setupIndexDB } from './_localdb.js';
 import help, { jq, log, doc, fetchTable, parseNumber, parseLocal, advanceQuery, pageHead, displayDatatable, searchData, parseData, createStuff, createEL, myIndexDBName, xdb, storeId, createTable, showErrors, postData, getSettings, queryData, isRestricted } from './help.js';
-import { _delStock, _loadSrchstock, setEditStockBody } from './module.js';
+import { _delStock, _loadSrchstock, editInlineStock, stockSubMenu } from './module.js';
 import temp from "./temps.js";
 
 doc.addEventListener('DOMContentLoaded', function () {
@@ -155,65 +155,79 @@ doc.addEventListener('DOMContentLoaded', function () {
                     })
                 }
             },
-            {
-                title: 'Hard Reset',
-                icon: '<i class="bi bi-arrow-clockwise"></i>',
-                cb: async () => {
-                    jq('div.process').removeClass('d-none');
-                    let data = await queryData({ key: 'stock' }); //log(data)
-                    let db = new xdb(storeId, 'stock');
-                    if (data.length) {
-                        db.clear();
-                        await db.add(data);
-                        jq('div.process').addClass('d-none');
-                        loadData();
-                    } else {
-                        db.clear();
-                        return;
-                    }
-                }
-            }
+            // {
+            //     title: 'Hard Reset',
+            //     icon: '<i class="bi bi-arrow-clockwise"></i>',
+            //     cb: async () => {
+            //         jq('div.process').removeClass('d-none');
+            //         let data = await queryData({ key: 'stock' }); //log(data)
+            //         let db = new xdb(storeId, 'stock');
+            //         if (data.length) {
+            //             db.clear();
+            //             await db.add(data);
+            //             jq('div.process').addClass('d-none');
+            //             loadData();
+            //         } else {
+            //             db.clear();
+            //             return;
+            //         }
+            //     }
+            // }
         ]
     });
 
     jq('#search').keyup(async function () {
         try {
             let key = this.value;
-            let db = new xdb(storeId, 'stock');
-            let arr = await db.getColumns({
-                key,
-                indexes: [`sku`, `product`, `pcode`, `price`, `mrp`, `brand`, `label`, `hsn`, `upc`, `section`, `season`, `colour`, `category`, `supplier`, `unit`, `ean`],
-                columns: [`id`, `sku`, `hsn`, `product`, `pcode`, `mrp`, `price`, `wsp`, `gst`, `size`, `discount`, `disc_type`, `brand`, `colour`, `label`, `section`, `season`, `category`, `upc`, `unit`, `prchd_on`, `purch_id`, `bill_number`, `supid`, `supplier`, `ean`, `cost`, `purch_price`, `cost_gst`, `qty`, `sold`, `defect`, `returned`, `available`,],
-                // rename: { 'available': 'avl', 'returned': 'gr', 'discount': 'disc' },
-                limit: 150,
-                sortby: 'product'
-            });
-            let tbl = createTable(arr, true, true);
-            showData(tbl);
+            
+            // let db = new xdb(storeId, 'stock');
+            // let arr = await db.getColumns({
+            //     key,
+            //     indexes: [`sku`, `product`, `pcode`, `price`, `mrp`, `brand`, `label`, `hsn`, `upc`, `section`, `season`, `colour`, `category`, `supplier`, `unit`, `ean`],
+            //     columns: [`id`, `sku`, `hsn`, `product`, `pcode`, `mrp`, `price`, `wsp`, `gst`, `size`, `discount`, `disc_type`, `brand`, `colour`, `label`, `section`, `season`, `category`, `upc`, `unit`, `prchd_on`, `purch_id`, `bill_number`, `supid`, `supplier`, `ean`, `cost`, `purch_price`, `cost_gst`, `qty`, `sold`, `defect`, `returned`, `available`,],
+            //     // rename: { 'available': 'avl', 'returned': 'gr', 'discount': 'disc' },
+            //     limit: 150,
+            //     sortby: 'product'
+            // });
+            // let tbl = createTable(arr, true, true);
+            if(key){
+                // let res = await queryData({ key: 'search_stock', type: 'search', searchfor: key });
+                let tbl = await fetchTable({ key: 'search_stock', type: 'search', searchfor: key }, true, true, null);
+                if(!tbl){
+                    displayDatatable(null, 'container-fluid');
+                    return;
+                };
+                showData(tbl);
+            }else(
+                loadData()
+            )
         } catch (error) {
             log(error);
         }
     }).on('search', function () {
         loadData();
-    })
+    });
+
+    let inputbox = jq(`<div></div>`).attr('id', 'inputbox');
+    jq('body').append(inputbox);
 
 })
 
 async function loadData(key = null) {
     try {
-        let db = new xdb(storeId, 'stock');
-        let data = await db.getColumns({
-            table: 'stock',
-            key: key || null,
-            columns: [`id`, `sku`, `hsn`, `product`, `pcode`, `mrp`, `price`, `wsp`, `gst`, `size`, `discount`, `disc_type`, `brand`, `colour`, `label`, `section`, `season`, `category`, `upc`, `unit`, `prchd_on`, `purch_id`, `bill_number`, `supid`, `supplier`, `ean`, `cost`, `purch_price`, `cost_gst`, `qty`, `sold`, `defect`, `returned`, `available`,],
-            indexes: [`sku`, `product`, `pcode`, `price`, `mrp`, `brand`, `label`, `hsn`, `upc`, `section`, `season`, `colour`, `category`, `supplier`, `unit`, `ean`],
-            limit: '500',
-            sortby: 'id',
-            sortOrder: 'desc'
-        });
-
+        // let db = new xdb(storeId, 'stock');
+        // let data = await db.getColumns({
+        //     table: 'stock',
+        //     key: key || null,
+        //     columns: [`id`, `sku`, `hsn`, `product`, `pcode`, `mrp`, `price`, `wsp`, `gst`, `size`, `discount`, `disc_type`, `brand`, `colour`, `label`, `section`, `season`, `category`, `upc`, `unit`, `prchd_on`, `purch_id`, `bill_number`, `supid`, `supplier`, `ean`, `cost`, `purch_price`, `cost_gst`, `qty`, `sold`, `defect`, `returned`, `available`,],
+        //     indexes: [`sku`, `product`, `pcode`, `price`, `mrp`, `brand`, `label`, `hsn`, `upc`, `section`, `season`, `colour`, `category`, `supplier`, `unit`, `ean`],
+        //     limit: '500',
+        //     sortby: 'id',
+        //     sortOrder: 'desc'
+        // });
+        let data = null;
+        let res = await fetchTable({ key: 'stock', limit: '50' }, true, true, data);
         jq('div.process').addClass('d-none');
-        let res = await fetchTable({ key: 'stock' }, true, true, data);
         res ? showData(res) : jq('#root').addClass('text-center').html('No Data/Records Found!');
     } catch (error) {
         log(error);
@@ -247,92 +261,11 @@ function showData(data) {
 
         jq(tbody).find(`[data-key="id"]`).addClass('text-primary role-btn').each(function (i, e) {
             jq(e).click(function () {
-                let { id, sku, sold } = data.data[i];
-                help.popListInline({
-                    el: this, li: [
-                        { key: 'Edit', id: 'editStock' },
-                        { key: 'Set Classic SKU', id: 'classicSKU' },
-                        { key: 'Set Dynamic SKU', id: 'dynamciSKU' },
-                        { key: 'Delete', id: 'delete' },
-                        { key: 'Cancel' },
-                    ]
-                })
-
-                if (sku.length > 6) jq('#dynamciSKU').addClass('disabled');
-                if (sku.length < 6) jq('#classicSKU').addClass('disabled');
-
-                if (sold) { jq('#classicSKU, #delete, #dynamciSKU').addClass('disabled'); }
-
-
-                jq('#editStock').click(async function () {
-                    try {
-                        if (await isRestricted('ChkBjNwf')) return;
-                        let db = new xdb(storeId, 'stock'); //log(id);
-                        let [arr] = await db.getColumns({ key: id, indexes: ['id'], columns: ['id', 'purch_id'], limit: 1, });
-                        let table = 'stock';
-                        if (arr.purch_id) { table = 'purchStockEdit' }; //log(table);
-
-                        let res = await createStuff({
-                            title: 'Edit Stock',
-                            table: table,
-                            applyButtonText: 'Update',
-                            url: '/api/crud/update/stock',
-                            focus: '#product',
-                            qryObj: { key: 'editStock', values: [id] },
-                            applyCallback: _loadSrchstock,
-                            applyCBPrams: id,
-                            hideFields: ['sizeGroup'],
-                            cb: loadData,
-                        });
-
-                        let mb = res.mb;
-
-                        setEditStockBody(mb);
-
-                    } catch (error) {
-                        log(error);
-                    }
-                })
-
-                jq('#delete').click(async function () {
-                    if (await isRestricted('BcmUCgFW')) return;
-                    let key = jq('#search').val();
-                    _delStock(id, () => loadData(key));
-                })
-
-                jq('#classicSKU').click(async function () {
-                    try {
-                        if (await isRestricted('ChkBjNwf')) return;
-                        let cnf = confirm('Update to Classic SKU?');
-                        if (!cnf) return;
-                        let { data: res } = await postData({ url: '/api/set-classic-sku', data: { data: { id } } });
-                        if (!res.affectedRows) { showErrors('Error Updating SKU!\nOnly Unsold Article/Item is allowed to Change/Update SKU!', 7000); return; }
-                        let { data } = await advanceQuery({ key: 'getstock_byid', values: [id] });
-                        let db = new xdb(storeId, 'stock');
-                        await db.put(data);
-                        loadData();
-                    } catch (error) {
-                        log(error);
-                    }
-                })
-
-                jq('#dynamciSKU').click(async function () {
-                    try {
-                        if (await isRestricted('ChkBjNwf')) return;
-                        let cnf = confirm('Update to Dynamic SKU?');
-                        if (!cnf) return;
-                        let { data: res } = await postData({ url: '/api/set-dynamic-sku', data: { data: { id } } });
-                        if (!res.affectedRows) { showErrors('Error Updating SKU!\nOnly Unsold Article/Item is allowed to Change/Update SKU!', 7000); return; }
-                        let { data } = await advanceQuery({ key: 'getstock_byid', values: [id] });
-                        let db = new xdb(storeId, 'stock');
-                        await db.put(data);
-                        loadData();
-                    } catch (error) {
-                        log(error);
-                    }
-                })
+                stockSubMenu(e, i, data.data, loadData)
             })
         })
+
+        editInlineStock(tbody, data.data, loadData);
 
         displayDatatable(table, 'container-fluid');
         jq(table).find(`[data-key="sku"]`).addClass('position-sticky start-0');

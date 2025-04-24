@@ -42,6 +42,8 @@ function searchStock(req, res) { action(req, res, modal.searchStock) }
 function getVersion(req, res) { action(req, res, modal.getVersion) }
 function shortUrl(req, res) { action(req, res, modal.shortUrl) }
 function holdOrder(req, res) { action(req, res, modal.holdOrder) }
+function getClassicSku(req, res) { action(req, res, modal.getClassicSku) }
+function inlineEditStock(req, res) { action(req, res, modal.inlineEditStock) }
 
 module.exports = {
     listApps,
@@ -74,4 +76,6 @@ module.exports = {
     getVersion,
     shortUrl,
     holdOrder,
+    getClassicSku,
+    inlineEditStock
 };

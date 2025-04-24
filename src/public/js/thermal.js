@@ -17,6 +17,7 @@ doc.addEventListener('DOMContentLoaded', async function () {
   const orderid = h.getUrlParams().orderid;
   const app = window?.app?.node() || null;
 
+  document.title = 'Invoice 80mm'; //return;
   await loadData(orderid);
   jq('div.status, div.view-order').toggleClass('d-none');
 
@@ -38,10 +39,11 @@ doc.addEventListener('DOMContentLoaded', async function () {
 
 
   if (app) {
-    jq('#setPrinter').removeClass('d-none').click(async function () {
-      jq('#loading').removeClass('d-none');
+    jq('div.tool-bar').removeClass('d-none');
+    jq('#setPrinter').click(async function () {
+      jq('div.status').removeClass('d-none');
       let printer = await window?.app?.showPrinters();
-      jq('#loading').addClass('d-none');
+      jq('div.status').addClass('d-none');
       Storage.set('POSPrinter', printer);
     })
   }
@@ -51,7 +53,7 @@ doc.addEventListener('DOMContentLoaded', async function () {
 async function loadData(orderid) {
   try {
     if (!orderid) return;
-    let { entity = {}, general = {} } = getSettings(); log(general);
+    let { entity = {}, general = {} } = getSettings();
     if (!entity.entity_id) return;
     let { entity_name, tag_line, address, city, state, pincode, contact, email, gst_num, entity_id: folder } = entity;
     let res = await fetchOrderData({ folder, orderid }); //log(res);

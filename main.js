@@ -210,9 +210,9 @@ ipcMain.handle('printPage1', async (e, printer) => {
 
 ipcMain.handle('showThermal', async (e, url, printer) => {
     let newWindow = new BrowserWindow({
-        width: 450,
+        width: 400,
         height: 800,
-        minWidth: 400,
+        minWidth: 350,
         minHeight: 400,
         autoHideMenuBar: true,
         // alwaysOnTop: false,
@@ -296,13 +296,13 @@ ipcMain.handle('print-pdf', (e, fileName) => {
 
 ipcMain.handle('confirmIt', async (e, msg) => {
     const options = {
-      type: 'question',
-      buttons: ['OK', 'Cancel'],
-      defaultId: 0,
-      title: 'EBS',
-      message: msg,
-      icon: null,
+        type: 'question',
+        buttons: ['OK', 'Cancel'],
+        defaultId: 0,
+        title: 'EBS',
+        message: msg,
+        icon: null,
     };
     const response = await dialog.showMessageBox(options);
     return response.response === 0; // Returns true if 'OK' was clicked, false if 'Cancel' was clicked
-  })
+})

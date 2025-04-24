@@ -65,7 +65,7 @@ async function initializeUserPool() {
 
 async function registerConnection(ecnstr) {
     try {
-        let cnstr = await decryptEncryptedJWT(ecnstr);
+        let cnstr = await decryptEncryptedJWT(ecnstr); //log(cnstr);
         cnstr.waitForConnections = true;
         cnstr.connectionLimit = 10;
         cnstr.queueLimit = 0;

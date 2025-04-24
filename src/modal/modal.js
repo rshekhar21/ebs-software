@@ -566,6 +566,33 @@ async function newSKU(ssid) {
     }
 }
 
+async function getClassicSku() {
+    try {
+        let sql = "SELECT AUTO_INCREMENT + 1000 AS sku FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'stock';";
+        let [res] = await queryUserDb(sql);
+        return res;
+    } catch (error) {
+        log(error);
+    }
+}
+Modals.getClassicSku = getClassicSku;
+// getClassicSku().then(d=>log(d)).catch(err=>log(err));
+// newSKU().then(d=>log(d)).catch(err=>log(err));
+
+async function inlineEditStock(req){
+    try {
+        let { key, value, id, ssid } = req.body;
+        if(!ssid) throw 'Unauthorized Access';
+        let sql = `UPDATE stock SET ${key} = ? WHERE id = ?;`;
+        let res = await queryUserDb(sql, [value, id]);
+        return res;
+    } catch (error) {
+        log(error);
+        return error;
+    }
+}
+Modals.inlineEditStock = inlineEditStock;
+
 async function setClassicSKU(req) {
     try {
         const { ssid, data } = req.body;
@@ -573,7 +600,7 @@ async function setClassicSKU(req) {
         const id = data.id;
         if (!id) throw 'Invalid/Missing ID !';
         const sku = Number(id) + 1000;
-        const sql = "UPDATE `stock` s LEFT JOIN `sold` l on l.`sku` = s.`sku` SET s.`sku` = ? WHERE s.`id` = ? AND l.`sku` IS NULL;;";
+        const sql = "UPDATE `stock` s LEFT JOIN `sold` l on l.`sku` = s.`sku` SET s.`sku` = ? WHERE s.`id` = ? AND l.`sku` IS NULL;";
         // const res = await config.querySql(sql, [sku, id]); //log(res);
         const res = await queryUserDb(sql, [sku, id]); //log(res);
         // const cnstr = await loadeCnstr(req);
@@ -604,26 +631,58 @@ async function setDynamicSKU(req) {
     }
 }
 
+// async function bulkEdit(req) {
+//     try {
+//         const { ssid, data: db } = req.body;
+//         let { data, selected } = db;
+//         if (!ssid) throw 'Invalid Request';
+//         let sql = `UPDATE stock SET ${Object.entries(data)
+//             .filter(([key, value]) => value !== '') // Include non-blank values
+//             .map(([key, value]) => {
+//                 // Check if the value is 'del', and set the column to null in that case
+//                 return (value === 'delete') ? `\`${key}\` = NULL` : `\`${key}\` = '${value}'`;
+//             }).join(', ')} WHERE id IN (${selected.join(',')});`
+//             let res = await queryUserDb(sql);
+//         return res;
+//     } catch (error) {
+//         log(error);
+//     }
+// }
+
 async function bulkEdit(req) {
     try {
         const { ssid, data: db } = req.body;
         let { data, selected } = db;
+
         if (!ssid) throw 'Invalid Request';
-        // const [cnstr] = await remoteCS(ssid);
-        let sql = `UPDATE stock SET ${Object.entries(data)
-            .filter(([key, value]) => value !== '') // Include non-blank values
-            .map(([key, value]) => {
-                // Check if the value is 'del', and set the column to null in that case
-                return (value === 'delete') ? `\`${key}\` = NULL` : `\`${key}\` = '${value}'`;
-            }).join(', ')} WHERE id IN (${selected.join(',')});`; //log(sql);
-        // let res = await config.querySql(sql); //log(res);
-        let res = await queryUserDb(sql); //log(res);
-        // const cnstr = await loadeCnstr(req);
-        // const remoteQry = new connection(cnstr);
-        // let res = await remoteQry.execute(sql); //log(res);
-        return res;
+        if (!Array.isArray(selected) || selected.length === 0) {
+            return { success: false, message: 'No items selected for update.' };
+        }
+
+        // Filter out blank values and prepare update clauses and values
+        const updates = Object.entries(data)
+            .filter(([key, value]) => value !== '');
+
+        if (updates.length === 0) {
+            return { success: true, message: 'No data provided for update.' };
+        }
+
+        const setClauses = updates.map(([key]) => `\`${key}\` = ?`).join(', ');
+        const updateValues = updates.map(([, value]) => (value === 'delete' ? null : value));
+
+        // Create placeholders for the IN clause
+        const inClausePlaceholders = selected.map(() => '?').join(',');
+        const sql = `UPDATE stock SET ${setClauses} WHERE id IN (${inClausePlaceholders})`;
+
+        // Combine update values and selected IDs
+        const queryValues = [...updateValues, ...selected];
+
+        let res = await queryUserDb(sql, queryValues); // Assuming queryUserDb supports parameterized queries
+        return { success: true, data: res };
+
     } catch (error) {
-        log(error);
+        console.error("Bulk Edit Error:", error); // Log with more context
+        return { success: false, message: 'Failed to bulk edit stock items.', error: error.message || error };
     }
 }
 
@@ -1310,6 +1369,7 @@ async function uploadSolds() {
         log(error);
     }
 }
+
 
 
 

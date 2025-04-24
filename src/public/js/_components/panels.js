@@ -1,7 +1,7 @@
 import help, { advanceQuery, calculateTotalTaxByGst, copyToClipboard, createEL, createNewPage, createStuff, createTable, doc, errorMsg, fd2json, fd2obj, fetchTable, generateUniqueAlphaCode, getClientType, getFinYear, getForm, getSettings, getSqlDate, isAdmin, isRestricted, jq, log, parseColumn, parseCurrency, parseData, parseLocals, parseNumber, popListInline, postData, queryData, setTable, shareOrder, showCalender, showErrors, showModal, showSuccess, showTable, storeId, titleCase, viewOrder, viewOrderA4, xdb } from "../help.js";
 import { loadSettings } from "./settings.js";
 import { icons } from "../svgs.js";
-import { _addPartyPymt, _delStock, _loadSrchstock, _viewOrderDetails, addPurchPymt, createStock, editParty, numerifyObject, purchEntry, sendOrderEmail, setEditStockBody } from "../module.js";
+import { _addPartyPymt, _delStock, _loadSrchstock, _viewOrderDetails, addPurchPymt, createStock, editParty, numerifyObject, purchEntry, sendOrderEmail, setEditStockBody, stockSubMenu, viewArticles } from "../module.js";
 import { getOrderData, hardresetData, loadOrderDetails, loadPartyDetails, quickData, refreshOrder, resetOrder, setItems, showOrderDetails, updateDetails } from "../order.config.js";
 import { setupIndexDB } from "../_localdb.js";
 
@@ -1015,66 +1015,8 @@ async function _viewStock() {
                 ]
             })
 
-            jq(tbl.tbody).find(`[data-key="id"]`).each(function (i, e) {
-                jq(e).addClass('role-btn text-primary').click(function () {
-                    let id = this.textContent;
-                    let index = jq(this).index();
-                    let supplier = jq(this).closest('tr').find(`[data-key="supplier"]`).text();
-                    popListInline({
-                        el: this,
-                        li: [
-                            { key: 'Edit', id: 'editStock' },
-                            { key: 'Set Classic SKU', id: 'updateSKU' },
-                            { key: 'Delete', id: 'delStock' },
-                            { key: 'Cancel' }
-                        ]
-                    });
-
-                    jq('#editStock').click(async function () {
-                        try {
-                            let db = new xdb(storeId, 'stock'); //log(id);
-                            let [arr] = await db.getColumns({ key: id, indexes: ['id'], columns: ['id', 'purch_id'], limit: 1, });
-                            let table = 'stock';
-                            if (arr.purch_id) { table = 'purchStockEdit' };
-                            let res = await createStuff({
-                                title: 'Edit Stock',
-                                table: table,
-                                applyButtonText: 'Update',
-                                url: '/api/crud/update/stock',
-                                focus: '#product',
-                                qryObj: { key: 'editStock', values: [id] },
-                                applyCallback: async () => {
-                                    let { data } = await advanceQuery({ key: 'getstock_byid', values: [id] }); //log(data);
-                                    let db = new xdb(storeId, 'stock');
-                                    await db.put(data);
-                                },
-                                applyCBPrams: id,
-                                hideFields: ['sizeGroup'],
-                                cb: loadData,
-                            });
-                            let mb = res.mb;
-                            setEditStockBody(mb);
-                        } catch (error) {
-                            log(error);
-                        }
-                    })
-
-                    jq('#updateSKU').click(async function () {
-                        let cnf = confirm('Update SKU?');
-                        if (!cnf) return;
-                        let { data: res } = await postData({ url: '/api/set-classic-sku', data: { data: { id } } }); //log(res);
-                        if (!res.affectedRows) { showErrors('Error Updating SKU!\nOnly Unsold Article/Item is allowed to Change/Update SKU!', 7000); return; }
-                        let { data } = await advanceQuery({ key: 'getstock_byid', values: [id] });
-                        let db = new xdb(storeId, 'stock');
-                        await db.put(data);
-                        loadData();
-                    })
-
-                    jq('#delStock').click(async function () {
-                        let key = jq(search).val();
-                        _delStock(id, () => loadData(null, key))
-                    })
-                })
+            jq(tbl.tbody).find(`[data-key="id"]`).addClass('role-btn text-primary').each(function (i, e) {
+                jq(e).click(function () { stockSubMenu(e, i, data, loadData) })
             })
 
             let srch = jq(search).val(); //log(srch);
@@ -1544,9 +1486,9 @@ export async function _viewHistory(party, print = false) {
 
             jq('div.history-data').html(tbl.table);
 
-            jq(tbl.tbody).find(`[data-key="id"]`).each(function (i, e) {
+            jq(tbl.tbody).find(`[data-key="id"]`).addClass('text-primary role-btn').each(function (i, e) {
                 if (tbl.data[i].type == 'Payment') return;
-                jq(e).addClass('text-primary role-btn').click(async function () { orderSubmenu(e, i, tbl.data, loadData) });
+                jq(e).click(async function () { orderSubmenu(e, i, tbl.data, loadData) });
             });
 
             jq(tbl.tbody).find(`[data-key="type"]`).each(function (i, e) {
@@ -1563,7 +1505,7 @@ async function orderSubmenu(el, i, data, cb = null) {
     if (!order_id) { [{ order_id }] = await queryData({ key: 'getorderids', values: [id, id] }) }
 
     popListInline({
-        el: el, li: [
+        el, li: [
             { key: 'View', id: 'viewOrder' },
             { key: 'Share', id: 'shareDetails' },
             { key: 'Print Order', id: 'viewPrint' },
@@ -1678,13 +1620,7 @@ async function orderSubmenu(el, i, data, cb = null) {
     })
 
     jq('#viewSold').click(async function () {
-        let items = await queryData({ key: 'vieworderitems', values: [id] });
-        await showTable({
-            title: 'Order Items',
-            data: items,
-            colsToParse: ['price', 'qty', 'gross'],
-            colsToTotal: ['qty', 'gross'],
-        })
+        viewArticles(id);
     });
 
     jq('#viewPymts').click(async function () {
@@ -1835,3 +1771,5 @@ async function orderSubmenu(el, i, data, cb = null) {
         _viewOrderDetails(id);
     })
 }
+
+

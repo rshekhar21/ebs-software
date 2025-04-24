@@ -13,12 +13,12 @@ doc.addEventListener('keypress', async function (e) {
     };
 })
 
-doc.addEventListener('DOMContentLoaded', function () {
+doc.addEventListener('DOMContentLoaded', async function () {
     const { orderid } = getUrlParams();
-    const app = window?.app?.node() || null;
+    const app = window?.app?.node() || null; log(app);
 
-    fetchOrder(orderid);
-    document.title = 'Invoice';
+    await fetchOrder(orderid);
+    document.title = 'Invoice A4';
 
     jq('#print-page').click(function () {
         if (app) {
@@ -32,17 +32,18 @@ doc.addEventListener('DOMContentLoaded', function () {
 
 
     if (app) {
+        jq('div.tool-bar').removeClass('d-none');
         jq('#setPrinter').click(async function () {
             jq('#loading').removeClass('d-none');
-            let printer = await window?.app?.showPrinters(); log(printer);
+            let printer = await window?.app?.showPrinters();
             jq('#loading').addClass('d-none');
             Storage.set('A4Printer', printer);
         })
 
         jq('#save-page').click(async function () {
-            let filename = `Invoice_${orderid}.pdf`;
+            let copytype = jq('#copytype').val();
+            let filename = `Invoice_${orderid}_${copytype}.pdf`;
             await window?.app?.printPdf(filename);
-            window.close();
         })
     }
 
@@ -51,9 +52,12 @@ doc.addEventListener('DOMContentLoaded', function () {
     let x = 1;
     jq('div.copy-type').click(function () {
         let arr = ['(ORIGINAL FOR RECIPIENT)', '(DUPLICATE COPY)', '(FOR TRANSPORT)'];
+        let arr2 = ['Original', 'Duplicate', 'Transport'];
+        let copytype = arr2[x];
         jq(this).text(arr[x]);
         x++
         if (x >= arr.length) x = 0;
+        jq('#copytype').val(copytype)
     })
 
 })
@@ -91,7 +95,6 @@ async function fetchOrder(orderid) {
         jq('#entity-details').html(ent);
 
         jq('span.for-entity').html(`For <span class="fw-500">${entity.entity_name}</span>`);
-        jq('span.comments').text(od.notes)
 
         // party
         jq('.bill-number').text(od.inv_number);
@@ -248,6 +251,10 @@ async function fetchOrder(orderid) {
 
         jq('#order-items').html(tbl.table);
         jq('div.view-order, div.status').toggleClass('d-none');
+
+        jq('span.comments').text(od?.notes || '')
+        jq('span.declaration-msg').html(general?.declareMessage || '')
+        jq('span.invoice-message').html(general?.invoiceMessage || '')
 
     } catch (error) {
         jq('#order').removeClass('d-none').text(error);

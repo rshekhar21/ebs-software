@@ -56,7 +56,7 @@ doc.addEventListener('DOMContentLoaded', function () {
         jq('#acnt-email').parent('div').addClass('d-none');
     })
 
-    let rememberMe = Storage.get('rememberMe'); log(rememberMe);
+    let rememberMe = Storage.get('rememberMe'); //log(rememberMe);
     if (rememberMe) {
         jq('#loign-email').val(rememberMe);
         jq('#login-pwd')[0].focus();
@@ -111,8 +111,8 @@ async function onReCaptchaVerified(token) {
     try {
         // Get the form data
         let form = jq('#login-form')[0];
-        let data = formDataToJson({ form });
-
+        let data = formDataToJson({ form }); //log(data); return;
+        // jq('button.login').addClass('disabled'); return;
         // Attach the reCAPTCHA token to the data
         data['g-recaptcha-response'] = token;
 

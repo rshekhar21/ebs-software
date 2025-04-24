@@ -1,5 +1,5 @@
 import { _unholdOrder, _viewHistory, _viewholds, leftPanel, rightPanel } from "./_components/panels.js";
-import help, { advanceQuery, changeCase, convertToDecimal, createEL, createStuff, createTable, doc, errorMsg, fd2json, fd2obj, generateUniqueAlphaCode, getData, getSettings, getSqlDate, isRestricted, jq, log, parseCurrency, parseData, parseDecimal, parseLocal, parseLocals, parseNumber, popConfirm, popListInline, postData, queryData, removeDecimal, roundOff, separateDecimal, setTable, showError, showTable, Storage, storeId, sumArray, xdb } from "./help.js";
+import help, { advanceQuery, changeCase, convertToDecimal, copyToClipboard, createEL, createStuff, createTable, doc, errorMsg, fd2json, fd2obj, generateUniqueAlphaCode, getData, getSettings, getSqlDate, isRestricted, jq, log, parseCurrency, parseData, parseDecimal, parseLocal, parseLocals, parseNumber, popConfirm, popListInline, postData, queryData, removeDecimal, roundOff, separateDecimal, setTable, showError, showTable, Storage, storeId, sumArray, xdb } from "./help.js";
 import { createEditParty, _loadSrchstock, numerifyObject, _scanProduct, _searchProduct, salesChart, _refreshSalesChart, holdOrder, _searchParty, _scanEAN } from "./module.js";
 import { getOrderData, hardresetData, loadBankModes, loadBanks, loadBillNumber, loadOrderDetails, loadPartyDetails, loadPymtMethods, quickData, refreshOrder, resetOrder, saveOrder, setItems, setTaxOnAllItems, showOrderDetails, updateDetails, updateOrder } from "./order.config.js";
 
@@ -1587,7 +1587,7 @@ async function scanItem() {
         if (arr.length) {
             let data = arr[0];
             data.qty = 1;
-            let obj = setItems(data);
+            let obj = setItems(data); //log(obj); return;
             updateDetails({ items: [obj] });
             showOrderDetails()
             jq('#addProduct').removeClass('is-invalid').val('').focus();
@@ -1666,7 +1666,7 @@ async function searchItemsSpecial() {
             columns: [`product`, `pcode`, `price`, `size`, `available`],
             limit: 21,
             sortby: 'price'
-        }); log(arr);
+        }); 
 
         if (arr.length) {
             jq('#viewItems').html('');
@@ -1688,7 +1688,281 @@ async function searchItemsSpecial() {
     }
 }
 
+function getTotalQuantities() {
+    let { items } = getOrderData();
+    return items.reduce((acc, item) => {
+        acc[item.sku] = (acc[item.sku] || 0) + item.qty;
+        return acc;
+    }, {});
+}
+
 async function searchItem() {
+    try {
+        let input = doc.getElementById('addProduct');
+        let val = input.value;
+        if (!val || val.length < 2) { jq('#hybridSearchList').html(''); jq('#hybridList').addClass('d-none'); return; }
+
+        let returning = false;
+        if (jq('#returnItem').is(':checked')) returning = true;
+        let key = 'srchProduct';
+        let arr = await _searchProduct(val);
+        if (!arr.length) {
+            if (returning) key = 'srchAllProduct'
+            let res = await queryData({ key, type: 'search', searchfor: val });
+            arr = res;
+        }
+        let { items } = getOrderData(); //log(od.items);
+        const totalQuantities = getTotalQuantities(); // Compute total added qty
+
+        if (arr.length > 0) {
+            jq('#hybridList').removeClass('d-none');
+            jq('#hybridSearchList').html('');
+            jq('span.result-count').text(`First ${arr.length} records`);
+            jq('#hybridList button.close-hybrid-list').click(function () {
+                jq('#hybridList').addClass('d-none');
+                jq('#hybridList #hybridSearchList').html('');
+                jq(input).val('').focus();
+            })
+            jq('#hybridList button.close-view-tags').click(function () {
+                jq('#hybridList ul.tags-list').html('');
+                jq('#hybridList div.view-tags').addClass('d-none');
+            })
+
+            // <span class="small text-white text-center flex-fill"><i class="fas fa-plus"></i></span>
+            arr.forEach((item, i) => {
+                const addedQty = totalQuantities[item.sku] || 0; // Get already added quantity
+                let str = `
+                    <div class="d-flex jcs aic gap-2 small">
+                        <span class="small d-flex jcs aic gap-2">
+                            <span class="fw-bold product-name" title="Product Name">${item.product}</span>
+                            <span class="tag-name text-warning" title="Additinal Tag Name"></span>
+                        </span>
+                        <span class="small text-dark ${item.size ? '' : 'd-none'}" title="Size">${item.size}</span>                        
+                        <span class="small text-dark ${item.mrp ? '' : 'd-none'}" title="MRP">MRP (${parseNumber(item.mrp)})</span>
+                        <span class="small text-dark ms-auto ${item.price ? '' : 'd-none'}" title="Selling Price">SP (${parseNumber(item.price)})</span>
+                        <span class="small text-dark ${item.wsp ? '' : 'd-none'}" title="Wholesale Price">WSP (${parseNumber(item.wsp)})</span>                        
+                    </div>
+                    <div class="d-flex jcs aic gap-2 small my-auto">
+                        <span class="small text-muted ${item.pcode ? '' : 'd-none'}" title="Product Code">${item.pcode}</span>
+                        <span class="small text-dark ${item.brand ? '' : 'd-none'}" title="Brand">${item.brand}</span>
+                        <span class="small text-muted ${item.colour ? '' : 'd-none'}" title="Colour">${item.colour}</span>
+                        <span class="small text-muted ${item.section ? '' : 'd-none'}" title="Section">${item.section}</span>
+                        <span class="small text-muted ${item?.season ? '' : 'd-none'}" title="Season">${item.season}</span>
+                        <span class="small text-muted ${item?.category ? '' : 'd-none'}" title="Category">${item.category}</span>
+                    </div>                    
+                    <div class="d-flex jcs aic gap-2 small">
+                        <span class="small" title="SKU">SKU ${item.sku}</span> 
+                        <span class="small text-muted ${item?.ean ? '' : 'd-none'}" title="EAN">EAN @ ${item.ean}</span>
+                        <span class="small text-muted ${item?.gst ? '' : 'd-none'}" title="GST">GST @ ${parseLocal(item.gst)}%</span>
+                        <span class="small text-muted ${item?.hsn ? '' : 'd-none'}" title="HSN">${item.hsn}</span>
+                        <span class="small text-muted ${item?.disc_per ? '' : 'd-none'}" title="Percent Discount">DISC. ${parseLocal(item.disc_per)}%</span>
+                        <span class="small text-muted ${item?.disc_val ? '' : 'd-none'}" title="Value Discount">DISC. ${parseLocal(item.disc_val)}</span>
+                        <span class="small text-muted loaded-qty" title="Cart Quanity">${`Cart: <strong>${addedQty}</strong>`}</span>
+                        <span class="small text-muted role-btn ms-auto edit-item" title="Edit Item"><i class="bi bi-pencil-fill"></i></span>
+                    </div>
+                `;
+
+                // <span class="small text-muted ${item?.ean ? '' : 'd-none'}" title="EAN/BARCODE">${item.ean}</span>
+                let inpqty = document.createElement('input');
+                inpqty.type = 'number';
+                inpqty.name = 'qty';
+                inpqty.step = '0.001';
+                inpqty.tabIndex = '0';
+                jq(inpqty).addClass('form-control form-control-sm text-center item-qty mt-auto').prop('title', 'Quantity').val(1);
+                // inpqty.placeholder = 'Qty';
+
+                let qtydiv = createEL('div');
+                jq(qtydiv).addClass('d-flex flex-column gap-1');
+
+                qtydiv.innerHTML = `
+                <div class="d-flex jcb aic gap-1 small" title="Available, Sold: ${parseLocals(item.sold)}">
+                    <span class="small text-grey">AVL</span>
+                    <span class="fw-500">${parseLocal(item?.avl) || 0}</span>
+                    <span class="small text-grey" title="Item Unit Type">${item?.unit || 'UNT'}</span>
+                </div>
+                `;
+
+                let left = createEL('div');
+                jq(left).addClass('d-flex flex-column jcb h-100');
+                left.append(qtydiv, inpqty);
+
+                let inprice = document.createElement('input');
+                inprice.type = 'number';
+                inprice.name = 'price';
+                inprice.step = '0.01';
+                inprice.tabIndex = '0';
+                inprice.placeholder = 'Price';
+                jq(inprice).addClass('form-control form-control-sm text-end mb-auto').prop('title', 'Price').val(parseNumber(item.price));
+
+                let qtyplus = createEL('button');
+                jq(qtyplus).addClass('btn btn-light').html('<i class="bi bi-plus-lg"></i>').click(function (e) {
+                    e.preventDefault();
+                    let qty = jq(inpqty).val() || 0;
+                    // if (qty == '') qty = 0;
+                    let nqty = parseNumber(qty) + 1;
+                    if (nqty > item.avl) return; log(nqty, item.avl);
+                    jq(inpqty).val(nqty);
+                })
+
+                let qtyminus = createEL('button');
+                jq(qtyminus).addClass('btn btn-light').html('<i class="bi bi-dash"></i>').click(function (e) {
+                    e.preventDefault();
+                    let qty = jq(inpqty).val() || 0;
+                    // if (qty == '') qty = 0;
+                    let nqty = parseNumber(qty) - 1;
+                    jq(inpqty).val(nqty);
+                })
+
+                let btngroup = createEL('div');
+                jq(btngroup).addClass('btn-group').append(qtyminus, qtyplus);
+
+                let right = createEL('div');
+                jq(right).addClass('d-flex flex-column jcb h-100').append(inprice, btngroup);
+
+                let submit = createEL('button');
+                submit.type = 'submit';
+                jq(submit).addClass('d-none').text('submit');
+
+                let form = createEL('form');
+                jq(form).addClass('mb-0 hstack p-1 gap-2 ms-auto ms-auto').append(submit, left, right);
+                form.style.width = '220px';
+                form.style.minHeight = "75px";
+                let proceed = true;
+
+                jq(form).submit(function (e) {
+                    try {
+                        e.preventDefault();
+                        if (!proceed) return;
+                        let { qty, price } = fd2json({ form: this });
+                        let obj = arr[i];
+                        obj.qty = qty;
+                        obj.price = price;
+                        insertItem(obj);
+                        jq('#addProduct').val('').focus();
+                    } catch (error) {
+                        log(error);
+                    }
+                })
+
+                let mainDiv = createEL('div');
+                jq(mainDiv).addClass('d-flex jcb aic gap-1 maindiv px-1 h-100');
+                mainDiv.style.minHeight = "75px";
+
+                let itemDetails = createEL('div');
+                itemDetails.tabIndex = '0';
+
+                let addTag = createEL('div');
+                addTag.tabIndex = '0';
+
+                jq(addTag).addClass('d-flex jcc aic h-100 role-btn px-1').html('<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#434343"><path d="m517.85-480-184-184L376-706.15 602.15-480 376-253.85 333.85-296l184-184Z"/></svg>');
+                jq(addTag).on('click keypress', function (e) {
+                    if (e.type == 'click' || e.key == 'Enter' || e.key == ' ') {
+                        jq('div.view-tags').removeClass('d-none');
+                        jq('#input-tag').focus();
+
+                        jq('#input-tag').keyup(function () {
+                            let val = this.value;
+                            if (val) {
+                                let tags = Storage.get('tagslist') || [];
+                                let filteredTags = tags.filter(tag => tag.includes(val.toUpperCase()));
+                                loadTags({ el: itemDetails, item, arr: filteredTags });
+                            } else {
+                                let tags = Storage.get('tagslist') || [];
+                                loadTags({ el: itemDetails, item, arr: tags });
+                            }
+                        })
+
+                        jq('#tag-form').submit(function (e) {
+                            e.preventDefault();
+                            let data = fd2json({ form: this });
+                            let tag = data.tag;
+                            if (tag === '') return;
+                            let tags = Storage.get('tagslist') || [];
+                            if (!tags.includes(tag.toUpperCase())) { tags.push(tag.toUpperCase()) };
+                            Storage.set('tagslist', tags);
+                            loadTags({ el: itemDetails, item, arr: tags });
+                            jq('#input-tag').val('').focus();
+                            if (tags.length) { loadTags({ el: itemDetails, item, arr: tags }); }
+                        })
+                    }
+                })
+
+                jq(itemDetails).addClass('vstack flex-fill role-btn p-1 item-div').prop('title', 'Click To Add Item').html(str);
+
+                jq(itemDetails).on('click keypress', function (e) {
+                    if (e.type == 'click' || e.key == 'Enter' || e.key == ' ') {
+                        try {
+                            if (!proceed) return;
+                            const existingQuantities = getTotalQuantities();
+                            let incart = existingQuantities[item.sku];
+                            if (incart >= item.avl) return;
+                            let qty = jq(inpqty).val();
+                            let price = jq(inprice).val();
+                            let obj = arr[i]; //search result
+                            obj.qty = qty;
+                            obj.price = price;
+                            insertItem(obj);
+                            const totalQuantities = getTotalQuantities();
+                            let cart = totalQuantities[item.sku];
+                            if (cart >= item.avl) proceed = false;
+                            jq(this).find('span.loaded-qty').html(`Cart: <strong>${cart}</strong>`);
+
+                            if (e.key == 'Enter') {
+                                jq('#addProduct').select().focus();
+                                // close list
+                                jq('#hybridList').addClass('d-none');
+                                jq('#hybridList #hybridSearchList').html('');
+                                jq(input).val('').focus();
+                            };
+                        } catch (error) {
+                            log(error);
+                        }
+                    }
+                });
+
+                jq(mainDiv).append(itemDetails, addTag, form);
+
+                jq(itemDetails).find('span.edit-item').click(function (e) {
+                    try {
+                        e.stopPropagation();
+                        editStock({
+                            applyCallback: () => {
+                                _loadSrchstock(item.id)
+                            }, cb: searchItem, id: item.id
+                        })
+                    } catch (error) {
+                        log(error);
+                    }
+                })
+
+                let li = createEL('li');
+                jq(li).addClass('list-group-item list-group-item-action px-1 py-2 d-flex flex-column rounded-0').html(mainDiv);
+                jq('#hybridSearchList').append(li);
+            })
+
+            const listItems = document.querySelectorAll('#hybridSearchList li div.item-div');
+            let currentIndex = 0;
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'ArrowDown') {
+                    currentIndex = (currentIndex + 1) % listItems.length;
+                    listItems[currentIndex].focus();
+                } else if (event.key === 'ArrowUp') {
+                    currentIndex = (currentIndex - 1 + listItems.length) % listItems.length;
+                    listItems[currentIndex].focus();
+                }
+            });
+
+        } else {
+            jq('#hybridSearchList').html('');
+            jq('#hybridList').addClass('d-none');
+        }
+
+    } catch (error) {
+        log(error);
+    }
+}
+
+async function searchItem_() {
     try {
         let input = doc.getElementById('addProduct');
         let val = input.value;

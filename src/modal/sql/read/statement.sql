@@ -1,6 +1,9 @@
 SELECT
     DATE_FORMAT(y.`pymt_date`, '%d-%m-%Y') AS `dated`,
+    y.`order_id`,
+    y.`purch_id`,
     p.`party_name` AS `party`,
+    p.`party_id`,
     y.`pymt_for`,
     CASE
         WHEN y.`pymt_for` = 'Sales' THEN 'Credit'
@@ -26,7 +29,10 @@ WHERE
 UNION ALL
 SELECT
     DATE_FORMAT(e.`date`, '%d-%m-%Y') AS `dated`,
+    null as `order_id`,
+    null as `purch_id`,
     'N/A' AS `party`,
+    null as `party_id`,
     'Expense' AS `pymt_for`,
     'Debit' AS `cr/dr`,
     e.`bank_mode` AS `mode`,

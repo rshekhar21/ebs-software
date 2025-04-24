@@ -1,5 +1,48 @@
--- Active: 1728019028452@@ebsserver.in@3306@gbxecgjdbxwi
+-- Active: 1745241177450@@myebs.in@3306@db_demo
+
+select * from stock where id = 23;
+SHOW TABLE STATUS LIKE 'stock';
+
+SELECT `Auto_increment` FROM (SHOW TABLE STATUS LIKE 'stock';);
+
+SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'gbxecgjdbxwi' AND TABLE_NAME = 'orders';
+
+SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'db_demo' AND TABLE_NAME = 'stock';
+select max(id) id from stock;
+
+SHOW CREATE TABLE stock;
+
+show DATABASE;
+
+SELECT AUTO_INCREMENT
+FROM information_schema.TABLES
+WHERE TABLE_SCHEMA = 'db_demo'
+  AND TABLE_NAME = 'stock';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 SELECT * FROM orders order by id DESC;
+
+SELECT DISTINCT fin_year FROM orders;
+
+select count(*) from party;
 UPDATE party set party_type = 'Customer' WHERE party_type = 'Supplier';
 SHOW CREATE TABLE supplier;
 

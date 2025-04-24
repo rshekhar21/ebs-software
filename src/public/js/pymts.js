@@ -30,26 +30,26 @@ doc.addEventListener('DOMContentLoaded', function () {
                     })
                 }
             },
-            {
-                title: 'Hard Reset',
-                icon: '<i class="bi bi-arrow-clockwise"></i>',
-                cb: async () => {
-                    try {
-                        let res = await queryData({ key: 'payments' });
-                        if (!res.length) return;
-                        let db = new xdb(storeId, 'payments');
-                        db.clear();
-                        await db.add(res);
-                        loadData();
-                    } catch (error) {
-                        log(error);
-                    }
-                }
-            }
+            // {
+            //     title: 'Hard Reset',
+            //     icon: '<i class="bi bi-arrow-clockwise"></i>',
+            //     cb: async () => {
+            //         try {
+            //             let res = await queryData({ key: 'payments' });
+            //             if (!res.length) return;
+            //             let db = new xdb(storeId, 'payments');
+            //             db.clear();
+            //             await db.add(res);
+            //             loadData();
+            //         } catch (error) {
+            //             log(error);
+            //         }
+            //     }
+            // }
         ]
     })
     // help.controlBtn({})
-    searchData({ key: 'srchpymts', showData, loadData });
+    searchData({ key: 'search_payment', showData, loadData });
 })
 
 async function loadData() {
@@ -71,6 +71,11 @@ async function loadData() {
 
 function showData(data) {
     try {
+        if(!data) {
+            displayDatatable(null, 'container-fluid');
+            return
+        };
+
         let { table, tbody, thead } = data
         jq(tbody).find(`[data-key="id"]`).addClass('text-primary role-btn').each(function (i, e) {
             jq(e).click(function () {
@@ -95,11 +100,10 @@ function showData(data) {
 
         parseData({
             tableObj: data,
-            colsToParse: ['payment', 'cash', 'bank', 'other', 'forfiet'],
+            colsToParse: ['payment', 'cash', 'bank', 'other', 'forefiet'],
+            colsToHide: ['party', 'pymt_date', 'pymt_method'],
+            hideBlanks: ['notes', 'purch_id', 'forefiet', 'purch_id'],
             alignRight: true,
-            colsToHide: ['party', 'pymt_date'],
-            // colsToRename: [{ old: 'bank_name', new: 'account' }],
-            hideBlanks: ['notes', 'purch_id'],
         })
 
         displayDatatable(table, 'container-fluid');

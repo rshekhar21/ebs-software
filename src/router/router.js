@@ -97,10 +97,13 @@ router.get('/test', (req, res) => {
     // return res.json('ok');
 })
 
+router.get('/getsku', ctrl.getClassicSku);
+
 // Catch-all route for any other GET requests
 router.get('*', (req, res) => {
     res.redirect('/'); // Redirect to the home page
 });
+
 
 // POST
 router.post('/login', mw.authorizeUser);
@@ -126,6 +129,7 @@ router.post('/api/bulk-edit', ctrl.bulkEdit);
 router.post('/api/reset/schema', ctrl.resetSchema);
 router.post('/api/email/order', ctrl.emailOrder);
 router.post('/api/hold-order', ctrl.holdOrder);
+router.post('/api/edit/stock', ctrl.inlineEditStock);
 router.post('/getuserpwdresetcode', ctrl.sendPasswordResetCode);
 router.post('/reset-user-password', ctrl.resetUserPassword);
 router.post('/verify-password', mw.isLoggedIn, mw.vefifyPassword);

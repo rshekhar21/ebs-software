@@ -49,4 +49,5 @@ FROM (
     LEFT JOIN `supplier` s ON s.`id` = y.`supplier`
     WHERE
         y.`pymt_for` = 'Purchase'
-) x ORDER BY x.`pymt_date` DESC, x.`id` DESC LIMIT 300;
+) x WHERE (x.`party/supplier` LIKE 'search' OR x.`payment` LIKE 'search' OR x.`cash` LIKE 'search' OR x.`bank` LIKE 'search')
+ORDER BY x.`pymt_date` DESC, x.`id` DESC LIMIT 300;

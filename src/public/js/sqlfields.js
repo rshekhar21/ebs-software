@@ -581,7 +581,7 @@ export default {
     showBankOnInv: { label: 'Show Bank on A4/A5 Invoice', type: 'select', select: ['', 'Yes', 'No'] },
     sendEmail: { label: 'Send Order By Email', type: 'select', select: ['', 'Yes', 'No'] },
     invoiceMessage: { label: 'Invoice Message', type: 'textarea', height: '136px', },
-    declareMessage: { label: 'Declaration Message', type: 'textarea', height: '136px', default: 'This invoice reflects the actual price of the items described and all details are true and correct.' },
+    declareMessage: { label: 'Declaration Message', type: 'textarea', height: '136px', default: 'We declare that this invoice shows the actual price of the goods described, and that all particulars are true and correct.' },
     showEntity: { label: 'Show Company Info (Thermal)', type: 'select', select: ['', 'Yes', 'No'] },
     showOrderType: { label: 'Show Order Type (Thermal)', type: 'select', select: ['', 'Yes', 'No'] },
     showPartyAddress: { label: 'Show Party Address (Thermal)', type: 'select', select: ['', 'Yes', 'No'] },

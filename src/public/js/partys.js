@@ -126,6 +126,7 @@ async function loadData() {
         jq('div.process').addClass('d-none');
         let res = await fetchTable({ key: 'party' }, true, true, data); //log(res);
         res ? showData(res) : jq('#root').addClass('text-center').html('No Data/Records Found!');
+
     } catch (error) {
         log(error);
     }

@@ -731,9 +731,8 @@ help.showModal = showModal;
 
 let actionList = `<div class="list-group list-group-flush rounded action-list position-absolute bg-white border border-primary border-1 ms-3 p-1 d-none" style="width:180px; inset: 0px auto auto 0px; z-index:1100"></div>`;
 
-export function popListInline({ el, li }) {
+export function popListInline_({ el, li }) {
     if (jq('div.action-list').length > 0) { jq('div.action-list').remove(); return; }
-    // let { el, li } = obj;
 
     jq('body').append(actionList);
     let list = jq('body').find('div.action-list');
@@ -786,6 +785,95 @@ export function popListInline({ el, li }) {
         if (DFL < boxWidth) { x = x + clcLedge }
         jq('div.action-list').removeClass('d-none').css({ 'transform': 'translate(' + x + 'px, ' + y + 'px)' });
     })
+    return list[0];
+}
+
+export function popListInline({ el, li }) {
+    const existingList = jq('div.action-list');
+    if (existingList.length > 0) {
+        existingList.remove();
+        // Remove the global click listener if it exists
+        jq(document).off('click.closeActionList');
+        return;
+    }
+
+    jq('body').append(actionList);
+    const list = jq('body').find('div.action-list');
+
+    li.forEach(item => {
+        const listItem = document.createElement('li');
+        jq(listItem).addClass('list-group-item list-group-item-action role-btn py-1').text(item.key);
+        listItem.id = item.id;
+        listItem.title = item?.title || '';
+        item?.class && jq(listItem).addClass(item.class);
+        jq(list).append(listItem);
+        jq(listItem).click(function () {
+            jq('div.action-list').remove();
+            // Remove the global click listener after an item is clicked
+            jq(document).off('click.closeActionList');
+        });
+    });
+
+    const boxWidth = jq(el).width();
+    const nudge = 5;
+    const rect = el.getBoundingClientRect();
+    const brect = document.querySelector('body').getBoundingClientRect();
+
+    let x = rect.left + 25;
+    let y = rect.bottom + nudge - brect.y;
+    let DFR = 0;
+    let DFL = 0;
+
+    const clcRedge = boxWidth - DFR + nudge;
+    const clcLedge = boxWidth - DFL + nudge;
+    if (DFR < boxWidth) {
+        x = x - clcRedge;
+    }
+    if (DFL < boxWidth) {
+        x = x + clcLedge;
+    }
+    jq('div.action-list').css({ 'transform': `translate(${x}px, ${y}px)` }).removeClass('d-none');
+
+    jq(document).ready(function () {
+        const actionListElement = document.querySelector('div.action-list');
+        if (actionListElement) {
+            let { bottom: boxBottom } = actionListElement.getBoundingClientRect();
+            const pageBottom = window.innerHeight;
+            if (boxBottom > pageBottom) {
+                const diff = boxBottom - pageBottom + 10;
+                y = y - diff;
+                jq('div.action-list').css({ 'transform': `translate(${x}px, ${y}px)` });
+            }
+        }
+    });
+
+    jq(window).resize(function () {
+        const rect = el.getBoundingClientRect();
+        const brect = document.querySelector('body').getBoundingClientRect();
+        let x = rect.left + 25;
+        let y = rect.bottom + nudge - brect.y;
+        const DFR = 0;
+        const DFL = 0;
+        const clcRedge = boxWidth - DFR + nudge;
+        const clcLedge = boxWidth - DFL + nudge;
+        if (DFR < boxWidth) {
+            x = x - clcRedge;
+        }
+        if (DFL < boxWidth) {
+            x = x + clcLedge;
+        }
+        jq('div.action-list').removeClass('d-none').css({ 'transform': `translate(${x}px, ${y}px)` });
+    });
+
+    // Add a global click listener to close the list when clicking outside
+    jq(document).on('click.closeActionList', function (event) {
+        if (!jq(event.target).closest('div.action-list').length && !jq(event.target).is(el)) {
+            jq('div.action-list').remove();
+            // Remove the global click listener once the list is closed
+            jq(document).off('click.closeActionList');
+        }
+    });
+
     return list[0];
 }
 help.popListInline = popListInline;
@@ -1681,7 +1769,7 @@ export function searchData({ key, showData, loadData, values = [], serial = fals
             } else {
                 loadData();
             }
-        })
+        }).on('search', loadData)
     } catch (error) {
         log(error);
     }
@@ -1950,7 +2038,7 @@ export function updatePopupPosition({ el = null, msg = 'Are you sure?', cb = nul
 window.addEventListener('resize', function () { updatePopupPosition({}) });
 
 
-export function popInput({ el = null, type = 'text', name = 'text-input', ph = '', cb = null, value = '' }) {
+export function popInput({ el = null, type = 'text', name = 'text-input', ph = '', cb = null, value = '', maxValue = false }) {
     try {
         if (!el) return;
         let rect = el.getBoundingClientRect();
@@ -1973,18 +2061,29 @@ export function popInput({ el = null, type = 'text', name = 'text-input', ph = '
         // jq(div).append(pointer);
 
         jq('#inputbox').html(div);
-
         let input = doc.createElement('input');
         input.type = type;
         input.placeholder = ph;
         input.name = name
-        input.value = value;
         input.className = 'form-control form-control-sm';
-        input.step = '0.001'
-
+        input.step = '0.001';
+        input.value = value;
         let btndiv = doc.createElement('div');
         let cancel = doc.createElement('button');
         let submit = doc.createElement('button');
+
+        jq(input).on('keyup', function () {
+            if (type == 'number' && maxValue) {
+                if (this.value > maxValue) {
+                    jq(input).addClass('is-invalid');
+                    jq(submit).addClass('disabled');
+                } else {
+                    jq(input).removeClass('is-invalid');
+                    jq(submit).removeClass('disabled');
+                };
+            }
+        })
+
         submit.type = 'submit';
         cancel.type = 'button';
 
@@ -2021,6 +2120,64 @@ export function popInput({ el = null, type = 'text', name = 'text-input', ph = '
     }
 }
 help.popInput = popInput;
+
+export function popTextarea({ el = null, name = 'text-input', ph = '', cb = null, value = '' }) {
+    try {
+        if (!el) return;
+        let rect = el.getBoundingClientRect();
+        let center = rect.width / 2;
+        let width = 350;
+        let height = 150;
+        let [div] = jq('<div></div>').addClass('d-none d-md-flex flex-column gap-2 rounded bg-white z-3 border position-fixed p-2 shadow');
+        div.style.width = `${width}px`;
+        div.style.height = `${height}px`;
+
+        let dify = window.innerHeight - rect.top;
+        let top = dify > 115 ? (rect.bottom + 5) : ((rect.bottom - rect.height - 5) - height);
+        div.style.top = `${top}px`;
+
+        let difx = window.innerWidth - rect.right;
+        let left = difx > 100 ? (rect.left - ((width / 2) - center)) : (rect.right - width);
+        div.style.left = `${left}px`;
+
+        jq('#inputbox').html(div);
+
+        let ta = doc.createElement('textarea');
+        ta.placeholder = ph;
+        ta.name = name
+        ta.value = value;
+        ta.className = 'form-control';
+        ta.style.height = '90px';
+
+        let btndiv = doc.createElement('div');
+        let cancel = doc.createElement('button');
+        let submit = doc.createElement('button');
+        submit.type = 'submit';
+        cancel.type = 'button';
+
+        jq(submit).addClass('btn btn-sm btn-primary').text('Apply');
+        jq(cancel).addClass('btn btn-sm btn-light').text('Cancel').click(function () { jq(div).remove(); });
+        jq(btndiv).addClass('d-flex jce aic gap-2').append(cancel, submit);
+
+        let form = jq('<form></form>').addClass('mb-0 d-flex flex-column gap-2').append(ta, btndiv);
+        jq(form).submit(function (e) { e.preventDefault(); cb(ta.value); jq(div).remove(); })
+        jq(div).append(form);
+        jq(ta).focus().select();
+
+        $(window).resize(function () {
+            let rect = el.getBoundingClientRect();
+            let dify = window.innerHeight - rect.top;
+            let top = dify > 115 ? (rect.bottom + 5) : ((rect.bottom - rect.height - 5) - height);
+            div.style.top = `${top}px`;
+            let diff = window.innerWidth - rect.right;
+            let left = diff > 100 ? (rect.left - ((width / 2) - center)) : (rect.right - width);
+            div.style.left = `${left}px`;
+        });
+    } catch (error) {
+        log(error);
+    }
+}
+help.popTextarea = popTextarea;
 
 export function popConfirm({ el = null, msg = 'Message', cb = null }) {
     try {

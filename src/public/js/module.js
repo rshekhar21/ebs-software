@@ -1,5 +1,5 @@
 import { setupIndexDB } from "./_localdb.js";
-import help, { doc, jq, log, clickModal, confirmMsg, advanceQuery, postData, queryData, createStuff, getActiveEntity, parseNumber, fetchTable, parseData, createTable, getData, getFinYear, xdb, myIndexDBName, storeId, createEL, fd2json, getSettings, showErrors, isRestricted, errorMsg, sumArray, showModal, titleCase } from "./help.js";
+import help, { doc, jq, log, clickModal, confirmMsg, advanceQuery, postData, queryData, createStuff, getActiveEntity, parseNumber, fetchTable, parseData, createTable, getData, getFinYear, xdb, myIndexDBName, storeId, createEL, fd2json, getSettings, showErrors, isRestricted, errorMsg, sumArray, showModal, titleCase, showTable, popTextarea, popInput } from "./help.js";
 import { getOrderData, loadPartyDetails, refreshOrder, resetOrder, updateDetails } from "./order.config.js";
 
 const modules = {}
@@ -1303,6 +1303,209 @@ export async function _viewOrderDetails(id) {
     }
 }
 
+export async function viewArticles(orderid) {
+    let items = await queryData({ key: 'vieworderitems', values: [orderid] });
+    await showTable({
+        title: 'Order Items',
+        data: items,
+        colsToParse: ['price', 'qty', 'net', 'gross'],
+        colsToTotal: ['qty', 'gross'],
+        alignRight: true,
+    })
+}
+
+export async function viewPayments(orderid) {
+    let items = await queryData({ key: 'pymtByorderId', values: [orderid] });
+    await showTable({
+        title: 'Order Payments',
+        modalSize: 'modal-xl',
+        data: items,
+        // colsToParse: [`amount`, `cash`, `bank`, `other`],
+        colsToTotal: [`amount`, `cash`, `bank`, `other`],
+        alignRight: true,
+    })
+}
+
+export async function stockSubMenu(el, i, data, cb = null) {
+    try {
+        let { id, sku, sold, purch_id } = data[i];
+        help.popListInline({
+            el, li: [
+                { key: 'Edit', id: 'editStock' },
+                { key: 'Set Classic SKU', id: 'classicSKU' },
+                { key: 'Set Dynamic SKU', id: 'dynamciSKU' },
+                { key: 'Delete', id: 'delete' },
+                { key: 'Cancel' },
+            ]
+        })
+
+        if (sku.length > 6) jq('#dynamciSKU').addClass('disabled');
+        if (sku.length < 6) jq('#classicSKU').addClass('disabled');
+        if (purch_id) jq('#delete').addClass("disabled");
+        if (sold) { jq('#classicSKU, #delete, #dynamciSKU').addClass('disabled'); }
+
+
+        jq('#editStock').click(async function () {
+            try {
+                if (await isRestricted('ChkBjNwf')) return;
+                let db = new xdb(storeId, 'stock'); //log(id);
+                let [arr] = await db.getColumns({ key: id, indexes: ['id'], columns: ['id', 'purch_id'], limit: 1, });
+                let table = 'stock';
+                if (arr.purch_id) { table = 'purchStockEdit' }; //log(table);
+
+                let res = await createStuff({
+                    title: 'Edit Stock',
+                    table: table,
+                    applyButtonText: 'Update',
+                    url: '/api/crud/update/stock',
+                    focus: '#product',
+                    qryObj: { key: 'editStock', values: [id] },
+                    applyCallback: _loadSrchstock,
+                    applyCBPrams: id,
+                    hideFields: ['sizeGroup'],
+                    cb,
+                });
+
+                let mb = res.mb;
+
+                setEditStockBody(mb);
+
+            } catch (error) {
+                log(error);
+            }
+        })
+
+        jq('#delete').click(async function () {
+            if (await isRestricted('BcmUCgFW')) return;
+            let key = jq('#search').val();
+            _delStock(id, () => cb(key));
+        })
+
+        jq('#classicSKU').click(async function () {
+            try {
+                if (await isRestricted('ChkBjNwf')) return;
+                let cnf = confirm('Update to Classic SKU?');
+                if (!cnf) return;
+                let { data: res } = await postData({ url: '/api/set-classic-sku', data: { data: { id } } });
+                if (!res.affectedRows) { showErrors('Error Updating SKU!\nOnly Unsold Article/Item is allowed to Change/Update SKU!', 7000); return; }
+                let { data } = await advanceQuery({ key: 'getstock_byid', values: [id] });
+                let db = new xdb(storeId, 'stock');
+                await db.put(data);
+                cb();
+            } catch (error) {
+                log(error);
+            }
+        })
+
+        jq('#dynamciSKU').click(async function () {
+            try {
+                if (await isRestricted('ChkBjNwf')) return;
+                let cnf = confirm('Update to Dynamic SKU?');
+                if (!cnf) return;
+                let { data: res } = await postData({ url: '/api/set-dynamic-sku', data: { data: { id } } });
+                if (!res.affectedRows) { showErrors('Error Updating SKU!\nOnly Unsold Article/Item is allowed to Change/Update SKU!', 7000); return; }
+                let { data } = await advanceQuery({ key: 'getstock_byid', values: [id] });
+                let db = new xdb(storeId, 'stock');
+                await db.put(data);
+                cb();
+            } catch (error) {
+                log(error);
+            }
+        })
+    } catch (error) {
+        log(error);
+    }
+}
+
+export async function editInlineStock_(tbody, arr, cb = null) {
+    try {
+        jq(tbody).find(`[data-key="product"]`).addClass('role-btn').click(function (e) {
+            let index = jq(this).closest('tr').index();
+            let data = arr[index];
+            let id = data.id;
+            handelClick({ el: this, name: 'product', ph: 'Product', type: 'text', value: data.product, key: 'product', id, cb })
+        })
+
+        jq(tbody).find(`[data-key="pcode"]`).addClass('role-btn').click(function (e) {
+            let index = jq(this).closest('tr').index();
+            let data = arr[index];
+            let id = data.id;
+            handelClick({ el: this, name: 'pcode', ph: 'Pcode', type: 'text', value: data.pcode, key: 'pcode', id, cb })
+        })
+
+        jq(tbody).find(`[data-key="price"]`).addClass('role-btn').click(function (e) {
+            let index = jq(this).closest('tr').index();
+            let data = arr[index];
+            let id = data.id;
+            handelClick({ el: this, name: 'price', ph: 'Price', type: 'number', value: data.price, key: 'price', id, cb })
+        })
+
+
+        function handelClick({ el, type, name, ph, cb, value, key, id }) {
+            popInput({
+                el, type, name, ph, value,
+                cb: async (val) => {
+                    await postData({ url: '/api/edit/stock', data: { key, value: val, id } });
+                    cb();
+                }
+            })
+        }
+
+    } catch (error) {
+        log(error);
+    }
+}
+
+export async function editInlineStock(tbody, arr, cb = null) {
+    try {
+        const fields = [
+            { key: 'product', name: 'product', ph: 'Product', type: 'text' },
+            { key: 'pcode', name: 'pcode', ph: 'Pcode', type: 'text' },
+            { key: 'price', name: 'price', ph: 'Price', type: 'number' },
+            { key: 'gst', name: 'gst', ph: 'Gst', type: 'number' },
+            { key: 'discount', name: 'discount', ph: 'Discount', type: 'number' },
+            { key: 'disc_type', name: 'disc_type', ph: 'Disc_type', type: 'text' },
+            { key: 'size', name: 'size', ph: 'Size', type: 'text' },
+            { key: 'brand', name: 'brand', ph: 'Brand', type: 'text' },
+            { key: 'colour', name: 'colour', ph: 'Colour', type: 'text' },
+            { key: 'label', name: 'label', ph: 'Label', type: 'text' },
+            { key: 'section', name: 'section', ph: 'Section', type: 'text' },
+            { key: 'season', name: 'season', ph: 'Season', type: 'text' },
+            { key: 'category', name: 'category', ph: 'Category', type: 'text' },
+            { key: 'upc', name: 'upc', ph: 'Upc', type: 'text' },
+            { key: 'hsn', name: 'hsn', ph: 'Hsn', type: 'text' },
+            { key: 'unit', name: 'unit', ph: 'Unit', type: 'text' },
+        ];
+
+        fields.forEach(({ key, name, ph, type }) => {
+            jq(tbody).find(`[data-key="${key}"]`).addClass('role-btn').click(function (e) {
+                const index = jq(this).closest('tr').index();
+                const data = arr[index];
+                const id = data.id;
+                handleClick({ el: this, type, name, ph, cb, value: data[key], key, id });
+            });
+        });
+
+        async function handleClick({ el, type, name, ph, cb, value, key, id }) {
+            popInput({
+                el,
+                type,
+                name,
+                ph,
+                value,
+                cb: async (val) => {
+                    await postData({ url: '/api/edit/stock', data: { key, value: val || null, id } });
+                    if (cb) {
+                        cb();
+                    }
+                },
+            });
+        }
+
+    } catch (error) {
+        console.error(error); // Using console.error for logging errors
+    }
+}
 
 
 // backgroundColor: [

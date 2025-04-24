@@ -40,7 +40,7 @@ doc.addEventListener('DOMContentLoaded', function () {
         try {
             e.preventDefault();
             let fd = fd2obj({ form: this }); //log(fd.password); return;
-
+            if (!fd.password) return;
             let partyFields = {
                 "title": "",
                 "email": "",
@@ -53,16 +53,15 @@ doc.addEventListener('DOMContentLoaded', function () {
                 "pincode": "",
                 "opening_bal": ""
             }
-
-            if (!fd.password) return;
+            
+            jq('button.login').addClass('disabled'); //return 
 
             let res = await postData({ url: '/app-login', data: fd }); //log(res, res.data); return;
             if (res.data.status) {
                 jq('div.modal-msg').html('');
                 let loader = jq('<div></div>').addClass('me-auto').html(loading);
-                jq('div.loading-status').removeClass('d-none').html(loader); //return;
-                jq('button.login').addClass('disabled'); //return            
-                let settings = LStore.get(store_id) || {}; //log(settings);
+                jq('div.loading-status').removeClass('d-none').html(loader);
+                let settings = LStore.get(store_id) || {};
                 settings.storeId = store_id;
                 settings.bankModes = ['', 'Card', 'Online', 'Multiple', 'Cheque', 'Draft'];
                 let rsp = await Promise.all([
@@ -128,6 +127,7 @@ doc.addEventListener('DOMContentLoaded', function () {
 
             if (!res.data.status) {
                 jq('div.modal-msg').html(`<span class="text-danger pb-2">${res.data.msg}</span>`);
+                jq('button.login').removeClass('disabled'); 
             }
         } catch (error) {
             log(error);

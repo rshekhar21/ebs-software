@@ -220,7 +220,7 @@ export function skuMode() {
         jq(form).submit(async function (e) {
             try {
                 e.preventDefault();
-                let sku = jq(input).val();
+                let sku = jq(input).val(); log(sku);
                 if (!sku) throw 'missing sku';
                 let arr = await _scanProduct(sku);
                 if (!arr.length) {
@@ -230,7 +230,7 @@ export function skuMode() {
                 if (arr.length) {
                     let data = arr[0];
                     data.qty = 1;
-                    let obj = setItems(data);
+                    let obj = setItems(data); //log(obj); return;
                     updateDetails({ items: [obj] });
                     loadOrderDetails();
                     jq('#input-sku').removeClass('is-invalid').val('').focus();
@@ -407,7 +407,75 @@ export function setItems(obj) { //log('setitems')
         let return_item = false;
         if (jq('#returnItem').is(':checked')) return_item = true;
 
-        qty = (order_type === 'cn' || order_type === 'refund' || return_item) ? -Math.abs(qty) : qty; //log(qty);
+        qty = (order_type === 'cn' || order_type === 'refund' || return_item) ? -Math.abs(qty) : qty;
+
+        price = price > 0 ? price : 0;
+
+        if (disc_per) {
+            disc = price * qty * (disc_per / 100);
+            discPerPeice = Math.round(price * (disc_per / 100));
+        }
+
+        if (disc_val) {
+            disc = disc_val ? qty * disc_val : 0;
+            discPerPeice = Math.round(disc_val);
+        }
+
+        let clc = (qty * price) - (qty * discPerPeice);
+
+        let dp = 0
+
+        addl_disc = clc * (adp / 100);
+
+        let net = Math.round(clc) - addl_disc;
+
+        if (gst) {
+            let x = calculateTaxAndPrice(net, gst, taxType); //log(x);
+            tax = x.tax;
+            net = x.net;
+        }
+
+        let total = net + tax;
+        item.clc = clc;
+        item.tax = tax;
+        item.net = net;
+        item.total = total;
+        item.gross = total
+        item.disc = Math.round(disc);
+        item.qty = qty;
+        item.price = price;
+        item.addl_disc = addl_disc;
+        item.size = size && size.toUpperCase() || '';
+        item.unit = unit && unit.toUpperCase() || '';
+        item.hsn = item.hsn || '';
+        item.gst = item.gst || '';
+        item.sku = item.sku || '';
+        item.pcode = item.pcode || '';
+        item.emp_id = emp_id || default_empid || null;
+        item.product = item.product.toUpperCase();
+
+        return item;
+    } catch (error) {
+        log(error);
+        return null;
+    }
+}
+
+function setItem(obj) {
+    try {
+        let item = numerifyObject(obj);
+        let { qty, price, gst, disc_per, size, unit, disc_val, adp = 0, emp_id = null } = item;
+        let { order_type, emp_id: default_empid, disc_percent, discount, taxType } = getOrderData(); //log(disc_percent);
+        let discPerPeice = 0;
+        let disc = 0;
+        let tax = 0;
+        if (qty == '') qty = 1;
+        let addl_disc = 0;
+
+        // let return_item = false;
+        // if (jq('#returnItem').is(':checked')) return_item = true;
+
+        // qty = (order_type === 'cn' || order_type === 'refund') ? -Math.abs(qty) : qty;
 
         price = price > 0 ? price : 0;
 
@@ -464,14 +532,14 @@ export function setItems(obj) { //log('setitems')
 function setOrder() {
     try {
         let { discount, disc_percent, items, tax } = getOrderData();
+        if (!items.length) return;
         if (tax === 0) { disc_percent = 0; discount = 0; }
         const itemsArr = items.filter(item => !item.hasOwnProperty('del'));
         const subtotal = itemsArr.map(item => (item.clc)).reduce((prev, curr) => prev + curr, 0);
-        if (!items.length) return;
         let modifiedItems = items.map(item => {
-            let adp = disc_percent ? disc_percent : (discount / subtotal) * 100;
+            let adp = disc_percent ? disc_percent : discount > 0 ? ((discount / subtotal) * 100) : 0;
             let obj = { ...item, adp }
-            return setItems(obj);
+            return setItem(obj);
         });
         updateDetails({ items: [] });
         updateDetails({ items: modifiedItems });
@@ -838,7 +906,7 @@ function setItemsTable() { //log(3, 'set item table')
                     <td class="role-btn d-none inline-pcode" data-key="pcode" title="Product Code">${pcode || ''}</td>
                     <td class="role-btn inline-product" data-key="product" title="Product Name">${strprod}</td>
                     <td class="role-btn inline-size text-center" data-key="size" title="Product Size">${size || ''}</td>
-                    <td class="role-btn inline-qty text-center " data-avlqty="${avl}">${qty || 0}</td>
+                    <td class="role-btn inline-qty text-center" title="Available Qty ${avl}" data-avlqty="${avl}">${qty || 0}</td>
                     <td class="role-btn d-none text-end inline-unit" data-key="unit" title="Unit Type">${unit || ''}</td>
                     <td class="role-btn text-end inline-price fw-500" data-key="price" title="Product Price">${parseLocal(price)}</td>
                     <td class="role-btn d-none text-end inline-disc" data-key="disc" title="Product Discount /Item ${disc / qty}">${parseLocal(disc) || ''}</td>
@@ -864,15 +932,17 @@ function setItemsTable() { //log(3, 'set item table')
             jq('#itemsBody').append(tr);
         });
 
+
+
         editProperty('hsn', 'td.inline-hsn', 'hsn', 'HSN', 'text', false);
         editProperty('category', 'td.inline-category', 'category', 'CAT', 'text');
         editProperty('pcode', 'td.inline-pcode', 'pcode', 'Pcode', 'text', true, true);
         editProperty('product', 'td.inline-product', 'product', 'Product', 'text');
         editProperty('size', 'td.inline-size', 'size', 'Size', 'text', true, true);
         editProperty('unit', 'td.inline-unit', 'unit', 'Unit', 'text', true, true);
-        editProperty('qty', 'td.inline-qty', 'qty', 'Qty', 'number', false);
-        editProperty('gst', 'td.inline-gst', 'gst', 'Gst', 'number', false);
-        editProperty('price', 'td.inline-price', 'price', 'Price', 'number', false);
+        editProperty('qty', 'td.inline-qty', 'qty', 'Qty', 'number', true, false);
+        editProperty('gst', 'td.inline-gst', 'gst', 'Gst', 'number');
+        editProperty('price', 'td.inline-price', 'price', 'Price', 'number');
 
         // set table
         // select line
@@ -985,7 +1055,7 @@ function setItemsTable() { //log(3, 'set item table')
         function editProperty(key, className, propertyName, placeholder, type = 'number', value = true, ucase = false) {
             jq(tbody).find(className).click(function () {
                 let index = jq(this).closest('tr').index();
-                let item = items[index];
+                let item = items[index];                
                 popInput({
                     el: this,
                     name: propertyName,
@@ -1000,13 +1070,13 @@ function setItemsTable() { //log(3, 'set item table')
                         items.splice(index, 1, obj);
                         updateDetails({ items: [] });
                         updateDetails({ items });
-                        // setItems(obj);
                         showOrderDetails();
                         showOrderDetails();
                     }
                 });
             });
         }
+        
     } catch (error) {
         log(error);
     }
