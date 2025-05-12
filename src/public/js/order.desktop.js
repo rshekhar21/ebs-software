@@ -21,15 +21,15 @@ doc.addEventListener('keydown', async function (e) {
         if (!modal) jq('div.calculator').toggleClass('d-none'); jq('#equation').focus()
     }
 
-    if(e.ctrlKey && e.shiftKey && e.key.toLowerCase() == 'm' && url === page){
+    if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() == 'm' && url === page) {
         let cnf = await window?.app?.confirmIt('Create Order?'); //log(cnf); return; //|| confirm('Create Order?');
-        if(!cnf) return;
+        if (!cnf) return;
 
         let { update = faslse } = getOrderData();
         update ? updateOrder() : saveOrder();
     }
 
-    if(e.key === 'Escape') {
+    if (e.key === 'Escape') {
         jq('#addProduct').val('').focus();
     }
 })
@@ -50,6 +50,23 @@ doc.addEventListener('DOMContentLoaded', () => {
     //     }
 
     // })
+
+    jq('button.add-quick-stock').click(()=>{
+        jq('#quickstock').toggleClass('d-none');
+    })
+
+    jq('#quickstock').on('submit', function(e){
+        e.preventDefault();
+        try {
+            let sku = jq('#quick-stock').val(); log(sku);
+            if(!sku) return;
+            
+
+            jq('#quick-stock').val('');
+        } catch (error) {
+            log(error);   
+        }
+    })
 
     jq('a.view-banks').click(async function () {
         showTable({
@@ -446,7 +463,7 @@ doc.addEventListener('DOMContentLoaded', () => {
 
     jq('#execute').click(function () {
         let { location, category, order_number, items, subtotal, update = false } = getOrderData();
-        if (!subtotal || !items.length) { showError('Incomplete Bill, No item found !'); return; }
+        if (!items.length) { showError('Incomplete Bill, No item found !'); return; }
         if (!order_number) { showError('Missing Order Number'); return; }
 
         let orderMsg = location ? `
@@ -749,7 +766,7 @@ doc.addEventListener('DOMContentLoaded', () => {
 
     jq('button.add-payment').click(async function () {
         let data = getOrderData();
-        let pymts = data.pymts; log(pymts);
+        let pymts = data.pymts;
 
         if (data.update) {
             if (pymts.length > 1) {
@@ -891,7 +908,7 @@ doc.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    jq('span.all-cash').click(function () {
+    jq('a.all-cash, button.cash-pymt').click(function () {
         try {
             let { total, edit_id } = getOrderData();
             let pymt = total
@@ -915,10 +932,10 @@ doc.addEventListener('DOMContentLoaded', () => {
         }
     })
 
-    jq('span.all-card').click(function () {
+    jq('a.card-pymt, a.all-card').click(function () {
         try {
-            let { balance, edit_id } = getOrderData();
-            let pymt = balance;
+            let { total, balance, edit_id } = getOrderData();
+            let pymt = total;
             let settings = getSettings();
             let pymtMethod = settings?.pymtMethods;
             let db = pymtMethod.find(pm => pm.value == "Card");
@@ -945,36 +962,45 @@ doc.addEventListener('DOMContentLoaded', () => {
 
     jq('button.quick-pay').click(function () {
         try {
-            let val = this.value;
-            let { pymtMethods } = getSettings();
-            let { total, balance } = getOrderData();
-            let method = {};
-
-
-            if (val == 'gpay') { method = pymtMethods.find(method => method.id == '1'); }
-            if (val == 'ppay') { method = pymtMethods.find(method => method.id == '2'); }
-            if (val == 'paytm') { method = pymtMethods.find(method => method.id == '3'); }
-
-            let type = jq('#pymtForm button.apply-pymt').val();
-            let amount = type == 'update' ? total : balance;
-
-            if (val == 'cash') {
-                jq('#pymtForm')[0].reset();
-                jq('#p_cash, #received').val(amount);
-                return;
+            const val = this.value;
+            const { pymtMethods } = getSettings();
+            const { total, balance } = getOrderData();
+            const amount = jq('#pymtForm button.apply-pymt').val() === 'update' ? total : balance;
+          
+            const methodMap = {
+              'gpay': '1',
+              'ppay': '2',
+              'paytm': '3',
+              'card': '4'
+            };
+          
+            const methodId = methodMap[val];
+            const method = methodId ? pymtMethods.find(m => m.id == methodId) : null;
+          
+            if (val === 'cash') {
+              jq('#pymtForm')[0].reset();
+              jq('#p_cash, #received').val(amount);
+              return;
             }
-
-            if (val.includes('gpay', 'ppay', 'paytm')) {
-                jq('#p_cash').val('');
+          
+            jq('#p_cash').val(''); // Clear cash field for non-cash methods
+          
+            if (method) {
+              jq('#p_bank, #received').val(amount);
+              jq('#pymtMehtods').val(method.id);
+              jq('#bankslist').val(method.default_bank);
+          
+              if (val === 'card') {
+                jq('#bankModes').val('Card');
+              } else {
+                jq('#bankModes').val('Online');
+              }
+              return;
             }
-
-            jq('#p_bank, #received').val(amount);
-            jq('#pymtMehtods').val(method.id)
-            jq('#bankslist').val(method.default_bank);
-            jq('#bankModes').val('Online');
-        } catch (error) {
+          
+          } catch (error) {
             log(error);
-        }
+          }
     })
 
     jq('span.remove-pymts').click(function () {
@@ -1116,7 +1142,7 @@ doc.addEventListener('DOMContentLoaded', () => {
         try {
             e.preventDefault();
             let type = jq(this).find(`button[type="submit"]`).val();
-            let fd = fd2json({ form: this });
+            let fd = fd2json({ form: this }); //log(fd); return;
             let obj = setItems(fd);
             if (type == 'add') {
                 updateDetails({ items: [obj] });
@@ -1666,7 +1692,7 @@ async function searchItemsSpecial() {
             columns: [`product`, `pcode`, `price`, `size`, `available`],
             limit: 21,
             sortby: 'price'
-        }); 
+        });
 
         if (arr.length) {
             jq('#viewItems').html('');

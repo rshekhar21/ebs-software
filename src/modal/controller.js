@@ -44,6 +44,7 @@ function shortUrl(req, res) { action(req, res, modal.shortUrl) }
 function holdOrder(req, res) { action(req, res, modal.holdOrder) }
 function getClassicSku(req, res) { action(req, res, modal.getClassicSku) }
 function inlineEditStock(req, res) { action(req, res, modal.inlineEditStock) }
+function inlineEditParty(req, res) { action(req, res, modal.inlineEditParty) }
 
 module.exports = {
     listApps,
@@ -77,5 +78,6 @@ module.exports = {
     shortUrl,
     holdOrder,
     getClassicSku,
-    inlineEditStock
+    inlineEditStock,
+    inlineEditParty
 };

@@ -2871,13 +2871,18 @@ export function updateApplication() {
     }
 }
 
+export async function orderUri(order_id, thermal) {
+    let { entity } = getSettings();
+    let res = await postData({ url: '/api/url', data: { entity: entity.entity_id, order_id } });
+    let uid = res.data;
+    let host = thermal ? 'https://myebs.in/o/' : 'https://myebs.in/o/s/';
+    let url = host + uid;
+    return url;
+}
+
 export async function shareOrder(order_id, thermal = true) {
     try {
-        let { entity } = getSettings()
-        let res = await postData({ url: '/api/url', data: { entity: entity.entity_id, order_id } }); //log(res.data)
-        let uid = res.data;
-        let host = thermal ? 'https://myebs.in/o/' : 'https://myebs.in/o/s/';
-        let url = host + uid; //log(url);
+        let url = await orderUri(order_id, thermal);
         let message = `View-order\n${url}`;
         let encodedMessage = encodeURIComponent(message);
         let client = getClientType(); //log(client);

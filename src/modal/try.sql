@@ -1,4 +1,9 @@
--- Active: 1745241177450@@myebs.in@3306@db_demo
+-- Active: 1745241177450@@myebs.in@3306@gbxecgjdbxwi
+
+SELECT l.`id`, l.`sku`, COALESCE(l.`hsn`, s.`hsn`) AS `hsn`, COALESCE(l.`pcode`, s.`pcode`) AS `pcode`,  COALESCE(l.`product`, s.`product`) AS `product`, l.`price`, l.`unit`, l.`tax`, l.`qty`, l.`gst`, l.`net`, l.`gross` FROM `sold` l LEFT JOIN `stock` s ON l.`sku` = s.`sku` WHERE l.`order_id` = ?;
+SELECT `gst`, `hsn`, `pcode`, `price`, `product`, `qty`, `size`, `category`, `disc_per`, `disc_val`, null as `emp_id`, null as `index`, null as `sku` FROM `sold` WHERE `order_id` = 54;
+
+SHOW CREATE TABLE party;
 
 select * from stock where id = 23;
 SHOW TABLE STATUS LIKE 'stock';

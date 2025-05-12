@@ -1,6 +1,8 @@
 SELECT 
+    o.`id`,
     DATE_FORMAT(o.`timestamp`, '%d-%m-%Y - %r') as `dated`,
     o.`order_type`,
+    o.`party`,
     p.`party_name`,
     p.`party_id`,
     o.`inv_number`,
@@ -28,7 +30,9 @@ SELECT
     o.`location`,
     o.`notes`,
     o.`order_id`,
-    u.`username` as `biller`
+    u.`username` as `biller`,
+    o.`order_date`,
+    o.`timestamp`
 FROM `orders` o 
 LEFT JOIN (
     SELECT `order_id`, count(`order_id`) `pymt_entries`, sum(`amount`) `payment`, sum(`cash`) as `cash`, sum(`bank`) as `bank` FROM `pymtfyear` GROUP BY order_id

@@ -48,4 +48,4 @@ WHERE
     AND e.`bank_id` = ?  
     AND YEAR(e.`date`) = ?
     AND MONTH(e.`date`) = ?
-ORDER BY `dated` ASC;
+ORDER BY `dated`, `order_id` ASC;

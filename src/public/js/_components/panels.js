@@ -1,4 +1,4 @@
-import help, { advanceQuery, calculateTotalTaxByGst, copyToClipboard, createEL, createNewPage, createStuff, createTable, doc, errorMsg, fd2json, fd2obj, fetchTable, generateUniqueAlphaCode, getClientType, getFinYear, getForm, getSettings, getSqlDate, isAdmin, isRestricted, jq, log, parseColumn, parseCurrency, parseData, parseLocals, parseNumber, popListInline, postData, queryData, setTable, shareOrder, showCalender, showErrors, showModal, showSuccess, showTable, storeId, titleCase, viewOrder, viewOrderA4, xdb } from "../help.js";
+import help, { advanceQuery, calculateTotalTaxByGst, copyToClipboard, createEL, createNewPage, createStuff, createTable, doc, errorMsg, fd2json, fd2obj, fetchTable, generateUniqueAlphaCode, getClientType, getFinYear, getForm, getSettings, getSqlDate, isAdmin, isRestricted, jq, log, parseColumn, parseCurrency, parseData, parseLocals, parseNumber, popListInline, postData, queryData, setTable, shareOrder, showCalender, showErrors, showModal, showSuccess, showTable, storeId, titleCase, viewOrder, viewOrderA4, xdb, Storage } from "../help.js";
 import { loadSettings } from "./settings.js";
 import { icons } from "../svgs.js";
 import { _addPartyPymt, _delStock, _loadSrchstock, _viewOrderDetails, addPurchPymt, createStock, editParty, numerifyObject, purchEntry, sendOrderEmail, setEditStockBody, stockSubMenu, viewArticles } from "../module.js";
@@ -25,7 +25,7 @@ export function leftPanel() {
             },
             // view orders
             {
-                id: 'vieworder', rc: 'PgBXvEqD', name: "View Orders", title: 'View Orders', icon: icons.view_orders, href: '', class: 'menu-item',
+                id: 'vieworder', rc: 'PgBXvEqD', name: "View Orders", title: 'View Orders', icon: icons.orders, href: '', class: 'menu-item',
                 action: () => {
                     const { pin_purch = null } = getOrderData();
                     if (pin_purch) return;
@@ -52,7 +52,7 @@ export function leftPanel() {
             },
             // create expense         
             {
-                id: 'expense', rc: '', name: "Expense", title: 'Create Expense', icon: icons.dollar2, href: '',
+                id: 'expense', rc: '', name: "Expense", title: 'Create Expense', icon: icons.expense1, href: '',
                 action: () => createStuff({ title: 'Add Expnse', table: 'expense', url: '/api/crud/create/expense' })
             },
             // create stock
@@ -90,14 +90,14 @@ export function leftPanel() {
             },
             // create purchase
             {
-                id: 'purchase', rc: 'FROKLrJs', name: "Purchase", title: 'Create New Purchase', icon: icons.cart, href: '', class: 'menu-item purch-item',
+                id: 'purchase', rc: 'FROKLrJs', name: "Purchase", title: 'Create New Purchase', icon: icons.purchase1, href: '', class: 'menu-item purch-item',
                 action: () => {
                     jq('#purchase-order').removeClass('d-none');
                 }
             },
             // monthly sales
             {
-                id: 'monthlyhsales', rc: 'klidFVCa', name: "Monthly Sales", title: 'View Montyly Sales!', icon: icons.salesdata, href: '', class: 'menu-item',
+                id: 'monthlyhsales', rc: 'klidFVCa', name: "Monthly Sales", title: 'View Montyly Sales!', icon: icons.sales, href: '', class: 'menu-item',
                 action: () => {
                     const { pin_purch = null } = getOrderData();
                     if (pin_purch) return;
@@ -106,7 +106,7 @@ export function leftPanel() {
             },
             // monthly purchase
             {
-                id: 'monthlyhsales', rc: 'klidFVCa', name: "Monthly Purhase", title: 'View Montyly Purchase!', icon: icons.mnthPurch, href: '', class: 'menu-item',
+                id: 'monthlyhsales', rc: 'klidFVCa', name: "Monthly Purhase", title: 'View Montyly Purchase!', icon: icons.sales, href: '', class: 'menu-item',
                 action: () => {
                     const { pin_purch = null } = getOrderData();
                     if (pin_purch) return;
@@ -193,6 +193,7 @@ export function rightPanel() {
             { id: 'recent_orders', name: 'Recent Orders', restricted: false, title: 'View Recent Orders', action: (id) => { _recent(id) } },
             { id: 'unpaid_orders', name: 'Unpaid Orders', restricted: false, title: 'View Orders Pending Payment', action: (id) => { _unpaid(id) } },
             { id: 'emp_sales', name: 'Employee Sales', restricted: true, title: 'View Employee Sales', action: (id) => { _empSales(id) } },
+            { id: 'import_data', name: 'Import Orders Data', restricted: true, title: 'View Import Orders Data', action: (id) => { _importData(id) } },
         ];
 
         let cover = createEL('div');
@@ -220,7 +221,6 @@ export function rightPanel() {
             $(cover).append(container);
         })
         $('#content-right-panel').html(cover);
-
     } catch (error) {
         log(error);
     }
@@ -355,6 +355,108 @@ async function _empSales(id) {
     } catch (error) {
         log(error);
     }
+}
+
+async function _importData(id) {
+    try {
+        let div = document.getElementById(id);
+        if (jq(div).hasClass('d-none')) return;
+        let btnImport = jq('<button></button>').addClass('btn btn-light btn-sm').text('Import')
+        let btnClear = jq('<button></button>').addClass('btn btn-light btn-sm').text('Clear All')
+        let btngroup = jq('<div></div>').addClass('btn-group mb-2 w-100').append(btnImport, btnClear);
+        jq(div).html(btngroup);
+        let importedData = Storage.get('importedOrdersData'); //log(importedData);
+        jq(btnImport).click(() => {
+            if (importedData) return;
+            readJsonFile(loadTable);
+        });
+
+        jq(btnClear).click(() => {
+            Storage.delete('importedOrdersData');
+            // Storage.delete('importProcessed');
+            loadTable();
+        });
+        if (importedData) {
+            loadTable()
+        }
+        function loadTable() {
+            let data = Storage.get('importedOrdersData'); //log('loadTale', data);
+            if (!data) {
+                jq('div.imported-data').html('');
+                return;
+            }
+            let tbl = createTable(data, false, false);
+            parseData({
+                tableObj: tbl,
+                colsToShow: ['party_name', 'order_date'],
+                colsToRename: [
+                    { 'old': 'party_name', 'new': 'party' },
+                    { 'old': 'order_date', 'new': 'date' }
+                ],
+                colsToRight: ['order_date'],
+            })
+            let tbldiv = jq('<div></div>').addClass('imported-data').html(tbl.table);
+            jq(tbl.tbody).find(`[data-key="order_date"]`).each(function (i, e) {
+                let { order_date } = data[i];
+                jq(e).text(moment(order_date).format('DD/MM/YYYY'))
+            })
+            jq(tbl.tbody).find(`[data-key="party_name"]`).addClass('role-btn').each(function (i, e) {
+                jq(e).click(function () {
+                    let data = importedData[i]; //log(data.id); return;
+                    let obj = {
+                        order_date: moment(data.order_date).format('YYYY-MM-DD'),
+                        party: data.party,
+                        party_id: data.party_id,
+                        party_name: data.party_name,
+                        imported: data.id
+                    }
+                    let pymts = data.pymts.map(pymt => numerifyObject(pymt)); //log(pymts);
+                    // log(data.items); return;
+                    updateDetails(obj);
+                    updateDetails({ items: [], pymts: [] });
+                    updateDetails({ items: data.items, pymts });
+                    loadOrderDetails();
+                })
+            })
+            let importProcessed = Storage.get('importProcessed') || [];
+            if (importProcessed.length) {
+                jq(tbl.tbody).find(`[data-key="id"]`).each(function (i, e) {
+                    const cellText = jq(this).text().trim(); // Get the text and trim whitespace
+                    if (importProcessed.includes(parseInt(cellText))) { // Check if the text (parsed as an integer) is in the array
+                        jq(this).closest('tr').addClass('text-decoration-line-through');
+                    }
+                })
+            }
+            jq(div).append(tbldiv);
+        }
+    } catch (error) {
+        log(error);
+    }
+}
+
+function readJsonFile(callback = null) {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json'; // Only allow JSON files
+    input.addEventListener('change', async (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            try {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const jsonData = JSON.parse(event.target.result); //log(jsonData);
+                    // Do something with the imported data
+                    // console.log(jsonData);
+                    Storage.set('importedOrdersData', jsonData);
+                    if (callback) callback();
+                };
+                reader.readAsText(file);
+            } catch (error) {
+                console.error('Error importing JSON:', error);
+            }
+        }
+    });
+    input.click();
 }
 
 export async function _unholdOrder(id) {
@@ -699,14 +801,14 @@ async function _viewOrders() {
             let key = this.value;
             if (key) {
                 jq(spinner).removeClass('d-none');
-                let res = await db.getColumns({
-                    key,
-                    indexes: ['id', 'year', 'month', 'dated', 'party', 'biller', 'fin_year', 'party_name'],
-                    limit: 50,
-                    sortby: 'id',
-                    sortOrder: 'desc'
-                });
-                // let res = await queryData({ key: 'srchordersbyparty', type: 'search', searchfor: key })
+                // let res = await db.getColumns({
+                //     key,
+                //     indexes: ['id', 'year', 'month', 'dated', 'party', 'biller', 'fin_year', 'party_name'],
+                //     limit: 50,
+                //     sortby: 'id',
+                //     sortOrder: 'desc'
+                // });
+                let res = await queryData({ key: 'srchordersbyparty', type: 'search', searchfor: key })
                 loadData(res);
             } else {
                 loadData();
@@ -735,20 +837,20 @@ async function _viewOrders() {
         loadData();
 
         async function loadData(data = null) {
-            let db = new xdb(storeId, 'orders');
-            if (!data) {
-                data = await db.getColumns({
-                    sortby: 'id',
-                    sortOrder: 'desc',
-                    limit: 150
-                });
-            }
+            // let db = new xdb(storeId, 'orders');
+            // if (!data) {
+            //     data = await db.getColumns({
+            //         sortby: 'id',
+            //         sortOrder: 'desc',
+            //         limit: 150
+            //     });
+            // }
 
-            if (!data.length) {
-                jq(tbldiv).html('');
-                jq(spinner).addClass('d-none');
-                return;
-            }
+            // if (!data.length) {
+            //     jq(tbldiv).html('');
+            //     jq(spinner).addClass('d-none');
+            //     return;
+            // }
 
             let res = await fetchTable({ key: 'orders', limit: 150 }, true, true, data);
             jq(spinner).addClass('d-none');
@@ -758,8 +860,7 @@ async function _viewOrders() {
             parseData({
                 tableObj: tbl,
                 // colsToShow: [`id`, `dated`, `party_name`, `inv_number`, `order_type`, `category`, `location`, `qty`, `subtotal`, `discount`, `tax`, `freight`, `round_off`, `total`, `pymt`, `balance`, `notes`, `order_id`],
-                alignRight: true,
-                colsToParse: ['subtotal', 'qty', 'discount', 'tax', 'freight', 'total', 'pymt', 'balance', 'round_off'],
+                colsToParse: ['subtotal', 'qty', 'discount', 'tax', 'freight', 'total', 'cash', 'bank', 'pymt', 'balance', 'round_off'],
                 colsToHide: ['order_date', 'party', 'adjustment', 'disc_id', 'disc_percent', 'ship_id', 'tax_type', 'gst_type', 'month', 'year', 'timestamp', 'order_id', 'email'],
                 hideBlanks: ['category', 'location', 'freight', 'round_off', 'notes', 'tax', 'disc', 'manual_tax', 'balance', 'rewards', 'redeem', 'previous_due'],
                 colsToCenter: ['inv_num', 'qty', 'notes'],
@@ -771,6 +872,7 @@ async function _viewOrders() {
                     { old: 'order_type', new: 'type' },
                 ],
                 colsToRight: ['fin_year', 'biller'],
+                alignRight: true,
             })
 
             jq(tbl.tbody).find(`[data-key="notes"]`).addClass('role-btn').each(function (i, e) {
@@ -785,7 +887,7 @@ async function _viewOrders() {
             jq(tbl).find(`[data-key="email"]`).addClass('d-none');
 
             jq(tbl.tbody).find(`[data-key="id"]`).addClass('text-primary role-btn').each(function (i, e) {
-                jq(e).click(async function () { orderSubmenu(e, i, data, loadData) });
+                jq(e).click(async function () { orderSubmenu(e, i, res.data, loadData) });
             })
 
             jq(tbldiv).html(tbl.table);
@@ -1657,6 +1759,10 @@ async function orderSubmenu(el, i, data, cb = null) {
         shareOrder(order_id);
     });
 
+    jq('#emailOrder').click(async function () {
+        sendOrderEmail(id);
+    })
+
     jq('#exportJson').click(async function () {
         try {
             if (await isRestricted('fiSvlNab')) return;
@@ -1762,10 +1868,6 @@ async function orderSubmenu(el, i, data, cb = null) {
     jq('#addPymts').click(async function () {
         _addPartyPymt(id);
     });
-
-    jq('#emailOrder').click(async function () {
-        sendOrderEmail(id);
-    })
 
     jq('#orderDetails').click(async function () {
         _viewOrderDetails(id);

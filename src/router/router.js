@@ -130,6 +130,7 @@ router.post('/api/reset/schema', ctrl.resetSchema);
 router.post('/api/email/order', ctrl.emailOrder);
 router.post('/api/hold-order', ctrl.holdOrder);
 router.post('/api/edit/stock', ctrl.inlineEditStock);
+router.post('/api/edit/party', ctrl.inlineEditParty);
 router.post('/getuserpwdresetcode', ctrl.sendPasswordResetCode);
 router.post('/reset-user-password', ctrl.resetUserPassword);
 router.post('/verify-password', mw.isLoggedIn, mw.vefifyPassword);

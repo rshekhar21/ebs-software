@@ -256,9 +256,9 @@ async function sanatizeData(req, res, next) {
         if (url === '/api/crud/create/stock') {
             if (!req.body.data.product) throw 'Column product cannot be blank'
             // let sku = await modal.newSKU(req);
-            let sku = modal.newDynamicSKU(req.body.ssid); //log(sku);
             // let rsp = await modal.getClassicSku();
             // let sku = rsp?.sku || modal.newDynamicSKU(req.body.ssid);
+            let sku = modal.newDynamicSKU(req.body.ssid); //log(sku);
             if (!sku) { return res.end('Invalid SKU') }
             if (req.body.data.pcode) req.body.data.pcode = req.body.data.pcode.toUpperCase();
             if (req.body.data.size) req.body.data.size = req.body.data.size.toUpperCase();

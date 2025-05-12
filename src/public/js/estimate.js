@@ -46,13 +46,14 @@ doc.addEventListener('DOMContentLoaded', function () {
 
 function loadEstimate() {
     let data = getOrderData();
-    let { items, subtotal, discount, tax, freight, round_off, total, order_date, notes } = data;
-    if (items.length == 0) return;
+    let { items, subtotal, discount, tax, freight, round_off, total, order_date, notes, taxType, gstType } = data;
+    if (items.length == 0) return; //log(taxType, gstType);
 
     let entity = getSettings().entity
     jq('span.est-date').text(realDate(order_date));
     jq('.entity-name').text(entity.entity_name);
     jq('div.comments').text(notes)
+    // <span class="">${parseDecimal(item.net / item.qty)}</span>
 
     items.forEach(item => {
         let str = `
@@ -63,11 +64,12 @@ function loadEstimate() {
                         <span class="${item.size ? '' : 'd-none'}">${item.size}</span>
                     </div>
                     <div class="d-flex jcs aic gap-2">
-                        <span class="">${parseLocal(item.price)}</span>
+                        <span class="">${parseDecimal(item.price)}</span>
                         <span class="fst-italic">x</span>
                         <span class="fw-bold">${item.qty}</span>
                         <div class="d-flex jcs aic gap-1 ${item.gst ? '' : 'd-none'}">
-                            <span class="">GST @</span>
+                            <span class="${taxType == 'inc'? '':'d-none'}">(${taxType}.) GST @</span>
+                            <span class="${taxType == 'inc'? 'd-none':''}">GST @</span>
                             <span class="">${item.gst}%</span>
                         </div>
                         <div class="d-flex jcs aic gap-1 ${item.tax ? '' : 'd-none'}">

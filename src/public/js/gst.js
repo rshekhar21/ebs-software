@@ -1,6 +1,8 @@
 import { controlBtn, doc, fetchTable, jq, log, Months, pageHead, parseData, queryData, Storage } from "./help.js";
 import 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+import 'https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js';
 const XLSX = window.XLSX;
+const ExcelJS = window.ExcelJS;
 
 let arr = []
 doc.addEventListener('DOMContentLoaded', function () {
@@ -14,7 +16,8 @@ doc.addEventListener('DOMContentLoaded', function () {
     controlBtn({});
 
     let excel = jq('<button></button>').addClass('btn btn-sm disabled btn-success').html('<i class="bi bi-file-earmark-spreadsheet"></i>').click(function () {
-        exportToExcel(arr);
+        // exportToExcel(arr);
+        exportWithExcelJS(arr);
     }).prop('title', 'Export as Excel file')
 
     let json = jq('<button></button>').addClass('btn btn-sm disabled btn-secondary').html('<i class="bi bi-braces"></i>').click(function () {
@@ -44,7 +47,6 @@ doc.addEventListener('DOMContentLoaded', function () {
         jq('#myTab button').addClass('d-print-none');
         jq(this).removeClass('d-print-none')
     })
-
 
 })
 
@@ -96,7 +98,6 @@ async function loadReport_() {
     }
 }
 
-
 function appenedFrame() {
 
     let body = `
@@ -140,7 +141,6 @@ function appenedFrame() {
 
 }
 
-
 async function createReport(month, year) {
     try {
         jq('#panel-one, #panel-two, #panel-three, #panel-four').html('');
@@ -155,9 +155,9 @@ async function createReport(month, year) {
         let [a, b, c, d] = res;
         arr = [a?.data, b?.data, c?.data, d?.data];
 
-        if (a.data.length) jq('div.quick-btns button').removeClass('disabled');
+        if (!a || a.data.length) jq('div.quick-btns button').removeClass('disabled');
 
-        if(a){
+        if (a) {
             parseData({
                 tableObj: a,
                 colsToRight: ['sales', 'tax'],
@@ -166,7 +166,7 @@ async function createReport(month, year) {
             jq('#panel-one').html(a.table);
         }
 
-        if(b){
+        if (b) {
             parseData({
                 tableObj: b,
                 colsToRight: ['total', 'tax'],
@@ -175,7 +175,7 @@ async function createReport(month, year) {
             jq('#panel-two').html(b.table);
         }
 
-        if(c){
+        if (c) {
             parseData({
                 tableObj: c,
                 colsToRight: ['price', 'gst', 'tax', 'net', 'gross'],
@@ -185,7 +185,7 @@ async function createReport(month, year) {
             jq('#panel-three').html(c.table);
         }
 
-        if(d){
+        if (d) {
             parseData({
                 tableObj: d,
                 colsToRight: ['sale', 'tax', 'net', 'gross'],
@@ -193,15 +193,13 @@ async function createReport(month, year) {
                 colsToTotal: ['qty', 'tax', 'net', 'gross']
             })
             jq('#panel-four').html(d.table);
-        }       
-        
+        }
+
 
     } catch (error) {
         log(error);
     }
 }
-
-
 
 async function loadReport() {
     let month = new Date().getMonth() + 1;
@@ -301,70 +299,117 @@ function exportToJsonFile(data) {
 }
 
 function exportToExcel(data) {
-    const workbook = XLSX.utils.book_new(); // Create a new workbook
+    const workbook = XLSX.utils.book_new();
 
     data.forEach((sheetData, index) => {
-        const sheetName = `Sheet${index + 1}`; // Create a sheet name
-
-        // Convert the data to a worksheet
-        const worksheet = XLSX.utils.json_to_sheet(sheetData);
-
-        // Format headers to be uppercase and bold
+        const sheetName = `Sheet${index + 1}`;
         const headers = Object.keys(sheetData[0] || {});
-        const uppercaseHeaders = headers.map(header => header.toUpperCase()); //log(uppercaseHeaders);
-        const headerRow = XLSX.utils.aoa_to_sheet([uppercaseHeaders]);
-        const range = XLSX.utils.decode_range(headerRow['!ref']);
+        const uppercaseHeaders = headers.map(header => header.toUpperCase());
 
-        // Style headers as bold
-        for (let C = range.s.c; C <= range.e.c; C++) {
-            const cellAddress = XLSX.utils.encode_cell({ r: 0, c: C });
-            if (headerRow[cellAddress]) {
-                headerRow[cellAddress].s = {
-                    font: { bold: true },
-                };
-            }
-        }
+        // Create worksheet with just the uppercase header row
+        const worksheet = XLSX.utils.aoa_to_sheet([uppercaseHeaders]);
 
-        // Merge the styled header row with the data
-        XLSX.utils.sheet_add_json(headerRow, sheetData, {
+        // Append JSON data below headers (without headers again)
+        XLSX.utils.sheet_add_json(worksheet, sheetData, {
             skipHeader: true,
             origin: -1,
         });
 
-        // Adjust column widths dynamically
+        // Set column widths
         const columnWidths = headers.map(header => {
             const maxLength = Math.max(
-                header.length, // Header length
-                ...sheetData.map(row => String(row[header] || "").length) // Longest cell content
+                header.length,
+                ...sheetData.map(row => String(row[header] || "").length)
             );
-            return { wch: maxLength + 2 }; // Add padding for better spacing
+            return { wch: maxLength + 2 };
         });
+        worksheet['!cols'] = columnWidths;
 
-        worksheet['!cols'] = columnWidths; // Set column widths in the worksheet
-
-        // Format numeric cells
+        // Ensure numeric types where possible
         const dataRange = XLSX.utils.decode_range(worksheet['!ref']);
-        for (let R = dataRange.s.r + 1; R <= dataRange.e.r; ++R) { // Skip header row
+        for (let R = dataRange.s.r + 1; R <= dataRange.e.r; ++R) {
             for (let C = dataRange.s.c; C <= dataRange.e.c; ++C) {
                 const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
                 const cell = worksheet[cellAddress];
-
-                if (cell) {
-                    // Check if the cell contains a numeric value
-                    const value = parseFloat(cell.v);
-                    if (!isNaN(value)) {
-                        cell.t = 'n'; // Set type to numeric
-                    }
+                if (cell && !isNaN(cell.v)) {
+                    cell.t = 'n';
                 }
             }
         }
 
-        XLSX.utils.book_append_sheet(workbook, worksheet, sheetName); // Add sheet to workbook
+        XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
     });
 
-    // Export the workbook
-    XLSX.writeFile(workbook, "data.xlsx"); // Save as data.xlsx
+    const timestamp = new Date().getTime();
+    const fileName = `${timestamp}.xlsx`;
+
+    XLSX.writeFile(workbook, fileName);
 }
+
+async function exportWithExcelJS(data) {
+    const workbook = new ExcelJS.Workbook();
+
+    data.forEach((sheetData, index) => {
+        const worksheet = workbook.addWorksheet(`Sheet${index + 1}`);
+
+        const headers = Object.keys(sheetData[0] || {});
+        const headerRow = headers.map(h => h.toUpperCase());
+
+        // Add header row with styling
+        worksheet.addRow(headerRow);
+        const header = worksheet.getRow(1);
+        header.eachCell(cell => {
+            cell.font = { bold: true };
+            cell.fill = {
+                type: 'pattern',
+                pattern: 'solid',
+                fgColor: { argb: 'D9D9D9' } // Light gray
+            };
+            cell.border = {
+                top: { style: 'thin' },
+                left: { style: 'thin' },
+                bottom: { style: 'thin' },
+                right: { style: 'thin' }
+            };
+            cell.alignment = { vertical: 'middle', horizontal: 'center' };
+        });
+
+        // Add data rows
+        sheetData.forEach(row => {
+            // worksheet.addRow(headers.map(h => row[h]));
+            const values = headers.map(h => {
+                const val = row[h];
+                return !isNaN(val) && val !== "" ? Number(val) : val;
+            });
+            worksheet.addRow(values);
+        });
+        // https://chatgpt.com/c/681778d8-65d0-8007-94c3-4d825e750b98
+        // worksheet.getRow(rowNumber).getCell(colIndex).numFmt = '#,##0.00'; // optional
+
+        // Auto-width columns
+        worksheet.columns.forEach(column => {
+            let maxLength = 12;
+            column.eachCell({ includeEmpty: true }, cell => {
+                maxLength = Math.max(maxLength, String(cell.value || '').length);
+            });
+            column.width = maxLength + 3;
+        });
+    });
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+    // Trigger download
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `${Date.now()}.xlsx`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+
+
 
 
 

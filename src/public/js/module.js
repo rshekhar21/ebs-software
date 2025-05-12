@@ -1,5 +1,5 @@
 import { setupIndexDB } from "./_localdb.js";
-import help, { doc, jq, log, clickModal, confirmMsg, advanceQuery, postData, queryData, createStuff, getActiveEntity, parseNumber, fetchTable, parseData, createTable, getData, getFinYear, xdb, myIndexDBName, storeId, createEL, fd2json, getSettings, showErrors, isRestricted, errorMsg, sumArray, showModal, titleCase, showTable, popTextarea, popInput } from "./help.js";
+import help, { doc, jq, log, clickModal, confirmMsg, advanceQuery, postData, queryData, createStuff, getActiveEntity, parseNumber, fetchTable, parseData, createTable, getData, getFinYear, xdb, myIndexDBName, storeId, createEL, fd2json, getSettings, showErrors, isRestricted, errorMsg, sumArray, showModal, titleCase, showTable, popTextarea, popInput, orderUri } from "./help.js";
 import { getOrderData, loadPartyDetails, refreshOrder, resetOrder, updateDetails } from "./order.config.js";
 
 const modules = {}
@@ -1227,14 +1227,11 @@ export async function sendOrderEmail(orderid) {
     try {
         let cnf = confirm('Send Order Email?');
         if (!cnf) return;
-        let [rsp] = await queryData({ key: 'sendEmail', values: [orderid] }); //log(rsp); return 'ok';
+        let [rsp] = await queryData({ key: 'sendEmail', values: [orderid] }); 
         let email = rsp.email;
         let party = rsp.party_name;
         if (!email) { errorMsg('No Email Id found!'); return };
-        let { entity } = getSettings()
-        let key = `${entity.entity_id}-${rsp.order_id}`;
-        // let link = `${window.location.origin}/order/?key=${key}`;
-        let link = `https://api.ebsserver.in/order/?key=${key}`;
+        let link = await orderUri(rsp.order_id, true); //log(link); return;
         let html = `<div class="position-fixed top-0 start-50 translate-middle-x m-2 w-20 z-5" id="sending-email">
                         <div class="d-flex justify-content-between align-items-center gap-2 bg-primary-subtle py-3 px-4 rounded">
                             <span class="fs-5 text-primary-emphasis">Sending Email...</span>
@@ -1244,14 +1241,14 @@ export async function sendOrderEmail(orderid) {
                         </div>
                     </div>`;
         jq('body').append(html);
-        let res = await postData({ url: '/api/email/order', data: { email, link, party } });
+        let entity = getSettings().entity;
+        let res = await postData({ url: '/api/email/order', data: { email, link, party, entity: entity.entity_name } });
         jq('#sending-email').remove();
         if (res.data.status) { }
     } catch (error) {
         log(error);
     }
 }
-
 
 export async function addPurchPymt(id, balance) {
     try {
@@ -1289,6 +1286,8 @@ export async function _viewOrderDetails(id) {
             modalSize: 'modal-md',
             showFooter: false
         }).modal; //log(mb);
+        delete res.order_date;
+        delete res.timestamp;
         let ul = jq('<ul></ul>').addClass('list-group');
         for (let k in res) {
             let key = jq('<span></span>').addClass('fw-500').text(titleCase(k));
@@ -1324,6 +1323,43 @@ export async function viewPayments(orderid) {
         colsToTotal: [`amount`, `cash`, `bank`, `other`],
         alignRight: true,
     })
+}
+
+export async function partySubMenu(el, i, data, cb = null) {
+    try {
+        let { id } = data[i];
+        help.popListInline({
+            el, li: [
+                { key: 'Edit', id: 'editParty' },
+                { key: 'View Ledger', id: 'viewLedger' },
+                { key: 'Delete', id: 'delParty' },
+                { key: 'Cancel', }
+            ]
+        });
+        jq('#editParty').click(async function () {
+            createEditParty({ update_id: id, callback: cb })
+        })
+        jq('#delParty').click(async function () {
+            let cnf = confirm('Are you sure want to delete this Party ?');
+            if (!cnf) return;
+            let rsp = await queryData({ key: 'deleteParty', values: [id] }); log(rsp);
+            if (rsp.affectedRows) {
+                let db = new xdb(storeId, 'partys');
+                db.delete(id);
+            }
+            cb();
+        })
+        jq('#viewLedger').click(() => {
+            try {
+                let url = `${window.location.origin}/apps/app/party/ledger/?party=${id}`;
+                window?.app?.node() ? window.app?.showA4(url) : window.open(url, '_blank');
+            } catch (error) {
+                log(error);
+            }
+        })
+    } catch (error) {
+        log(error);
+    }
 }
 
 export async function stockSubMenu(el, i, data, cb = null) {
@@ -1495,6 +1531,51 @@ export async function editInlineStock(tbody, arr, cb = null) {
                 value,
                 cb: async (val) => {
                     await postData({ url: '/api/edit/stock', data: { key, value: val || null, id } });
+                    if (cb) {
+                        cb();
+                    }
+                },
+            });
+        }
+
+    } catch (error) {
+        console.error(error); // Using console.error for logging errors
+    }
+}
+
+export async function editInlineParty(tbody, arr, cb = null) {
+    try { 
+        const fields = [
+            { key: 'title', name: 'title', ph: 'Title', type: 'text' },
+            { key: 'party_name', name: 'party_name', ph: 'Party_name', type: 'text' },
+            { key: 'contact', name: 'contact', ph: 'Contact', type: 'text' },
+            { key: 'email', name: 'email', ph: 'Email', type: 'email' },
+            { key: 'address', name: 'address', ph: 'Address', type: 'text' },
+            { key: 'city', name: 'city', ph: 'City', type: 'text' },
+            { key: 'pincode', name: 'pincode', ph: 'Pincode', type: 'text' },
+            { key: 'state', name: 'state', ph: 'State', type: 'text' },
+            { key: 'gst_number', name: 'gst_number', ph: 'Gst Number', type: 'text' },
+            { key: 'opening', name: 'opening', ph: 'Opening', type: 'number' },
+        ];
+
+        fields.forEach(({ key, name, ph, type }) => {
+            jq(tbody).find(`[data-key="${key}"]`).addClass('role-btn').click(function (e) {
+                const index = jq(this).closest('tr').index();
+                const data = arr[index];
+                const id = data.id;
+                handleClick({ el: this, type, name, ph, cb, value: data[key], key, id });
+            });
+        });
+
+        async function handleClick({ el, type, name, ph, cb, value, key, id }) {
+            popInput({
+                el,
+                type,
+                name,
+                ph,
+                value,
+                cb: async (val) => {
+                    await postData({ url: '/api/edit/party', data: { key, value: val || null, id } });
                     if (cb) {
                         cb();
                     }

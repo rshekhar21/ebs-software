@@ -70,7 +70,7 @@ async function fetchOrder(orderid) {
         if (!entity?.entity_name) throw 'Unable to Fetch Order, Please Try Again!';
 
         let res = await fetchOrderData({ folder: entity.entity_id, orderid }); //log(res);
-        let { orderData: [od], itemsData: items, gsData: [gs], grData: [gr] } = res; //log(od);
+        let { orderData: [od], itemsData: items, gsData: [gs], grData: [gr], itemsSold } = res; //log(od);
 
         // entity
         jq('#entity .entity-name').text(entity.entity_name);
@@ -143,9 +143,12 @@ async function fetchOrder(orderid) {
             colsToRight: ['price', 'disc', 'gst', 'tax', 'net', 'total'],
             hideBlanks: ['sku', 'pcode', 'hsn', 'size', 'unit', 'disc', 'gst', 'tax'],
             colsToCenter: ['qty'],
+            colsToHide: ['pcode'],
         })
 
+        let taxType = od.tax_tpe == '' ? '' : od.tax_type == 'inc' ? 'INCLUSIVE' : 'EXCLUSIVE';
         jq('.quantity').text(parseDecimal(gs.gs));
+        jq('.gst_type').text(taxType);
 
 
         if (general.showBankOnInv === 'Yes') {
@@ -202,7 +205,7 @@ async function fetchOrder(orderid) {
                 })
             })
         }
-
+        log(od);
         let str = ` 
                 <div class="d-flex flex-column gap-0 h-100">
                     <div class="d-flex jce aic gap-2 pb-1 fw-500">

@@ -35,7 +35,12 @@
 
     <!-- set bill details -->
     <div class="d-flex jce aic gap-2 ms-auto w-50 pe-1">
-      <button class="btn btn-sm btn-light fs-5 ms-4 px-4" id="addNewParty" title="Create New Party"><i class="bi bi-person-plus-fill"></i></button>
+      <button class="btn btn-sm btn-light fs-5 ms-4 px-4" id="addNewParty" title="Create New Party">
+        <!-- <i class="bi bi-person-plus-fill"></i> -->
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#434343">
+          <path d="M725-410v-120H605v-60h120v-120h60v120h120v60H785v120h-60Zm-365-82.31q-57.75 0-98.87-41.12Q220-574.56 220-632.31q0-57.75 41.13-98.87 41.12-41.13 98.87-41.13 57.75 0 98.87 41.13Q500-690.06 500-632.31q0 57.75-41.13 98.88-41.12 41.12-98.87 41.12ZM60-187.69v-88.93q0-29.38 15.96-54.42 15.96-25.04 42.66-38.5 59.3-29.07 119.65-43.61 60.35-14.54 121.73-14.54t121.73 14.54q60.35 14.54 119.65 43.61 26.7 13.46 42.66 38.5Q660-306 660-276.62v88.93H60Zm60-60h480v-28.93q0-12.15-7.04-22.5-7.04-10.34-19.11-16.88-51.7-25.46-105.42-38.58Q414.7-367.69 360-367.69q-54.7 0-108.43 13.11-53.72 13.12-105.42 38.58-12.07 6.54-19.11 16.88-7.04 10.35-7.04 22.5v28.93Zm240-304.62q33 0 56.5-23.5t23.5-56.5q0-33-23.5-56.5t-56.5-23.5q-33 0-56.5 23.5t-23.5 56.5q0 33 23.5 56.5t56.5 23.5Zm0-80Zm0 384.62Z" />
+        </svg>
+      </button>
       <button class="btn btn-light party-list d-none" title="View Party List"><i class="bi bi-view-list"></i></button>
       <input type="date" class="form-control ms-auto" id="setOrderDate" title="Order Date" style="max-width: 150px;">
       <input type="text" class="form-control text-center" id="setOrderNumber" placeholder="Bill Number" aria-label="Bill Number" style="max-width: 150px;">
@@ -71,8 +76,11 @@
       <div class="d-flex jcb aic gap-2 w-50">
         <!-- hold -->
         <div class="dropdown me-auto ms-4">
-          <button type="button" class="btn btn-light btn-lg" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="bi bi-list"></i>
+          <button type="button" class="btn btn-light px-4" title="Quick Action Menu" data-bs-toggle="dropdown" aria-expanded="false">
+            <!-- <i class="bi bi-list"></i> -->
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#434343">
+              <path d="M140-254.62v-59.99h680v59.99H140ZM140-450v-60h680v60H140Zm0-195.39v-59.99h680v59.99H140Z" />
+            </svg>
           </button>
           <ul class="dropdown-menu">
             <li><a class="dropdown-item role-btn hold">Hold</a></li>
@@ -123,7 +131,7 @@
                   <li><span class="dropdown-item role-btn party-info">View Details</span></li>
                 </ul>
               </div>
-  
+
               <div class="d-none d-xl-flex jce aic ms-auto gap-4 flex-fill">
                 <span class="role-btn fs-5 add-party d-none" title="Add Party"><i class="bi bi-plus-square"></i></span>
                 <span class="role-btn fs-5 edit-party" title="Edit Party"><i class="bi bi-pencil-square"></i></span>
@@ -132,7 +140,7 @@
                 <span class="role-btn fs-5 party-info"><i class="bi bi-info-circle-fill"></i></span>
               </div>
             </div>
-  
+
             <ul class="party-info-box list-group w-50 position-absolute top-0 end-0 z-4 shadow d-none">
               <li class="list-group-item  list-group-item-action bg-light d-flex jcb aic fw-500">
                 Party Details
@@ -208,7 +216,9 @@
             </div>
             <div class="d-flex jcs aic gap-3">
               <span class="contact" title="Contact Number"></span>
-              <span class="copy-contact role-btn" title="Copy Contact"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#434343"><path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Zm160-240v-480 480Z"/></svg></span>
+              <span class="copy-contact role-btn" title="Copy Contact"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#434343">
+                  <path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Zm160-240v-480 480Z" />
+                </svg></span>
               <span class="copy-contact-status d-none" style="color: rgb(23, 133, 23);">Copied</span>
             </div>
             <span class="email"></span>
@@ -322,14 +332,32 @@
 
       <!-- payment/manual -->
       <div class="d-flex jce aic gap-2 w-50 position-relative">
-        <!-- <div class="form-check mb-0 ms-4" title="Order Category">
-                            <input class="form-check-input" type="checkbox" value="" id="order-category">
-                            <label class="form-check-label" for="order-category">
-                              WS
-                            </label>
-                        </div> -->
-        <!-- <button class="show-category btn btn-light btn-lg ms-4" title="Add order Category"><i class="bi bi-bookmark-plus-fill"></i></button> -->
-        <!-- <span class="add-category fs-5 ms-4 ps-3 role-btn text-secondary" title="Add order Category"><i class="bi bi-bookmark-plus-fill"></i></span> -->
+        <!-- quick stock -->
+        <button class="btn btn-light quick-stock px-4 ms-4 d-none" type="button" title="View Stock"   data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions"">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#434343">
+            <path d="M212.31-100q-29.92 0-51.12-21.19Q140-142.39 140-172.31v-447.92q-17.61-9.08-28.81-25.81Q100-662.77 100-684.62v-103.07q0-29.92 21.19-51.12Q142.39-860 172.31-860h615.38q29.92 0 51.12 21.19Q860-817.61 860-787.69v103.07q0 21.85-11.19 38.58-11.2 16.73-28.81 25.81v447.92q0 29.92-21.19 51.12Q777.61-100 747.69-100H212.31ZM200-612.31v438.08q0 6.15 4.42 10.19 4.43 4.04 10.97 4.04h532.3q5.39 0 8.85-3.46t3.46-8.85v-440H200Zm-27.69-60h615.38q5.39 0 8.85-3.46t3.46-8.85v-103.07q0-5.39-3.46-8.85t-8.85-3.46H172.31q-5.39 0-8.85 3.46t-3.46 8.85v103.07q0 5.39 3.46 8.85t8.85 3.46Zm195.38 249.62h224.62V-480H367.69v57.31ZM480-386.15Z" />
+          </svg>
+        </button>
+        <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
+          <div class="offcanvas-header bg-light">
+           <div class="d-flex jcs aic gap-2">
+            <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">Stock</h5>
+            <button class="btn btn-light px-3 add-quick-stock" title="Add Quick Stock"><i class="bi bi-plus-lg"></i></button>
+           </div>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <form class="add-quick-stock mb-2 d-none" id="quickstock">
+              <input type="text" name="sku" id="quick-stock" class="form-control" placeholder="Scan SKU/EAN" title="Enter SKU/EAN to Add Quick Stock!">
+            </form>
+
+            <div class="quickstock overflow-auto py-2"></div>
+            <!-- <p>Try scrolling the rest of the page to see this option in action.</p> -->
+          </div>
+        </div>
+        <!-- quick stock end -->
+
+        <!-- category -->
         <div class="category d-flex jcs aic gap-2 ms-4 d-none">
           <div style="width: max(30px, 60%)" title="Order Category">
             <input class="form-control" list="categoryList" id="category" placeholder="Category">
@@ -344,15 +372,16 @@
             <label class="btn btn-light" for="hold-category"><i class="bi bi-pause" title="Hold Category"></i></label>
           </div>
         </div>
-
-        <div class="btn-group ms-auto pymt-btn-group">
+        <!-- category end -->
+        <button type="button" class="ms-auto btn btn-light cash-pymt px-4" title="Total cash payment">Cash</button>
+        <div class="btn-group pymt-btn-group">
           <button type="button" class="btn btn-light add-payment" title="Add Payment"><i class="bi bi-plus-lg"></i> Pymt</button>
           <button type="button" class="btn btn-light dropdown-toggle dropdown-toggle-split px-3" data-bs-toggle="dropdown" aria-expanded="false">
             <span class="visually-hidden">Toggle Dropdown</span>
           </button>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item role-btn card-pymt">All Cash</a></li>
-            <li><a class="dropdown-item role-btn cash-pymts">All Card</a></li>
+            <!-- <li><a class="dropdown-item role-btn cash-pymt">All Cash</a></li> -->
+            <li><a class="dropdown-item role-btn card-pymt">All Card</a></li>
             <li><a class="dropdown-item role-btn new-pymt">New Entry</a></li>
             <li><a class="dropdown-item role-btn view-pymts">View Entries</a></li>
             <li><a class="dropdown-item role-btn delete-pymts">Remove Pymts</a></li>
@@ -433,7 +462,8 @@
 
             <!-- quick online pymts -->
             <div class="btn-group mt-2">
-              <button type="button" class="btn btn-outline-secondary quick-pay" value="cash">Cash</button>
+              <button type="button" class="btn btn-outline-secondary quick-pay" value="card">Card</button>
+              <button type="button" class="btn btn-outline-secondary quick-pay d-none" value="cash">Cash</button>
               <button type="button" class="btn btn-outline-secondary quick-pay" value="gpay">G-Pay</button>
               <button type="button" class="btn btn-outline-secondary quick-pay" value="paytm">PayTm</button>
               <button type="button" class="btn btn-outline-secondary quick-pay" value="ppay">PhonePay</button>
@@ -545,7 +575,7 @@
                 <span class="gst-config me-auto role-btn px-2" title="GST Settigns">
                   <i class="bi bi-gear"></i>
                 </span>
-                <span class="tax-type text-secondary fst-italic" title="GST Type"></span>
+                <span class="tax-type text-secondary" title="GST Type"></span>
                 <span>GST</span>
               </div>
               <span class="text-end tax" style="min-width: 95px;" title="Tax Amount">0</span>
@@ -686,7 +716,7 @@
                 <select name="gstType" id="set-gst-for" class="form-select">
                   <option value="">N/A</option>
                   <option value="igst">IGST</option>
-                  <option value="local">LOCAL (CGST/IGST)</option>
+                  <option value="local">CGST/SGST</option>
                 </select>
                 <label for="set-gst-for">GST TYPE</label>
               </div>

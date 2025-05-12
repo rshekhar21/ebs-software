@@ -17,7 +17,6 @@ doc.addEventListener('DOMContentLoaded', function () {
 
 async function viewDetails() {
     try {
-        jq('div.process').addClass('d-none');
         let fys = await queryData({ key: 'pymtfys' });
         if (!fys.length) { jq('#root').html(`<span class="fs-2 text-secondary">No Records Found</span>`); return; }
         let [selectbank] = jq('<select></select>').addClass('form-select form-select-sm me-auto w-md-25').attr('id', 'bank_id');
@@ -25,8 +24,9 @@ async function viewDetails() {
         let [selectYear] = jq('<select></select').addClass('form-select form-select-sm w-md-10').prop('title', 'Financial Year')
         let [apply] = jq('<button></button>').addClass('btn btn-sm btn-primary apply').text('Apply').prop('title', 'Click to Fetch/Pull Details');
         let [print] = jq('<button></button>').addClass('btn btn-sm btn-primary print disabled').text('Print').click(function () { window.print() }).prop('title', 'Print Data');
-        let [downlaod] = jq('<button></button>').addClass('btn btn-sm btn-primary export-excel disabled').text('Excel').prop('title', 'Export Excel File')
-        let [btn_group] = jq('<div></div>').addClass('btn-group mw-md-100').append(apply, print, downlaod);
+        let [excel] = jq('<button></button>').addClass('btn btn-sm btn-primary export-excel disabled').text('Excel').prop('title', 'Export Excel File');
+        let [json] = jq('<button></button>').addClass('btn btn-sm btn-primary export-json disabled').text('JSON').prop('title', 'Export JSON Data');
+        let [btn_group] = jq('<div></div>').addClass('btn-group mw-md-100').append(apply, print, json, excel);
         let [headrow] = jq('<div></div>').addClass('d-flex flex-column flex-md-row jcb aic gap-2 p-2 rounded d-print-none').append(selectbank, selectmonth, selectYear, btn_group)
         let [tablesdiv] = jq('<div></div>').addClass('p-2');
         let [container] = jq('<div></div>').addClass('container-md d-flex flex-column gap-2 px-0').append(headrow, tablesdiv);
@@ -49,6 +49,7 @@ async function viewDetails() {
         let cDate = new Date();
         jq(selectmonth).val(cDate.getMonth() + 1);
         jq(selectYear).val(cDate.getFullYear());
+        jq('div.process').addClass('d-none');
 
 
         jq(apply).click(async function () {
@@ -57,6 +58,7 @@ async function viewDetails() {
             let fy = jq(selectYear).val();
             if (!bank || !month || !fy) return;
             let res = await fetchTable({ key: 'statement', values: [bank, fy, month, bank, fy, month] });
+
             if (!res) {
                 jq(tablesdiv).html('');
                 return
@@ -86,8 +88,13 @@ async function viewDetails() {
             })
             jq(tablesdiv).html(table);
             jq(print).toggleClass('disabled', !res.data.length);
-            jq(downlaod).toggleClass('disabled', !res.data.length);
-            jq(downlaod).click(async function () { exportToExcel(res.data, 'Statement') })
+            jq(excel).toggleClass('disabled', !res.data.length);
+            jq(json).toggleClass('disabled', !res.data.length);
+
+            jq(excel).click(async function () { exportToExcel(res.data, 'Statement') });
+            jq(json).click(async function () { exportOrdersAsJson(res.data) });
+
+            // exportOrdersAsJson(res.data);
             // jq(downlaod).click(async function () { log(doc.body.innerHTML) })
         });
 
@@ -189,6 +196,44 @@ function exportToExcel(data, fileName) {
 
     // Write the workbook and trigger a download
     XLSX.writeFile(workbook, `${fileName || "export"}.xlsx`);
+}
+
+async function exportOrdersAsJson(data) {
+    try {
+        const orderIds = data.map(order => order.order_id);
+        let arr = []
+        jq('div.process').removeClass('d-none');
+        for (const id of orderIds) {
+            let [[a], b, c] = await Promise.all([
+                await queryData({ key: 'orderdetailsbyid', values: [id] }),
+                await queryData({ key: 'items_sold', values: [id] }),
+                await queryData({ key: 'pymtItems', values: [id] }),
+            ]);
+            a.items = b;
+            a.pymts = c;
+            arr.push(a);
+        }
+        jq('div.process').addClass('d-none');
+        exportToJsonFile(arr)
+        // let json = JSON.stringify(arr); log(json);
+    } catch (error) {
+        log(error);
+    }
+}
+
+function exportToJsonFile(data) {
+    const jsonData = JSON.stringify(data, null, 2); // Convert data to JSON string
+    const blob = new Blob([jsonData], { type: "application/json" }); // Create a Blob with JSON data
+    const url = URL.createObjectURL(blob); // Create a URL for the Blob
+
+    // Create a temporary <a> element
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "order_data.json"; // Set the file name for the download
+    a.click(); // Trigger the download
+
+    // Clean up
+    URL.revokeObjectURL(url);
 }
 
 

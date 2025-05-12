@@ -15,6 +15,8 @@ SELECT
     o.`freight`,
     o.`alltotal` AS `total`,
     o.`previous_due`,
+    py.`cash`,
+    py.`bank`,
     py.`pymt`,
     o.`adjustment`,
     o.`round_off`,
@@ -47,7 +49,7 @@ FROM
             `order_id`
     ) qs ON qs.`order_id` = o.`id`
     LEFT JOIN (
-        SELECT sum(`amount`) `pymt`, `order_id`
+        SELECT sum(`amount`) `pymt`, sum(`cash`) as `cash`, sum(`bank`) as `bank`, `order_id`
         FROM `payments`
         GROUP BY
             `order_id`

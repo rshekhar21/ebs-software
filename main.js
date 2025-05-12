@@ -1,5 +1,5 @@
 const log = console.log;
-const { app, BrowserWindow, ipcMain, shell, screen, dialog, powerMonitor } = require('electron/main');
+const { app, BrowserWindow, ipcMain, shell, screen, dialog, Menu, powerMonitor } = require('electron/main');
 const { exec, spawn } = require('child_process');
 const path = require('node:path');
 const fs = require('fs-extra');
@@ -8,6 +8,10 @@ const { autoUpdater } = require('electron-updater');
 const lock = app.requestSingleInstanceLock();
 if (!lock) { app.quit(); return; }
 const elog = require('electron-log');
+require('dotenv').config();
+
+const port = process.env.PORT || '3303';
+// const template = require('./menu');
 elog.transports.file.resolvePathFn = () => path.resolve(app.getPath('userData'), 'logs', 'main.log');
 
 
@@ -71,13 +75,15 @@ function createWindow() {
             contextIsolation: true,
         },
     });
-    win.loadURL('http://localhost:3300');
+    win.loadURL('http://localhost:' + port);
     win.once('ready-to-show', () => {
         setTimeout(() => {
             splashWindow.destroy(); // Close the splash screen
             win.show()
         }, 1000); // 1000 milliseconds = 1 second
     });
+    // const menu = Menu.buildFromTemplate(template);
+    // Menu.setApplicationMenu(menu);
     win.focus();
     return win;
 }

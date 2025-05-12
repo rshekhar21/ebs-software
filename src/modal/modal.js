@@ -593,6 +593,20 @@ async function inlineEditStock(req){
 }
 Modals.inlineEditStock = inlineEditStock;
 
+async function inlineEditParty(req){
+    try {
+        let { key, value, id, ssid } = req.body;
+        if(!ssid) throw 'Unauthorized Access';
+        let sql = `UPDATE party SET ${key} = ? WHERE id = ?;`;
+        let res = await queryUserDb(sql, [value, id]);
+        return res;
+    } catch (error) {
+        log(error);
+        return error;
+    }
+}
+Modals.inlineEditParty = inlineEditParty;
+
 async function setClassicSKU(req) {
     try {
         const { ssid, data } = req.body;
@@ -750,6 +764,7 @@ async function ulAWS(req) {
             await advanceQuery({ ecnstr, body: { ssid, data: { key: 'settings', eid: true } } }),
             await advanceQuery({ ecnstr, body: { ssid, data: { key: 'thermal', values: [id] } } }),
             await advanceQuery({ ecnstr, body: { ssid, data: { key: 'soldItems', values: [id] } } }),
+            await advanceQuery({ ecnstr, body: { ssid, data: { key: 'itemsSold', values: [id] } } }),
             // await h.runsql(pymtsSql),
         ]); //log(data); return 'ok';
 
@@ -763,6 +778,7 @@ async function ulAWS(req) {
             settingsData: data[6],
             thermalitems: data[7],
             soldItems: data[8],
+            itemsSold: data[9],
         }; //log(jsonData);
         await aws.uploadFile(folder, order_id, jsonData);
         return jsonData;
@@ -842,19 +858,19 @@ async function restLocalAppAdminPwd(req) {
 
 async function emailOrder(req) {
     try {
-        let { email, link, party, ssid } = req.body;
+        let { email, link, party, ssid, entity } = req.body;
         if (!ssid) throw 'Unauthorized request';
         if (!email) throw 'Email id is required!';
-        let app = req.cookies.app_name;
-        let sql = "SELECT service_email, email_pwd, email_client FROM settings WHERE id = 1;";
+        let app = req.cookies.app_name; //log(email); return
+        let sql = "SELECT `service_email`, `email_pwd`, `email_client` FROM `settings` WHERE `id` = 1;"; //log(sql); return { status: true, res: 'ok'};
         // const cnstr = await loadeCnstr(req);
         // const remoteQry = new connection(cnstr);
         // let [res] = await remoteQry.execute(sql);
         // let [res] = await config.querySql(sql);
-        let [res] = await queryUserDb(sql);
+        let [res] = await queryUserDb(sql); //console.log(res); return { status: true, res: 'ok'};
         if (!res) throw 'Invalid Email Settings';
         let mailOptions = {
-            from: `"${app}"<${res.service_email}>`,
+            from: `"${entity}"<${res.service_email}>`,
             to: email,
             subject: "Order Details",
             html: `
@@ -868,7 +884,7 @@ async function emailOrder(req) {
                         </p>
 
                         <p style="font-size:0.9rem;color:#3a3838; margin: 0;">Sincerely</p>
-                        <p style="font-size:0.8rem;color:#3a3838; margin: 0;">The ${app} Team</p>
+                        <p style="font-size:0.8rem;color:#3a3838; margin: 0;">The ${entity} Team</p>
 
                         <p><i><span style="font-size:10.0pt;color:#3a3838">Please Add <a href="mailto:${res.service_email}"
                                         target="_blank">${res.service_email}</a> in your address book so that mail from us going to
@@ -895,8 +911,8 @@ async function emailOrder(req) {
         let rsp = await sendEmail(res, mailOptions); //log(rsp);
         return { status: true, res: rsp };
     } catch (error) {
-        log(error);
-        return error;
+        // log(error);
+        return { status: true, res: error };;
     }
 }
 
@@ -1196,9 +1212,9 @@ async function importPartys(req) {
 
 async function shortUrl(req) {
     try {
-        let { entity, order_id, client_id, ssid, app_name } = req.body;
+        let { entity, order_id, client_id, ssid, app_name } = req.body; 
         if (!entity || !order_id || !client_id || !ssid, !app_name) throw 'Invalid Request';
-        let rsp = await axios.post(apiUrl + '/url', { entity, order_id }); log(rsp.data);
+        let rsp = await axios.post(apiUrl + '/url', { entity, order_id });
         return rsp.data;
     } catch (error) {
         log(error);

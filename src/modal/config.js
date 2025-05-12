@@ -17,7 +17,12 @@ const cs = {
     charset: 'utf8mb4'
 }
 
-const pool = mysql.createPool(cs); //log('cs', cs)
+// Server=localhost\SQLEXPRESS;Database=master;Trusted_Connection=True;
+// https://drive.proton.me/urls/6SH64FKVGG#7yns8HJMbve3
+// sphere attack about rifle orphan eagle near inhale frog bike trophy hollow
+
+
+const pool = mysql.createPool(cs);
 function runSql(sql, values = []) {
     return new Promise(function (resolve, reject) {
         pool.query(sql, values, (err, rows, fields) => {

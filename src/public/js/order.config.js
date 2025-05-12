@@ -89,10 +89,13 @@ export let details = {
 }
 
 export function resetOrder() {
-    let data = Storage.get('ordersData');
-    details.itemsMode = data.itemsMode;
-    details.enableScan = data.enableScan;
-    details.purchase = data.purchase;
+    const ordersData = Storage.get('ordersData') || {}; // Handle cases where 'ordersData' might be missing
+    const { itemsMode, enableScan, purchase, taxType, gstType } = ordersData;
+    details.itemsMode = itemsMode;
+    details.enableScan = enableScan;
+    details.purchase = purchase;
+    details.taxType = taxType;
+    details.gstType = gstType;
     details.update = false;
     details.edit_id = null;
     Storage.set('ordersData', details);
@@ -553,8 +556,12 @@ function calculateTotal() {
         const data = getOrderData();
         let { items, pymts, round_off: round, disc_percent, discount, freight, order_type, previous_due } = data;
 
-        const itemsArr = items.filter(item => !item.hasOwnProperty('del')); //log(arr);
-        const pymtsArr = pymts.filter(pymt => !pymt.hasOwnProperty('del')); //log(arr);
+        const itemsArr = items.filter(item => !item.hasOwnProperty('del'));
+        const pymtsArr = pymts.filter(pymt => !pymt.hasOwnProperty('del'));
+        let pymt = 0;
+        if (pymtsArr.length) {
+            pymt = pymtsArr.map(pymt => pymt.amount).reduce((prev, curr) => prev + curr, 0);
+        }
 
         if (itemsArr.length) {
             // const subtotal = itemsArrArr.map(item => (parseNumber(item.price) * parseNumber(item.qty))).reduce((prev, curr) => prev + curr, 0); log(subtotal);
@@ -569,7 +576,6 @@ function calculateTotal() {
             const qtyM = itemsArr.map(item => item.qty).filter(qty => qty < 0).reduce((a, b) => a + b, 0);
             const dx = itemsArr.map(item => item.disc).reduce((prev, curr) => prev + curr, 0);
             const addldisc = itemsArr.map(item => item.addl_disc).reduce((prev, curr) => prev + curr, 0);
-            const pymt = pymtsArr.map(pymt => pymt.amount).reduce((prev, curr) => prev + curr, 0); //log(pymt);
 
             let disc = addldisc || discount;
 
@@ -585,7 +591,7 @@ function calculateTotal() {
             updateDetails({ subtotal, tax, total, savings, mrptotal, qty, discount: disc, mrptotal, savings, balance, pymt });
 
         } else {
-            updateDetails({ subtotal: 0, tax: 0, total: 0, savings: 0, mrptotal: 0, qty: 0, discount: 0, balance: 0, pymt: 0 });
+            updateDetails({ subtotal: 0, tax: 0, total: 0, savings: 0, mrptotal: 0, qty: 0, discount: 0, balance: 0, pymt });
         };
 
     } catch (error) {
@@ -595,9 +601,9 @@ function calculateTotal() {
 
 function calculateGSTsTotal(items) {
     try {
+        if (items.length == 0) { jq('div.order-gst').removeClass('pe-2 border-end').html(''); return; }
         const tax = items.map(item => item.tax).reduce((prev, curr) => prev + parseDecimal(curr), 0);
         if (tax === 0) return;
-        if (!items) { jq('div.order-gst').html(''); return; }
         let arr = calculateTotalTaxGstwise(items);
         let ul = jq('<ul></ul>').addClass('list-group list-group-flush').css({ 'min-width': '256px' });
         jq('div.order-gst').html('');
@@ -606,7 +612,7 @@ function calculateGSTsTotal(items) {
             let tax = jq('<span></span>').text(`${parseDecimal(item.totalTax)}`).css('min-width', '95px').addClass('text-end')
             let li = jq('<li></li>').addClass('list-group-item d-flex jce aic py-1 gap-3').append(gst, tax);
             jq(ul).append(li);
-            jq('div.order-gst').html(ul);
+            jq('div.order-gst').addClass('pe-2 border-end').html(ul);
         })
     } catch (error) {
         log(error);
@@ -620,10 +626,11 @@ export function showOrderDetails() {
         setItemsTable();
         showBilledItems();
         beautifyTable();
-        let data = getOrderData();  //log(data.items)
+        let data = getOrderData(); //log(data)
         calculateGSTsTotal(data.items);
+        let pymts = getTotalCashAndBankFromMultiple(data.pymts);
         data = getOrderData();
-        let { subtotal, total, round_off: round, tax, savings, qty, freight, discount, balance, pymt, disc_percent, location = null, pin_location = false, taxType, category = null, pin_category = false, update = false, gstType, order_type, notes, emp_id, previous_due, enableScan } = data; //log(data)
+        let { subtotal, total, round_off: round, tax, savings, qty, freight, discount, balance, pymt, disc_percent, location = null, pin_location = false, taxType, category = null, pin_category = false, update = false, gstType, order_type, notes, emp_id, previous_due, enableScan } = data;
 
         let strdisc = disc_percent ? `(${parseDecimal(disc_percent)}%) ${parseDecimal(discount)}` : discount ? '(#) ' + parseDecimal(discount) : '0';
         let strtax = tax ? `<div class="d-flex jce aic"><span class="text-secondary text-uppercase fst-italic me-2" title="Tax Type">${taxType || 'EXC'}</span>${parseDecimal(tax)}<span></span></div>` : 0;
@@ -641,6 +648,8 @@ export function showOrderDetails() {
         jq('span.balance, h3.balance').html(parseLocals(balance));
         jq('h3.pymts, h3.balance').toggleClass('d-none', total == 0);
         jq('#order-comments').val(notes);
+        jq('#cashPayment').val(pymts.totalCash);
+        jq('#bankPayment').val(pymts.totalBank);
         jq('span.old-bal').html(parseLocal(previous_due) || 0);
         update ? jq('#execute').html('UPDATE') : jq('#execute').html('EXECUTE');
         let scan = jq('#scanEntry');
@@ -708,6 +717,21 @@ export function showOrderDetails() {
         log(error);
     }
 }
+
+function getTotalCashAndBankFromMultiple(paymentsArray) {
+    let totalCash = 0;
+    let totalBank = 0;
+
+    if (paymentsArray && Array.isArray(paymentsArray)) {
+        paymentsArray.forEach(payment => {
+            totalCash += payment.cash || 0;
+            totalBank += payment.bank || 0;
+        });
+    }
+
+    return { totalCash, totalBank, combinedTotal: totalCash + totalBank };
+}
+
 
 function beautifyTable() { //log(5,'beautity')
     const data = getOrderData();
@@ -934,7 +958,7 @@ function setItemsTable() { //log(3, 'set item table')
 
 
 
-        editProperty('hsn', 'td.inline-hsn', 'hsn', 'HSN', 'text', false);
+        editProperty('hsn', 'td.inline-hsn', 'hsn', 'HSN', 'text', true);
         editProperty('category', 'td.inline-category', 'category', 'CAT', 'text');
         editProperty('pcode', 'td.inline-pcode', 'pcode', 'Pcode', 'text', true, true);
         editProperty('product', 'td.inline-product', 'product', 'Product', 'text');
@@ -1055,7 +1079,7 @@ function setItemsTable() { //log(3, 'set item table')
         function editProperty(key, className, propertyName, placeholder, type = 'number', value = true, ucase = false) {
             jq(tbody).find(className).click(function () {
                 let index = jq(this).closest('tr').index();
-                let item = items[index];                
+                let item = items[index];
                 popInput({
                     el: this,
                     name: propertyName,
@@ -1076,7 +1100,7 @@ function setItemsTable() { //log(3, 'set item table')
                 });
             });
         }
-        
+
     } catch (error) {
         log(error);
     }
@@ -1255,9 +1279,9 @@ export async function savePartysdata(party) {
 }
 
 export async function loadOrderDetails() {
-    let data = getOrderData();
     let { entity } = getSettings();
     jq('#side-panel .entity-name').text(entity?.entity_name || '')
+    let data = getOrderData();
     if (data?.party) {
         jq('div.party-details').removeClass('d-none');
         jq('div.party-name').text(data?.party_name);
@@ -1407,9 +1431,17 @@ export async function saveOrder() {
             },
             items: obj.items,
             pymts: obj.pymts,
-        }; //log(data); return;
+        }; //log(obj.imported); return;
+        let imported = obj?.imported || null;
 
         if (obj.disc_id == '1') data.order.redeem = obj.discount; //log(data.order); return;
+
+        // if (obj?.imported) {
+        //     let arr = Storage.get('importProcessed') || [];
+        //     arr.push(data.imported);
+        //     Storage.set('importProcessed', arr);
+        // }
+        // return;
 
         let res = await postData({ url: '/api/create/order', data: { data } });
         if (res.data.status) {
@@ -1438,6 +1470,12 @@ export async function saveOrder() {
                     let url = `${window.location.origin}/view/order/format/b/?orderid=${order_id}`; //log(url);
                     window?.app?.showA4(url)
                 };
+            }
+
+            if (imported) {
+                let arr = Storage.get('importProcessed') || [];
+                arr.push(imported);
+                Storage.set('importProcessed', arr);
             }
 
             let sendEmail = getSettings().general.sendEmail;
