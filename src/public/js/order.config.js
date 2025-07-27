@@ -1432,7 +1432,7 @@ export async function saveOrder() {
             items: obj.items,
             pymts: obj.pymts,
         }; //log(obj.imported); return;
-        let imported = obj?.imported || null;
+        let imported = obj?.imported || null; //log(imported);
 
         if (obj.disc_id == '1') data.order.redeem = obj.discount; //log(data.order); return;
 

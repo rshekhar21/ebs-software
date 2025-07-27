@@ -1,4 +1,26 @@
--- Active: 1735393922891@@127.0.0.1@3306@ebs_clients
+-- Active: 1745241177450@@myebs.in@3306@gzxynqgulilv
+
+
+select id, inv_number from orders;
+
+update orders SET inv_number = id where inv_number != id;
+
+
+select product, hsn from sold group by product, hsn;
+
+select * from payments where order_id = 55;
+SELECT `id`, `sku`, `hsn`, `category`, `unit`, `pcode`, `product`, `qty`, `size`, `price`, `gst`, `disc_val`, `disc_per`, `emp_id`, `order_id` FROM sold WHERE order_id = 55;
+
+select * from payments order by id desc;
+
+select * from gbxecgjdbxwi.party order by id desc;
+
+select * from party order by id desc;
+
+-- INSERT INTO `party` SELECT * FROM gbxecgjdbxwi.party WHERE `id` > 3234;
+
+
+
 
 ALTER TABLE ebs_clients.clients ADD COLUMN `auth_key_sent` BOOLEAN DEFAULT false;
 
@@ -113,3 +135,8 @@ select disc_id from orders where disc_id is not null order by id desc;
 
 SELECT * FROM stock;
 
+
+select * from gzxynqgulilv.orders;
+
+
+-- insert into gzxynqgulilv.party (select * from gbxecgjdbxwi.party where id > 3222 order by id asc);

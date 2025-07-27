@@ -418,7 +418,7 @@ async function _importData(id) {
                     loadOrderDetails();
                 })
             })
-            let importProcessed = Storage.get('importProcessed') || [];
+            let importProcessed = Storage.get('importProcessed') || []; //log(importProcessed);
             if (importProcessed.length) {
                 jq(tbl.tbody).find(`[data-key="id"]`).each(function (i, e) {
                     const cellText = jq(this).text().trim(); // Get the text and trim whitespace
@@ -1603,7 +1603,7 @@ export async function _viewHistory(party, print = false) {
 }
 
 async function orderSubmenu(el, i, data, cb = null) {
-    let { id, date, email, party, order_id } = data[i];
+    let { id, order_date, email, party, order_id } = data[i]; //log(data[i]); return;
     if (!order_id) { [{ order_id }] = await queryData({ key: 'getorderids', values: [id, id] }) }
 
     popListInline({
@@ -1656,7 +1656,7 @@ async function orderSubmenu(el, i, data, cb = null) {
         viewOrderA4(order_id);
     })
 
-    jq('#editOrder').click(async function () {
+    jq('#editOrder_').click(async function () {
         if (await isRestricted('fiSvlNab')) return;
         let db = new xdb(storeId);
         let [data] = await db.getColumns({
@@ -1702,6 +1702,22 @@ async function orderSubmenu(el, i, data, cb = null) {
         loadOrderDetails();
         jq('#side-panel div.order').click();
     })
+
+    jq('#editOrder').click(async function () {
+        if (await isRestricted('fiSvlNab')) return;
+        let [a, b, c] = await Promise.all([
+            await queryData({ key: 'editOrder', values: [id] }),
+            await queryData({ key: 'editOrderItems', values: [id] }),
+            await queryData({ key: 'editOrderPymts', values: [id, order_date] })
+        ]); //log(a, b, c); return;
+        const [data] = a, items = b, pymts = c; //log(data); return;
+        pymts.forEach(pymt => numerifyObject(pymt)); 
+        updateDetails({ items: [], pymts: [] });
+        updateDetails({ ...data, update: true, items, pymts });
+        loadOrderDetails();
+        jq('#side-panel div.order').click();
+    })
+
 
     jq('#delOrder').click(async function () {
         try {
