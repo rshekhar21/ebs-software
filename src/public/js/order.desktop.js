@@ -430,9 +430,9 @@ doc.addEventListener('DOMContentLoaded', () => {
     jq('#neworder').click(function (e) {
         popConfirm({
             el: this, msg: 'Set New Order?', cb: () => {
-                let { location, pin_location, category, pin_category } = getOrderData();
                 resetOrder();
-
+                
+                let { location, pin_location, category, pin_category } = getOrderData();
                 if (pin_location && location) { updateDetails({ location, pin_location }) }
 
                 if (!pin_location) {

@@ -38,7 +38,7 @@ function getTrialStatus(user) {
         return `Activated, ${user?.version || 'Basic'}`;
     }
 
-    const signupDate = new Date(user.signup_date);
+    const signupDate = new Date(user.signup_date); log(signupDate);
     const today = new Date();
     const trialPeriod = user.trial_period;
 

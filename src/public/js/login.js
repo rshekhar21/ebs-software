@@ -53,7 +53,7 @@ doc.addEventListener('DOMContentLoaded', function () {
                 "pincode": "",
                 "opening_bal": ""
             }
-            
+
             jq('button.login').addClass('disabled'); //return 
 
             let res = await postData({ url: '/app-login', data: fd }); //log(res, res.data); return;
@@ -92,6 +92,8 @@ doc.addEventListener('DOMContentLoaded', function () {
                     "bank_id": "",
                     "defaultInvFormat": "format-b",
                     "basePrice": "sp",
+                    "taxType": "",
+                    "gstType": "",
                     "productMode": "Search",
                     "thermalFormat": "Classic",
                     "chartType": "line",
@@ -112,11 +114,16 @@ doc.addEventListener('DOMContentLoaded', function () {
 
                 let entity = await getActiveEntity();
                 settings.entity = entity;
-                updateDetails(details);
+
 
                 LStore.set(store_id, settings);
                 if (!LStore.get(store_id)) { }
 
+                // log(settings?.general?.taxType); return;
+                let { taxType, gstType } = settings?.general;
+                details.taxType = taxType;
+                details.gstType = gstType;
+                updateDetails(details);
                 // help.Storage.set('ordersData', orderdData);
 
 
@@ -127,7 +134,7 @@ doc.addEventListener('DOMContentLoaded', function () {
 
             if (!res.data.status) {
                 jq('div.modal-msg').html(`<span class="text-danger pb-2">${res.data.msg}</span>`);
-                jq('button.login').removeClass('disabled'); 
+                jq('button.login').removeClass('disabled');
             }
         } catch (error) {
             log(error);

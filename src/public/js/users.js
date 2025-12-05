@@ -148,7 +148,7 @@ async function loadData() {
                                 let data = fd2json({ form }); log(data);
                                 if (!data.password) throw 'Missing Password';
                                 if (data.password.length < 6) throw 'Password must be 6 charactors long!';
-                                let res = await advanceQuery({ key: 'updateUserPwd', values: [id] }); //log(res);
+                                let res = await advanceQuery({ key: 'resetUsersPwd', values: [id] }); //log(res);
                                 if (res.data?.affectedRows) {
                                     jq(mb).find('span.success').removeClass('d-none');
                                     jq(mb).find('span.fail, div.p-status').addClass('d-none');

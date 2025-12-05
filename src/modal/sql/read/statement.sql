@@ -2,6 +2,7 @@ SELECT
     DATE_FORMAT(y.`pymt_date`, '%d-%m-%Y') AS `dated`,
     y.`order_id`,
     y.`purch_id`,
+    o.inv_number as `inv#`,
     p.`party_name` AS `party`,
     p.`party_id`,
     y.`pymt_for`,
@@ -31,6 +32,7 @@ SELECT
     DATE_FORMAT(e.`date`, '%d-%m-%Y') AS `dated`,
     null as `order_id`,
     null as `purch_id`,
+    null as `inv#`,
     'N/A' AS `party`,
     null as `party_id`,
     'Expense' AS `pymt_for`,
@@ -41,7 +43,7 @@ SELECT
     (e.`amount` * -1) AS `amount`
 FROM
     `expense` e
-    JOIN `bank` b ON b.id = e.bank_id
+    JOIN `bank` b ON b.`id` = e.`bank_id`
     JOIN `pymt_methods` m ON m.id = e.`pymt_method`
 WHERE
     e.`bank_id` IS NOT NULL 

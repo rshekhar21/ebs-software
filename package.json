@@ -1,6 +1,6 @@
 {
   "name": "myebs-app",
-  "version": "1.0.33",
+  "version": "1.0.34",
   "main": "main.js",
   "scripts": {
     "start": "electron --no-sandbox .",
@@ -26,7 +26,7 @@
       "oneClick": false,
       "installerIcon": "icon.ico",
       "uninstallerIcon": "icon.ico",
-      "uninstallDisplayName": "Uninstaller",
+      "uninstallDisplayName": "EBS",
       "license": "license.md",
       "allowToChangeInstallationDirectory": true,
       "runAfterFinish": true,
@@ -91,6 +91,7 @@
   "devDependencies": {
     "electron": "^35.1.5",
     "electron-builder": "^25.1.8",
-    "electron-reload": "^2.0.0-alpha.1"
+    "electron-reload": "^2.0.0-alpha.1",
+    "nodemon": "^3.1.10"
   }
 }

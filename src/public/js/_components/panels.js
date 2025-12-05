@@ -1567,7 +1567,7 @@ export async function _viewHistory(party, print = false) {
                 qryObj: { key: 'partyledger_bydates', values: [party, to, from, party, to, from] },
                 colsToTotal: ['subtotal', 'discount', 'freight', 'tax', 'total', 'payment'],
                 colsToRight: ['clear', 'timestamp'],
-                colsToParse: ['balance'],
+                colsToParse: ['balance'],                
                 hideBlanks: ['freight'],
                 alignRight: true,
             });
@@ -1580,7 +1580,8 @@ export async function _viewHistory(party, print = false) {
             let tbl = await setTable({
                 qryObj: { key: 'partyLedger', values: [party, party] },
                 colsToTotal: ['subtotal', 'discount', 'freight', 'tax', 'total', 'payment'],
-                colsToRight: ['clear', 'timestamp'],
+                colsToRight: ['clear', 'time'],
+                colsToHide: ['sort_date', 'sort_ts'],
                 colsToParse: ['balance'],
                 hideBlanks: ['freight'],
                 alignRight: true,

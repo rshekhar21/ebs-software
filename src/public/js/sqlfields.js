@@ -573,9 +573,23 @@ export default {
       ]
     },
     basePrice: { label: 'Stock Base Price', type: 'select', selectObj: [{ value: 'SP (Selling Price)', id: 'sp' }, { value: 'WSP (Wholesale Price)', id: 'wsp' }], default: 'sp', },
+    taxType: {
+      label: 'Default Tax Type', type: 'select', selectObj: [
+        { id: null, value: 'N/A' },
+        { id: 'inc', value: 'Inclusive' },
+        { id: 'exc', value: 'Exclusive' }
+      ]
+    },
+    gstType: {
+      label: 'Default Tax Type', type: 'select', selectObj: [
+        { id: null, value: 'N/A' },
+        { id: 'local', value: 'CGST/SGST' },
+        { id: 'igst', value: 'IGST' }
+      ]
+    },
     productMode: { label: 'Default Product Mode', type: 'select', select: ['Scan', 'Search'] },
     thermalFormat: { label: 'Thermal Format', type: 'select', select: ['', 'Classic', 'Tabular'] },
-    defaultPrint: { label: 'Default Order Print', type: 'select', select: ['', 'Thermal 80mm', 'A4', 'A5'], default: 'Thermal'},
+    defaultPrint: { label: 'Default Order Print', type: 'select', select: ['', 'Thermal 80mm', 'A4', 'A5'], default: 'Thermal' },
     chartType: { label: 'Chart Type', type: 'select', select: ['line', 'bar', 'doughnut', 'bubble', 'scatter'], default: 'line' },
     showPymt: { label: 'Show Pymt. & Bal.', type: 'select', select: ['', 'Yes', 'No'] },
     showBankOnInv: { label: 'Show Bank on A4/A5 Invoice', type: 'select', select: ['', 'Yes', 'No'] },

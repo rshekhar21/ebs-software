@@ -90,7 +90,8 @@ export let details = {
 
 export function resetOrder() {
     const ordersData = Storage.get('ordersData') || {}; // Handle cases where 'ordersData' might be missing
-    const { itemsMode, enableScan, purchase, taxType, gstType } = ordersData;
+    const { itemsMode, enableScan, purchase, taxType, gstType } = ordersData; //log(taxType);
+    
     details.itemsMode = itemsMode;
     details.enableScan = enableScan;
     details.purchase = purchase;
@@ -98,6 +99,21 @@ export function resetOrder() {
     details.gstType = gstType;
     details.update = false;
     details.edit_id = null;
+    
+    // if(!taxType){
+    //     const { taxType } = getSettings().general; log(taxType);
+    //     if(!taxType) return;
+    //     details.taxType = taxType;
+    // }
+    
+    // if(!gstType){
+    //     const { gstType } = getSettings().general;
+    //     if(!gstType) return;
+    //     details.gstType = gstType;
+    // }
+
+    // log(details);
+
     Storage.set('ordersData', details);
 }
 
