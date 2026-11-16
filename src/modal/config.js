@@ -3,29 +3,36 @@ const path = require('path');
 const mysql = require('mysql2');
 const fse = require('fs-extra');
 const { create, update, views } = require('./fields');
-// const conn = require('./myebs/conn.json'); //log(conn[0].ssid)
+const { getPrivateConfigPath, readPrivateConfig } = require('./private-config');
 
-const cs = {
-    host: 'myebs.in',
-    port: '3306',
-    user: 'master',
-    password: '269608Raj$',
-    database: 'ebs_clients',
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0,
-    charset: 'utf8mb4'
+let pool;
+
+function getPool() {
+    if (pool) return pool;
+
+    const { database } = readPrivateConfig();
+    const requiredFields = ['host', 'user', 'password', 'database'];
+    const missingFields = requiredFields.filter(field => typeof database?.[field] !== 'string' || database[field].length === 0);
+    if (missingFields.length) {
+        throw new Error(`Database settings are missing ${missingFields.join(', ')} in ${getPrivateConfigPath()}`);
+    }
+
+    pool = mysql.createPool({
+        ...database,
+        port: Number(database.port || 3306),
+        waitForConnections: true,
+        connectionLimit: 10,
+        queueLimit: 0,
+        charset: 'utf8mb4'
+    });
+
+    return pool;
 }
 
-// Server=localhost\SQLEXPRESS;Database=master;Trusted_Connection=True;
-// https://drive.proton.me/urls/6SH64FKVGG#7yns8HJMbve3
-// sphere attack about rifle orphan eagle near inhale frog bike trophy hollow
-
-
-const pool = mysql.createPool(cs);
 function runSql(sql, values = []) {
+    const dbPool = getPool();
     return new Promise(function (resolve, reject) {
-        pool.query(sql, values, (err, rows, fields) => {
+        dbPool.query(sql, values, (err, rows, fields) => {
             if (err) {
                 return reject(err.message)
             }
@@ -293,64 +300,5 @@ async function bulkInsertParty(req) {
         throw error;
     }
 }
-
-// test().then(d=>log(d)).catch(e=>log(e));
-async function test() {
-    try {
-
-        let cnstr = {
-            host: 'myebsserver.in',
-            port: '3306',
-            user: 'sa_demo',
-            password: '269608Raj$',
-            database: 'db_demo'
-        }
-
-        const connection = require('./connect');
-        const remoteQry = new connection(cnstr);
-
-        const sql = `INSERT INTO party (party_id, reg_date, party_type, title, party_name, contact, email, company, gender, gst_number, birthday, address, city, pincode, state, rewards, enable_rewards, opening_bal, user_id) VALUES ?`;
-
-        let values = [
-            [
-                '101', '2024-07-09',
-                'Customer', 'Mr',
-                'ABCD10', null,
-                null, null,
-                null, null,
-                null, null,
-                null, null,
-                null, null,
-                1, '0.00',
-                1
-            ],
-            [
-                '102', '2024-07-09',
-                'Customer', 'Ms',
-                'ABCD11', null,
-                null, null,
-                null, null,
-                null, null,
-                null, null,
-                null, 2500,
-                1, '6000.25',
-                1
-            ]
-        ];
-
-        const conn = mysql.createConnection(cnstr);
-
-        // conn.query(sql, [values], function(err) {
-        //     if (err) throw err;
-        //     conn.end();
-        // });
-
-        // let rs = await remoteQry.execute(sql, [values]); log(rs);
-
-    } catch (error) {
-        log(error);
-    }
-}
-
 
 module.exports = { runSql, readQuery, trimValues, createSqlStmt, create, update, views, createUpdateStmt, sqlDate, bulkInsertParty }

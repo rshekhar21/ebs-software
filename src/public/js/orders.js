@@ -173,7 +173,6 @@ function setData(data) {
                 let url = `https://api.ebsserver.in/order/?key=${key}`; //log(url); return;
                 // Encode the URL and message for WhatsApp
                 // Encrypt the key
-                let secretKey = 'your-secret-key'; // Use a strong key
                 // let encryptedKey = encrypt(key, secretKey); log(encryptedKey); return;
                 // let res = await postData({ url: '/api/encrypt', data: { key }}); log(res.data); return;
                 let message = `View Order\n${url}`; //log(message); return;

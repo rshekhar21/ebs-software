@@ -45,7 +45,11 @@ async function authorizeUser(req, res) {
             res.json({ 'status': 'error', 'message': 'invalid credentials' })
         }
     } catch (error) {
-        res.json(error)
+        log(error);
+        return res.status(500).json({
+            status: 'error',
+            message: 'Unable to verify credentials. Check the database configuration and connection.'
+        });
     }
 }
 

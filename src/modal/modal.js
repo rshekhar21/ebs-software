@@ -27,6 +27,7 @@ const Modals = {};
 const crypto = require('crypto');
 const { createEncryptedJWT, decryptEncryptedJWT } = require('./utils');
 const { queryUserDb } = require('./conn');
+const { getPrivateConfigPath, readPrivateConfig } = require('./private-config');
 const apiUrl = 'https://www.myebs.in';
 
 // console.log('Available Ciphers:', crypto.getCiphers());
@@ -205,16 +206,17 @@ async function loginUser(req) {
         if (!username) throw 'Username Required';
         if (!password) throw 'Password Required';
         if (!captcha) throw 'Unauthorized Login';
+        const { recaptchaSecret } = readPrivateConfig();
+        if (!recaptchaSecret) throw new Error(`reCAPTCHA secret is missing in ${getPrivateConfigPath()}`);
         const response = await axios.post('https://www.google.com/recaptcha/api/siteverify', null, {
             params: {
-                // secret: '6LfD75IqAAAAAOmbHobyJJyjlOUoFpo9o_ZuL2Do', // localhost Replace with your reCAPTCHA secret key
-                secret: '6LfK6JIqAAAAAMheDMHiN_cdI0GrDfPSjg6kczRA', // store.myebs.in Replace with your reCAPTCHA secret key
+                secret: recaptchaSecret,
                 response: captcha,
             },
         });
         // log(response.data); 117325841072944472917
         if (!response.data.success) {
-            return res.status(400).json({ status: 'error', message: 'CAPTCHA verification failed.' });
+            throw new Error('CAPTCHA verification failed.');
         }
         let sql = 'SELECT `user_id` AS `id`, `client_id` FROM `users` WHERE (`username` = ? OR `email` = ?) AND `password` = MD5(?);';
         let res = await runSql(sql, [username.trim(), username.trim(), password.trim()]); //log(res);
@@ -328,28 +330,6 @@ async function appUsersList(req) {
         log(error);
     }
 }
-
-// testfun().then(res => log()).catch(err => log(err));
-// async function testfun() {
-//     const cs = {
-//         host: 'myebs.in',
-//         port: '3306',
-//         user: 'sa_demo',
-//         password: '269608Raj$',
-//         database: 'db_demo'
-//     };
-
-//     const conn = await mysql.createConnection(cs);
-//     try {
-
-//         const [rows, fields] = await conn.execute('select ?+? as sum', [2, 2]); log(rows)
-//         await conn.end();
-//     } catch (error) {
-//         log(error);
-//     }finally{
-//         conn.end;
-//     }
-// }
 
 function setItems(orderid, items) {
     let str = '';
@@ -1309,90 +1289,3 @@ Object.assign(Modals, subModal);
 // log(Modals.encyptVersion);
 
 module.exports = Modals
-
-async function uploadOrders() {
-    try {
-        let cnstr = {
-            host: 'myebsserver.in',
-            port: '3306',
-            user: 'iatrsaxynqkm',
-            password: '6647c0116140998d6a9935caf938bbcd',
-            database: 'gzxynqgulilv'
-        }
-        const remoteQry = new connection(cnstr);
-        let orders = require('./ordres.json');
-        let qry = 'INSERT INTO orders (order_date, party, inv_number, subtotal, discount, totaltax, alltotal, fin_year, order_id) VALUES ';
-        let values = '';
-        log(orders.length);
-        let partyArr = []
-        orders.forEach(async (order, i) => {
-            // if (order.party == '1') log(order);
-            let { party, inv_number, subtotal, discount, totaltax, alltotal, fin_year } = order;
-            party = party == 1 ? 101 : parseInt(party);
-            party = party - 100;
-            // if (party == 11254) log(order)
-            if (i > 100 && i < 201) {
-                let arr = [`'${order.order_date}'`, party, `'${inv_number}'`, subtotal, discount, totaltax, alltotal, fin_year, `'${short.generate()}'`];
-                values += `(${arr.join()}),`; //log(values.slice(0,-1));
-                return values;
-            }
-            partyArr.push(party);
-        })
-        log(partyArr.filter(a => a > 3200))
-        // let sql = qry + values.slice(0, -1); //log(sql);
-        // let res = await remoteQry.execute(sql); log(res.insertId);
-        // return res.insertId;
-    } catch (error) {
-        log(error);
-    }
-}
-
-async function uploadSolds() {
-    try {
-        let cnstr = {
-            host: 'myebsserver.in',
-            port: '3306',
-            user: 'iatrsaxynqkm',
-            password: '6647c0116140998d6a9935caf938bbcd',
-            database: 'gzxynqgulilv'
-        }
-
-        let solds = require('./solds.json');
-        log(solds.length);
-        let qry = "INSERT INTO sold(order_id, sku, hsn, qty, product, price, gst, tax, net, gross) VALUES ";
-        let values = '';
-        solds.forEach((sold, i) => {
-            if (i > 30000 && i < 35001) {
-                // log(i);
-                // log(sold);
-                // if(!sold.tax) log(sold);
-                let { order_id, sku, hsn, qty, article, price, tax, net, gross } = sold;
-                if (!sold.tax) tax = 0;
-                if (!sold.net) net = sold.price;
-                // log(sold);
-                let arr = [`'${order_id}'`, `'${sku}'`, `'${hsn}'`, qty, `'${article}'`, price, price > 999 ? 12 : 5, `'${tax}'`, `'${net}'`, `'${gross}'`];
-                values += `(${arr.join(', ')}),`; //log(values.slice(0,-1));
-                return values;
-            }
-        });
-        // log(values.slice(0, -1))
-        let sql = qry + values.slice(0, -1); //log(sql);
-        const remoteQry = new connection(cnstr);
-        // let res = await remoteQry.execute(sql); //log(res.insertId);
-        // let res = await config.querySql(sql); //log(res.insertId);
-        let res = await queryUserDb(sql); //log(res.insertId);
-    } catch (error) {
-        log(error);
-    }
-}
-
-
-
-
-// uploadOrders();
-// uploadSolds();
-
-
-
-
-// uploadOrders().then(d => log(d)).catch(err => log(err));

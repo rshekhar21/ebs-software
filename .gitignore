@@ -132,3 +132,6 @@ dist/
 env.json
 
 test.sql
+node_modules.onedrive-backup/
+*.onedrive-backup
+src/modal/myebs/conn.json

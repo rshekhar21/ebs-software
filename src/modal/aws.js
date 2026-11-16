@@ -1,22 +1,29 @@
 const { S3Client, ListObjectsV2Command, PutObjectCommand, GetObjectCommand  }=require('@aws-sdk/client-s3');
 const log=console.log;
 require('dotenv').config();
-const env = require('../../env.json');
+const { getPrivateConfigPath, readPrivateConfig } = require('./private-config');
 
-// Set your AWS credentials
-const credentials = {
-  accessKeyId: env.AWS_ACCESSKEY || process.env.AWS_ACCESSKEY,
-  secretAccessKey: env.AWS_SECRETKEY || process.env.AWS_SECRETKEY,
-};
-
-// Set the AWS region
 const region='ap-south-1';
-
-// Specify the bucket name
 const bucketName='bucket-ebs';
 
-// Create an S3 client
-const s3Client=new S3Client({ region, credentials });
+let s3Client;
+
+function getS3Client() {
+  if (s3Client) return s3Client;
+
+  const { aws } = readPrivateConfig();
+  const accessKeyId = aws?.accessKeyId || process.env.AWS_ACCESSKEY;
+  const secretAccessKey = aws?.secretAccessKey || process.env.AWS_SECRETKEY;
+  if (!accessKeyId || !secretAccessKey) {
+    throw new Error(`AWS credentials are missing in ${getPrivateConfigPath()}`);
+  }
+
+  s3Client = new S3Client({
+    region,
+    credentials: { accessKeyId, secretAccessKey }
+  });
+  return s3Client;
+}
 
 async function uploadFile(folder, fileName, data) {
   try {
@@ -28,7 +35,7 @@ async function uploadFile(folder, fileName, data) {
       Body: jsonString,
       ContentType: 'application/json', // Set content type if needed
     };
-    const res = await s3Client.send(new PutObjectCommand(putObjectParams));
+    const res = await getS3Client().send(new PutObjectCommand(putObjectParams));
     // console.log(`JSON data uploaded to ${key} successfully:`, res);
     return res;
   } catch (error) {
@@ -49,7 +56,7 @@ async function downloadFile(folder, fileName) {
       ContentType: 'application/json',
     };
 
-    const response = await s3Client.send(new GetObjectCommand(getObjectParams)); //log(response.Body);
+    const response = await getS3Client().send(new GetObjectCommand(getObjectParams)); //log(response.Body);
     // const jsonString=data.Body.toString('utf-8'); log(jsonString);
     const str=await response.Body.transformToString(); //log(str);
     const jsonData = JSON.parse(str);  //log(jsonData);

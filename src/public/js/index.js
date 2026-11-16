@@ -66,22 +66,6 @@ doc.addEventListener('DOMContentLoaded', function () {
     }
 
 
-    jq('#login-form').submit(async function (e) {
-        try {
-            e.preventDefault();
-            let data = formDataToJson({ form: this });
-            let res = await postData({ url: '/login', data });
-            if (res.data.status == 'error') {
-                throw res.data.message
-            } else {                
-                window.location.href = '/apps'
-            }
-        } catch (error) {
-            log(error);
-            jq('div.error').removeClass('d-none').text(error);
-        }
-    })
-
     jq('#reset-pwd').submit(async function (e) {
         try {
             e.preventDefault();
